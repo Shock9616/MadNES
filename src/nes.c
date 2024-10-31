@@ -48,19 +48,18 @@ int main(int argc, char** argv) {
     assert(memory == NULL);
     memory = calloc(MEMORY_SPACE, sizeof(uint8_t));
     assert(memory != NULL);
-    int prog_instr_count = 0;
+    int prog_line_count = 0;
 
     if (data_file != NULL) {
-        prog_instr_count = loadFile(memory, processor.PC, data_file);
+        prog_line_count = loadFile(memory, processor.PC, data_file);
     }
 
     if (opt_disassemble) {
-        for (int i = 0; i < 6; i++) {
+        while (prog_line_count > 0) {
             Instruction instr = parse_instruction(memory, processor.PC);
             print_instruction(instr);
             processor.PC += instr.length;
-            // printf("0x%02x\n", memory[processor.PC]);
-            // processor.PC++;
+            prog_line_count -= instr.length;
         }
     }
     if (opt_run) {

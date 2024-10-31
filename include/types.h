@@ -25,7 +25,7 @@ typedef enum {
     REL,
     ABS,
     ABSX,
-    ABXY,
+    ABSY,
     IND,
     INDX,
     INDY,
