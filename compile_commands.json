@@ -1,0 +1,7 @@
+[
+  {
+    "directory": "/Users/kalebrosborough/Documents/Programming/C/nes-sim/",
+    "command": "zig cc -Wall -I include -c src/nes.c -o build/nes.o",
+    "file": "build/nes.o"
+  }
+]

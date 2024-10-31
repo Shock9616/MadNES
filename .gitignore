@@ -54,3 +54,4 @@ dkms.conf
 
 # Other files/dirs
 **/.nvim/
+**/.zig-cache/
