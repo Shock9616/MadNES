@@ -73,6 +73,8 @@ int main(int argc, char** argv) {
  * @param mem - The byte array to load instructions into.
  * @param start_addr - The start address of the code block in memory.
  * @param file_path - The path to the file to load into memory
+ *
+ * @returns The number of lines in the file
  */
 int loadFile(uint8_t* mem, int start_addr, const char* file_path) {
     FILE* file = fopen(file_path, "r");

@@ -5,10 +5,16 @@
 #include <stdint.h>
 #include <stdio.h>
 
-uint16_t concatenate_bytes(uint16_t ms_byte, uint16_t ls_byte) {
-    return (ms_byte << 8) | ls_byte;
-}
+uint16_t concatenate_bytes(uint16_t ms_byte, uint16_t ls_byte);
 
+/**
+ * Parses the location in memory pointed to by 'pc' and creates an Instruction
+ *
+ * @param mem - The byte array serving as system memory
+ * @param pc - The program counter (points to the current instruction in memory)
+ *
+ * @returns An Instruction with all the information needed about it
+ */
 Instruction parse_instruction(uint8_t* mem, Register pc) {
     Instruction instruction;
 
@@ -164,6 +170,11 @@ Instruction parse_instruction(uint8_t* mem, Register pc) {
     return instruction;
 }
 
+/**
+ * Prints the given instruction as it would be written in 6502 assembly
+ *
+ * @param instr - The instruction to print
+ */
 void print_instruction(Instruction instr) {
     switch (instr.addr_mode) {
         case IMPL:
@@ -206,4 +217,16 @@ void print_instruction(Instruction instr) {
             printf(INDY_FORMAT, instr.name, instr.indy.addr);
             break;
     }
+}
+
+/**
+ * Concatenate the most siginificant byte and the least significant byte
+ *
+ * @param ms_byte - The most significant byte (e.x. 1010 -> 1010xxxx)
+ * @param ls_byte - The least significant byte (e.x. 0101 -> xxxx0101)
+ *
+ * @returns The two bytes concatenated (e.x. ms_byte = 1010, ls_byte = 0101 returns 10100101)
+ */
+uint16_t concatenate_bytes(uint16_t ms_byte, uint16_t ls_byte) {
+    return (ms_byte << 8) | ls_byte;
 }
