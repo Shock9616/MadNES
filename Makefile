@@ -5,7 +5,7 @@ BUILD_DIR := build
 BIN_DIR := $(BUILD_DIR)/bin
 
 # Compiler and flags
-CC := zig cc
+CC := clang
 CFLAGS := -Wall -I $(INCLUDE_DIR)
 
 # Source files, object files, and executable

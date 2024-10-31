@@ -54,9 +54,8 @@ int main(int argc, char** argv) {
     }
 
     if (opt_disassemble) {
-        printf("Disassemble: %s\n", data_file);
         for (int i = 0; i < prog_instr_count; i++) {
-            printf("0x%02x\n", memory[i]);
+            printf("0x%02x\n", memory[processor.PC + i]);
         }
     }
     if (opt_run) {
