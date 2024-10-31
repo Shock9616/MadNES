@@ -1,4 +1,4 @@
-# NEStastrophe (A crappy NES emulator)
+# MadNES (A crappy NES emulator)
 
 This is a long term side project I was inspired to start after one of the
 assignments I did for CMPT 295 (Introduction to Computing Systems) at SFU. In
