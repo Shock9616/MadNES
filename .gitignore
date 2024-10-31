@@ -56,3 +56,4 @@ dkms.conf
 **/.nvim/
 **/.zig-cache/
 **/.DS_Store
+compile_commands.json
