@@ -1,4 +1,5 @@
 #include "types.h"
+#include "utils.h"
 
 #include <assert.h>
 #include <stdbool.h>
@@ -45,7 +46,7 @@ int main(int argc, char** argv) {
 
     // Allocate system memory
     assert(memory == NULL);
-    memory = calloc(MEMORY_SPACE, sizeof(uint8_t));  // allocate zeroed memory
+    memory = calloc(MEMORY_SPACE, sizeof(uint8_t));
     assert(memory != NULL);
     int prog_instr_count = 0;
 
@@ -54,8 +55,12 @@ int main(int argc, char** argv) {
     }
 
     if (opt_disassemble) {
-        for (int i = 0; i < prog_instr_count; i++) {
-            printf("0x%02x\n", memory[processor.PC + i]);
+        for (int i = 0; i < 6; i++) {
+            Instruction instr = parse_instruction(memory, processor.PC);
+            print_instruction(instr);
+            processor.PC += instr.length;
+            // printf("0x%02x\n", memory[processor.PC]);
+            // processor.PC++;
         }
     }
     if (opt_run) {
