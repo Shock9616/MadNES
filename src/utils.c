@@ -70,6 +70,55 @@ Instruction parse_instruction(uint8_t* mem, Register pc) {
             instruction.length = 2;
             instruction.indy.addr = mem[pc + 1];
             break;
+        // ---------- AND ----------
+        case 0x29:
+            instruction.name = "AND";
+            instruction.addr_mode = IMM;
+            instruction.length = 2;
+            instruction.imm.imm = mem[pc + 1];
+            break;
+        case 0x25:
+            instruction.name = "AND";
+            instruction.addr_mode = ZP;
+            instruction.length = 2;
+            instruction.zp.addr = mem[pc + 1];
+            break;
+        case 0x35:
+            instruction.name = "AND";
+            instruction.addr_mode = ZPX;
+            instruction.length = 2;
+            instruction.zpx.addr = mem[pc + 1];
+            break;
+        case 0x2D:
+            instruction.name = "AND";
+            instruction.addr_mode = ABS;
+            instruction.length = 3;
+            instruction.abs.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
+            break;
+        case 0x3D:
+            instruction.name = "AND";
+            instruction.addr_mode = ABSX;
+            instruction.length = 3;
+            instruction.absx.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
+            break;
+        case 0x39:
+            instruction.name = "AND";
+            instruction.addr_mode = ABSY;
+            instruction.length = 3;
+            instruction.absy.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
+            break;
+        case 0x21:
+            instruction.name = "AND";
+            instruction.addr_mode = INDX;
+            instruction.length = 2;
+            instruction.indx.addr = mem[pc + 1];
+            break;
+        case 0x31:
+            instruction.name = "AND";
+            instruction.addr_mode = INDY;
+            instruction.length = 2;
+            instruction.indy.addr = mem[pc + 1];
+            break;
         // ---------- LDA ----------
         case 0xA9:
             instruction.name = "LDA";
