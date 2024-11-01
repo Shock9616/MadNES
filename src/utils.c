@@ -357,6 +357,27 @@ Instruction parse_instruction(uint8_t* mem, Register pc) {
             instruction.addr_mode = INDY;
             instruction.indy.addr = mem[pc + 1];
             break;
+        // ---------- INC ----------
+        case 0xE6:
+            instruction.name = "INC";
+            instruction.addr_mode = ZP;
+            instruction.zp.addr = mem[pc + 1];
+            break;
+        case 0xF6:
+            instruction.name = "INC";
+            instruction.addr_mode = ZPX;
+            instruction.zpx.addr = mem[pc + 1];
+            break;
+        case 0xEE:
+            instruction.name = "INC";
+            instruction.addr_mode = ABS;
+            instruction.abs.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
+            break;
+        case 0xFE:
+            instruction.name = "INC";
+            instruction.addr_mode = ABSX;
+            instruction.absx.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
+            break;
         // ---------- LDA ----------
         case 0xA9:
             instruction.name = "LDA";
