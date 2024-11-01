@@ -498,6 +498,36 @@ Instruction parse_instruction(uint8_t* mem, Register pc) {
             instruction.addr_mode = ABSX;
             instruction.absx.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
             break;
+        // ---------- LSR ----------
+        case 0x4A:
+            instruction.name = "LSR";
+            instruction.addr_mode = ACCUM;
+            break;
+        case 0x46:
+            instruction.name = "LSR";
+            instruction.addr_mode = ZP;
+            instruction.zp.addr = mem[pc + 1];
+            break;
+        case 0x56:
+            instruction.name = "LSR";
+            instruction.addr_mode = ZPX;
+            instruction.zpx.addr = mem[pc + 1];
+            break;
+        case 0x4E:
+            instruction.name = "LSR";
+            instruction.addr_mode = ABS;
+            instruction.abs.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
+            break;
+        case 0x5E:
+            instruction.name = "LSR";
+            instruction.addr_mode = ABSX;
+            instruction.absx.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
+            break;
+        // ---------- NOP ----------
+        case 0xEA:
+            instruction.name = "NOP";
+            instruction.addr_mode = IMPL;
+            break;
         // ---------- STA ----------
         case 0x85:
             instruction.name = "STA";
