@@ -316,6 +316,47 @@ Instruction parse_instruction(uint8_t* mem, Register pc) {
             instruction.name = "DEY";
             instruction.addr_mode = IMPL;
             break;
+        // ---------- EOR ----------
+        case 0x49:
+            instruction.name = "EOR";
+            instruction.addr_mode = IMM;
+            instruction.imm.imm = mem[pc + 1];
+            break;
+        case 0x45:
+            instruction.name = "EOR";
+            instruction.addr_mode = ZP;
+            instruction.zp.addr = mem[pc + 1];
+            break;
+        case 0x55:
+            instruction.name = "EOR";
+            instruction.addr_mode = ZPX;
+            instruction.zpx.addr = mem[pc + 1];
+            break;
+        case 0x4D:
+            instruction.name = "EOR";
+            instruction.addr_mode = ABS;
+            instruction.abs.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
+            break;
+        case 0x5D:
+            instruction.name = "EOR";
+            instruction.addr_mode = ABSX;
+            instruction.absx.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
+            break;
+        case 0x59:
+            instruction.name = "EOR";
+            instruction.addr_mode = ABSY;
+            instruction.absy.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
+            break;
+        case 0x41:
+            instruction.name = "EOR";
+            instruction.addr_mode = INDX;
+            instruction.indx.addr = mem[pc + 1];
+            break;
+        case 0x51:
+            instruction.name = "EOR";
+            instruction.addr_mode = INDY;
+            instruction.indy.addr = mem[pc + 1];
+            break;
         // ---------- LDA ----------
         case 0xA9:
             instruction.name = "LDA";
