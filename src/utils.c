@@ -378,6 +378,16 @@ Instruction parse_instruction(uint8_t* mem, Register pc) {
             instruction.addr_mode = ABSX;
             instruction.absx.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
             break;
+        // ---------- INX ----------
+        case 0xE8:
+            instruction.name = "INX";
+            instruction.addr_mode = IMPL;
+            break;
+        // ---------- INY ----------
+        case 0xC8:
+            instruction.name = "INY";
+            instruction.addr_mode = IMPL;
+            break;
         // ---------- LDA ----------
         case 0xA9:
             instruction.name = "LDA";
