@@ -297,6 +297,44 @@ Instruction parse_instruction(uint8_t* mem, Register pc) {
             instruction.length = 2;
             instruction.indy.addr = mem[pc + 1];
             break;
+        // ---------- CPX ----------
+        case 0xE0:
+            instruction.name = "CPX";
+            instruction.addr_mode = IMM;
+            instruction.length = 2;
+            instruction.imm.imm = mem[pc + 1];
+            break;
+        case 0xE4:
+            instruction.name = "CPX";
+            instruction.addr_mode = ZP;
+            instruction.length = 2;
+            instruction.zp.addr = mem[pc + 1];
+            break;
+        case 0xEC:
+            instruction.name = "CPX";
+            instruction.addr_mode = ABS;
+            instruction.length = 3;
+            instruction.abs.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
+            break;
+        // ---------- CPY ----------
+        case 0xC0:
+            instruction.name = "CPY";
+            instruction.addr_mode = IMM;
+            instruction.length = 2;
+            instruction.imm.imm = mem[pc + 1];
+            break;
+        case 0xC4:
+            instruction.name = "CPY";
+            instruction.addr_mode = ZP;
+            instruction.length = 2;
+            instruction.zp.addr = mem[pc + 1];
+            break;
+        case 0xCC:
+            instruction.name = "CPY";
+            instruction.addr_mode = ABS;
+            instruction.length = 3;
+            instruction.abs.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
+            break;
         // ---------- LDA ----------
         case 0xA9:
             instruction.name = "LDA";
