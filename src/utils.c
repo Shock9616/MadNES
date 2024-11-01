@@ -149,6 +149,104 @@ Instruction parse_instruction(uint8_t* mem, Register pc) {
             instruction.length = 3;
             instruction.absx.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
             break;
+        // ---------- BCC ----------
+        case 0x90:
+            instruction.name = "BCC";
+            instruction.addr_mode = REL;
+            instruction.length = 2;
+            instruction.rel.offset = mem[pc + 1];
+            break;
+        // ---------- BCS ----------
+        case 0xB0:
+            instruction.name = "BCS";
+            instruction.addr_mode = REL;
+            instruction.length = 2;
+            instruction.rel.offset = mem[pc + 1];
+            break;
+        // ---------- BEQ ----------
+        case 0xF0:
+            instruction.name = "BEQ";
+            instruction.addr_mode = REL;
+            instruction.length = 2;
+            instruction.rel.offset = mem[pc + 1];
+            break;
+        // ---------- BIT ----------
+        case 0x24:
+            instruction.name = "BIT";
+            instruction.addr_mode = ZP;
+            instruction.length = 2;
+            instruction.zp.addr = mem[pc + 1];
+            break;
+        case 0x2C:
+            instruction.name = "BIT";
+            instruction.addr_mode = ABS;
+            instruction.length = 3;
+            instruction.abs.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
+            break;
+        // ---------- BMI ----------
+        case 0x30:
+            instruction.name = "BMI";
+            instruction.addr_mode = REL;
+            instruction.length = 2;
+            instruction.rel.offset = mem[pc + 1];
+            break;
+        // ---------- BNE ----------
+        case 0xD0:
+            instruction.name = "BNE";
+            instruction.addr_mode = REL;
+            instruction.length = 2;
+            instruction.rel.offset = mem[pc + 1];
+            break;
+        // ---------- BPL ----------
+        case 0x10:
+            instruction.name = "BPL";
+            instruction.addr_mode = REL;
+            instruction.length = 2;
+            instruction.rel.offset = mem[pc + 1];
+            break;
+        // ---------- BRK ----------
+        case 0x00:
+            instruction.name = "BRK";
+            instruction.addr_mode = IMPL;
+            instruction.length = 1;
+            break;
+        // ---------- BVC ----------
+        case 0x50:
+            instruction.name = "BVC";
+            instruction.addr_mode = REL;
+            instruction.length = 2;
+            instruction.rel.offset = mem[pc + 1];
+            break;
+        // ---------- BVS ----------
+        case 0x70:
+            instruction.name = "BVS";
+            instruction.addr_mode = REL;
+            instruction.length = 2;
+            instruction.rel.offset = mem[pc + 1];
+            break;
+        // ---------- CLC ----------
+        case 0x18:
+            instruction.name = "CLC";
+            instruction.addr_mode = IMPL;
+            instruction.length = 1;
+            break;
+        // ---------- CLD ----------
+        case 0xD8:
+            instruction.name = "CLD";
+            instruction.addr_mode = IMPL;
+            instruction.length = 1;
+            break;
+        // ---------- CLI ----------
+        case 0x58:
+            instruction.name = "CLI";
+            instruction.addr_mode = IMPL;
+            instruction.length = 1;
+            break;
+        case 0xB8:
+            instruction.name = "CLV";
+            instruction.addr_mode = IMPL;
+            instruction.length = 1;
+            break;
         // ---------- LDA ----------
         case 0xA9:
             instruction.name = "LDA";
