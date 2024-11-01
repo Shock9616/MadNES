@@ -446,6 +446,58 @@ Instruction parse_instruction(uint8_t* mem, Register pc) {
             instruction.addr_mode = INDY;
             instruction.indy.addr = mem[pc + 1];
             break;
+        // ---------- LDX ----------
+        case 0xA2:
+            instruction.name = "LDX";
+            instruction.addr_mode = IMM;
+            instruction.imm.imm = mem[pc + 1];
+            break;
+        case 0xA6:
+            instruction.name = "LDX";
+            instruction.addr_mode = ZP;
+            instruction.zp.addr = mem[pc + 1];
+            break;
+        case 0xB6:
+            instruction.name = "LDX";
+            instruction.addr_mode = ZPY;
+            instruction.zpy.addr = mem[pc + 1];
+            break;
+        case 0xAE:
+            instruction.name = "LDX";
+            instruction.addr_mode = ABS;
+            instruction.abs.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
+            break;
+        case 0xBE:
+            instruction.name = "LDX";
+            instruction.addr_mode = ABSY;
+            instruction.absy.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
+            break;
+        // ---------- LDY ----------
+        case 0xA0:
+            instruction.name = "LDY";
+            instruction.addr_mode = IMM;
+            instruction.imm.imm = mem[pc + 1];
+            break;
+        case 0xA4:
+            instruction.name = "LDY";
+            instruction.addr_mode = ZP;
+            instruction.zp.addr = mem[pc + 1];
+            break;
+        case 0xB4:
+            instruction.name = "LDY";
+            instruction.addr_mode = ZPX;
+            instruction.zpx.addr = mem[pc + 1];
+            break;
+        case 0xAC:
+            instruction.name = "LDY";
+            instruction.addr_mode = ABS;
+            instruction.abs.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
+            break;
+        case 0xBC:
+            instruction.name = "LDY";
+            instruction.addr_mode = ABSX;
+            instruction.absx.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
+            break;
         // ---------- STA ----------
         case 0x85:
             instruction.name = "STA";
