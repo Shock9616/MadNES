@@ -388,6 +388,23 @@ Instruction parse_instruction(uint8_t* mem, Register pc) {
             instruction.name = "INY";
             instruction.addr_mode = IMPL;
             break;
+        // ---------- JMP ----------
+        case 0x4C:
+            instruction.name = "JMP";
+            instruction.addr_mode = ABS;
+            instruction.abs.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
+            break;
+        case 0x6C:
+            instruction.name = "JMP";
+            instruction.addr_mode = IND;
+            instruction.ind.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
+            break;
+        // ---------- JSR ----------
+        case 0x20:
+            instruction.name = "JSR";
+            instruction.addr_mode = ABS;
+            instruction.abs.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
+            break;
         // ---------- LDA ----------
         case 0xA9:
             instruction.name = "LDA";
