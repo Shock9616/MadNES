@@ -335,6 +335,43 @@ Instruction parse_instruction(uint8_t* mem, Register pc) {
             instruction.length = 3;
             instruction.abs.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
             break;
+        // ---------- DEC ----------
+        case 0xC6:
+            instruction.name = "DEC";
+            instruction.addr_mode = ZP;
+            instruction.length = 2;
+            instruction.zp.addr = mem[pc + 1];
+            break;
+        case 0xD6:
+            instruction.name = "DEC";
+            instruction.addr_mode = ZPX;
+            instruction.length = 2;
+            instruction.zpx.addr = mem[pc + 1];
+            break;
+        case 0xCE:
+            instruction.name = "DEC";
+            instruction.addr_mode = ABS;
+            instruction.length = 3;
+            instruction.abs.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
+            break;
+        case 0xDE:
+            instruction.name = "DEC";
+            instruction.addr_mode = ABSX;
+            instruction.length = 3;
+            instruction.absx.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
+            break;
+        // ---------- DEX ----------
+        case 0xCA:
+            instruction.name = "DEX";
+            instruction.addr_mode = IMPL;
+            instruction.length = 1;
+            break;
+        // ---------- DEY ----------
+        case 0x88:
+            instruction.name = "DEY";
+            instruction.addr_mode = IMPL;
+            instruction.length = 1;
+            break;
         // ---------- LDA ----------
         case 0xA9:
             instruction.name = "LDA";
