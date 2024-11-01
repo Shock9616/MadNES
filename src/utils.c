@@ -25,83 +25,67 @@ Instruction parse_instruction(uint8_t* mem, Register pc) {
         case 0x69:  // nice
             instruction.name = "ADC";
             instruction.addr_mode = IMM;
-            instruction.imm.imm = mem[pc + 1];
             break;
         case 0x65:
             instruction.name = "ADC";
             instruction.addr_mode = ZP;
-            instruction.zp.addr = mem[pc + 1];
             break;
         case 0x75:
             instruction.name = "ADC";
             instruction.addr_mode = ZPX;
-            instruction.zpx.addr = mem[pc + 1];
             break;
         case 0x6D:
             instruction.name = "ADC";
             instruction.addr_mode = ABS;
-            instruction.abs.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
             break;
         case 0x7D:
             instruction.name = "ADC";
             instruction.addr_mode = ABSX;
-            instruction.absx.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
             break;
         case 0x79:
             instruction.name = "ADC";
             instruction.addr_mode = ABSY;
-            instruction.absy.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
             break;
         case 0x61:
             instruction.name = "ADC";
             instruction.addr_mode = INDX;
-            instruction.indx.addr = mem[pc + 1];
             break;
         case 0x71:
             instruction.name = "ADC";
             instruction.addr_mode = INDY;
-            instruction.indy.addr = mem[pc + 1];
             break;
         // ---------- AND ----------
         case 0x29:
             instruction.name = "AND";
             instruction.addr_mode = IMM;
-            instruction.imm.imm = mem[pc + 1];
             break;
         case 0x25:
             instruction.name = "AND";
             instruction.addr_mode = ZP;
-            instruction.zp.addr = mem[pc + 1];
             break;
         case 0x35:
             instruction.name = "AND";
             instruction.addr_mode = ZPX;
-            instruction.zpx.addr = mem[pc + 1];
             break;
         case 0x2D:
             instruction.name = "AND";
             instruction.addr_mode = ABS;
-            instruction.abs.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
             break;
         case 0x3D:
             instruction.name = "AND";
             instruction.addr_mode = ABSX;
-            instruction.absx.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
             break;
         case 0x39:
             instruction.name = "AND";
             instruction.addr_mode = ABSY;
-            instruction.absy.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
             break;
         case 0x21:
             instruction.name = "AND";
             instruction.addr_mode = INDX;
-            instruction.indx.addr = mem[pc + 1];
             break;
         case 0x31:
             instruction.name = "AND";
             instruction.addr_mode = INDY;
-            instruction.indy.addr = mem[pc + 1];
             break;
         // ---------- ASL ----------
         case 0x0A:
@@ -111,69 +95,57 @@ Instruction parse_instruction(uint8_t* mem, Register pc) {
         case 0x06:
             instruction.name = "ASL";
             instruction.addr_mode = ZP;
-            instruction.zp.addr = mem[pc + 1];
             break;
         case 0x16:
             instruction.name = "ASL";
             instruction.addr_mode = ZPX;
-            instruction.zpx.addr = mem[pc + 1];
             break;
         case 0x0E:
             instruction.name = "ASL";
             instruction.addr_mode = ABS;
-            instruction.abs.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
             break;
         case 0x1E:
             instruction.name = "ASL";
             instruction.addr_mode = ABSX;
-            instruction.absx.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
             break;
         // ---------- BCC ----------
         case 0x90:
             instruction.name = "BCC";
             instruction.addr_mode = REL;
-            instruction.rel.offset = mem[pc + 1];
             break;
         // ---------- BCS ----------
         case 0xB0:
             instruction.name = "BCS";
             instruction.addr_mode = REL;
-            instruction.rel.offset = mem[pc + 1];
             break;
         // ---------- BEQ ----------
         case 0xF0:
             instruction.name = "BEQ";
             instruction.addr_mode = REL;
-            instruction.rel.offset = mem[pc + 1];
             break;
         // ---------- BIT ----------
         case 0x24:
             instruction.name = "BIT";
             instruction.addr_mode = ZP;
-            instruction.zp.addr = mem[pc + 1];
             break;
         case 0x2C:
             instruction.name = "BIT";
             instruction.addr_mode = ABS;
-            instruction.abs.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
             break;
         // ---------- BMI ----------
         case 0x30:
             instruction.name = "BMI";
             instruction.addr_mode = REL;
-            instruction.rel.offset = mem[pc + 1];
             break;
         // ---------- BNE ----------
         case 0xD0:
             instruction.name = "BNE";
             instruction.addr_mode = REL;
-            instruction.rel.offset = mem[pc + 1];
             break;
         // ---------- BPL ----------
         case 0x10:
             instruction.name = "BPL";
             instruction.addr_mode = REL;
-            instruction.rel.offset = mem[pc + 1];
             break;
         // ---------- BRK ----------
         case 0x00:
@@ -184,13 +156,11 @@ Instruction parse_instruction(uint8_t* mem, Register pc) {
         case 0x50:
             instruction.name = "BVC";
             instruction.addr_mode = REL;
-            instruction.rel.offset = mem[pc + 1];
             break;
         // ---------- BVS ----------
         case 0x70:
             instruction.name = "BVS";
             instruction.addr_mode = REL;
-            instruction.rel.offset = mem[pc + 1];
             break;
         // ---------- CLC ----------
         case 0x18:
@@ -216,95 +186,77 @@ Instruction parse_instruction(uint8_t* mem, Register pc) {
         case 0xC9:
             instruction.name = "CMP";
             instruction.addr_mode = IMM;
-            instruction.imm.imm = mem[pc + 1];
             break;
         case 0xC5:
             instruction.name = "CMP";
             instruction.addr_mode = ZP;
-            instruction.zp.addr = mem[pc + 1];
             break;
         case 0xD5:
             instruction.name = "CMP";
             instruction.addr_mode = ZPX;
-            instruction.zpx.addr = mem[pc + 1];
             break;
         case 0xCD:
             instruction.name = "CMP";
             instruction.addr_mode = ABS;
-            instruction.abs.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
             break;
         case 0xDD:
             instruction.name = "CMP";
             instruction.addr_mode = ABSX;
-            instruction.absx.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
             break;
         case 0xD9:
             instruction.name = "CMP";
             instruction.addr_mode = ABSY;
-            instruction.absy.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
             break;
         case 0xC1:
             instruction.name = "CMP";
             instruction.addr_mode = INDX;
-            instruction.indx.addr = mem[pc + 1];
             break;
         case 0xD1:
             instruction.name = "CMP";
             instruction.addr_mode = INDY;
-            instruction.indy.addr = mem[pc + 1];
             break;
         // ---------- CPX ----------
         case 0xE0:
             instruction.name = "CPX";
             instruction.addr_mode = IMM;
-            instruction.imm.imm = mem[pc + 1];
             break;
         case 0xE4:
             instruction.name = "CPX";
             instruction.addr_mode = ZP;
-            instruction.zp.addr = mem[pc + 1];
             break;
         case 0xEC:
             instruction.name = "CPX";
             instruction.addr_mode = ABS;
-            instruction.abs.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
             break;
         // ---------- CPY ----------
         case 0xC0:
             instruction.name = "CPY";
             instruction.addr_mode = IMM;
-            instruction.imm.imm = mem[pc + 1];
             break;
         case 0xC4:
             instruction.name = "CPY";
             instruction.addr_mode = ZP;
-            instruction.zp.addr = mem[pc + 1];
             break;
         case 0xCC:
             instruction.name = "CPY";
             instruction.addr_mode = ABS;
-            instruction.abs.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
             break;
         // ---------- DEC ----------
         case 0xC6:
             instruction.name = "DEC";
             instruction.addr_mode = ZP;
-            instruction.zp.addr = mem[pc + 1];
             break;
         case 0xD6:
             instruction.name = "DEC";
             instruction.addr_mode = ZPX;
-            instruction.zpx.addr = mem[pc + 1];
             break;
         case 0xCE:
             instruction.name = "DEC";
             instruction.addr_mode = ABS;
-            instruction.abs.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
             break;
         case 0xDE:
             instruction.name = "DEC";
             instruction.addr_mode = ABSX;
-            instruction.absx.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
             break;
         // ---------- DEX ----------
         case 0xCA:
@@ -320,63 +272,51 @@ Instruction parse_instruction(uint8_t* mem, Register pc) {
         case 0x49:
             instruction.name = "EOR";
             instruction.addr_mode = IMM;
-            instruction.imm.imm = mem[pc + 1];
             break;
         case 0x45:
             instruction.name = "EOR";
             instruction.addr_mode = ZP;
-            instruction.zp.addr = mem[pc + 1];
             break;
         case 0x55:
             instruction.name = "EOR";
             instruction.addr_mode = ZPX;
-            instruction.zpx.addr = mem[pc + 1];
             break;
         case 0x4D:
             instruction.name = "EOR";
             instruction.addr_mode = ABS;
-            instruction.abs.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
             break;
         case 0x5D:
             instruction.name = "EOR";
             instruction.addr_mode = ABSX;
-            instruction.absx.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
             break;
         case 0x59:
             instruction.name = "EOR";
             instruction.addr_mode = ABSY;
-            instruction.absy.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
             break;
         case 0x41:
             instruction.name = "EOR";
             instruction.addr_mode = INDX;
-            instruction.indx.addr = mem[pc + 1];
             break;
         case 0x51:
             instruction.name = "EOR";
             instruction.addr_mode = INDY;
-            instruction.indy.addr = mem[pc + 1];
             break;
         // ---------- INC ----------
         case 0xE6:
             instruction.name = "INC";
             instruction.addr_mode = ZP;
-            instruction.zp.addr = mem[pc + 1];
             break;
         case 0xF6:
             instruction.name = "INC";
             instruction.addr_mode = ZPX;
-            instruction.zpx.addr = mem[pc + 1];
             break;
         case 0xEE:
             instruction.name = "INC";
             instruction.addr_mode = ABS;
-            instruction.abs.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
             break;
         case 0xFE:
             instruction.name = "INC";
             instruction.addr_mode = ABSX;
-            instruction.absx.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
             break;
         // ---------- INX ----------
         case 0xE8:
@@ -392,111 +332,90 @@ Instruction parse_instruction(uint8_t* mem, Register pc) {
         case 0x4C:
             instruction.name = "JMP";
             instruction.addr_mode = ABS;
-            instruction.abs.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
             break;
         case 0x6C:
             instruction.name = "JMP";
             instruction.addr_mode = IND;
-            instruction.ind.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
             break;
         // ---------- JSR ----------
         case 0x20:
             instruction.name = "JSR";
             instruction.addr_mode = ABS;
-            instruction.abs.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
             break;
         // ---------- LDA ----------
         case 0xA9:
             instruction.name = "LDA";
             instruction.addr_mode = IMM;
-            instruction.imm.imm = mem[pc + 1];
             break;
         case 0xA5:
             instruction.name = "LDA";
             instruction.addr_mode = ZP;
-            instruction.zp.addr = mem[pc + 1];
             break;
         case 0xB5:
             instruction.name = "LDA";
             instruction.addr_mode = ZPX;
-            instruction.zpx.addr = mem[pc + 1];
             break;
         case 0xAD:
             instruction.name = "LDA";
             instruction.addr_mode = ABS;
-            instruction.abs.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
             break;
         case 0xBD:
             instruction.name = "LDA";
             instruction.addr_mode = ABSX;
-            instruction.absx.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
             break;
         case 0xB9:
             instruction.name = "LDA";
             instruction.addr_mode = ABSY;
-            instruction.absy.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
             break;
         case 0xA1:
             instruction.name = "LDA";
             instruction.addr_mode = INDX;
-            instruction.indx.addr = mem[pc + 1];
             break;
         case 0xB1:
             instruction.name = "LDA";
             instruction.addr_mode = INDY;
-            instruction.indy.addr = mem[pc + 1];
             break;
         // ---------- LDX ----------
         case 0xA2:
             instruction.name = "LDX";
             instruction.addr_mode = IMM;
-            instruction.imm.imm = mem[pc + 1];
             break;
         case 0xA6:
             instruction.name = "LDX";
             instruction.addr_mode = ZP;
-            instruction.zp.addr = mem[pc + 1];
             break;
         case 0xB6:
             instruction.name = "LDX";
             instruction.addr_mode = ZPY;
-            instruction.zpy.addr = mem[pc + 1];
             break;
         case 0xAE:
             instruction.name = "LDX";
             instruction.addr_mode = ABS;
-            instruction.abs.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
             break;
         case 0xBE:
             instruction.name = "LDX";
             instruction.addr_mode = ABSY;
-            instruction.absy.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
             break;
         // ---------- LDY ----------
         case 0xA0:
             instruction.name = "LDY";
             instruction.addr_mode = IMM;
-            instruction.imm.imm = mem[pc + 1];
             break;
         case 0xA4:
             instruction.name = "LDY";
             instruction.addr_mode = ZP;
-            instruction.zp.addr = mem[pc + 1];
             break;
         case 0xB4:
             instruction.name = "LDY";
             instruction.addr_mode = ZPX;
-            instruction.zpx.addr = mem[pc + 1];
             break;
         case 0xAC:
             instruction.name = "LDY";
             instruction.addr_mode = ABS;
-            instruction.abs.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
             break;
         case 0xBC:
             instruction.name = "LDY";
             instruction.addr_mode = ABSX;
-            instruction.absx.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
             break;
         // ---------- LSR ----------
         case 0x4A:
@@ -506,63 +425,85 @@ Instruction parse_instruction(uint8_t* mem, Register pc) {
         case 0x46:
             instruction.name = "LSR";
             instruction.addr_mode = ZP;
-            instruction.zp.addr = mem[pc + 1];
             break;
         case 0x56:
             instruction.name = "LSR";
             instruction.addr_mode = ZPX;
-            instruction.zpx.addr = mem[pc + 1];
             break;
         case 0x4E:
             instruction.name = "LSR";
             instruction.addr_mode = ABS;
-            instruction.abs.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
             break;
         case 0x5E:
             instruction.name = "LSR";
             instruction.addr_mode = ABSX;
-            instruction.absx.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
             break;
         // ---------- NOP ----------
         case 0xEA:
             instruction.name = "NOP";
             instruction.addr_mode = IMPL;
             break;
+        // ---------- ORA ----------
+        case 0x09:
+            instruction.name = "ORA";
+            instruction.addr_mode = IMM;
+            break;
+        case 0x05:
+            instruction.name = "ORA";
+            instruction.addr_mode = ZP;
+            break;
+        case 0x15:
+            instruction.name = "ORA";
+            instruction.addr_mode = ZPX;
+            break;
+        case 0x0D:
+            instruction.name = "ORA";
+            instruction.addr_mode = ABS;
+            break;
+        case 0x1D:
+            instruction.name = "ORA";
+            instruction.addr_mode = ABSX;
+            break;
+        case 0x19:
+            instruction.name = "ORA";
+            instruction.addr_mode = ABSY;
+            break;
+        case 0x01:
+            instruction.name = "ORA";
+            instruction.addr_mode = INDX;
+            break;
+        case 0x11:
+            instruction.name = "ORA";
+            instruction.addr_mode = INDY;
+            break;
         // ---------- STA ----------
         case 0x85:
             instruction.name = "STA";
             instruction.addr_mode = ZP;
-            instruction.zp.addr = mem[pc + 1];
             break;
         case 0x95:
             instruction.name = "STA";
             instruction.addr_mode = ZPX;
-            instruction.zpx.addr = mem[pc + 1];
             break;
         case 0x8D:
             instruction.name = "STA";
             instruction.addr_mode = ABS;
-            instruction.abs.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
             break;
         case 0x9D:
             instruction.name = "STA";
             instruction.addr_mode = ABSX;
-            instruction.absx.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
             break;
         case 0x99:
             instruction.name = "STA";
             instruction.addr_mode = ABSY;
-            instruction.absy.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
             break;
         case 0x81:
             instruction.name = "STA";
             instruction.addr_mode = INDX;
-            instruction.indx.addr = mem[pc + 1];
             break;
         case 0x91:
             instruction.name = "STA";
             instruction.addr_mode = INDY;
-            instruction.indy.addr = mem[pc + 1];
             break;
         default:
             fprintf(stderr, "ERROR: Invalid opcode 0x%02x\n", instruction.opcode);
@@ -578,36 +519,47 @@ Instruction parse_instruction(uint8_t* mem, Register pc) {
             break;
         case IMM:
             instruction.length = 2;
+            instruction.imm.imm = mem[pc + 1];
             break;
         case ZP:
             instruction.length = 2;
+            instruction.zp.addr = mem[pc + 1];
             break;
         case ZPX:
             instruction.length = 2;
+            instruction.zpx.addr = mem[pc + 1];
             break;
         case ZPY:
             instruction.length = 2;
+            instruction.zpy.addr = mem[pc + 1];
             break;
         case REL:
             instruction.length = 2;
+            instruction.rel.offset = mem[pc + 1];
             break;
         case ABS:
             instruction.length = 3;
+            instruction.abs.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
             break;
         case ABSX:
             instruction.length = 3;
+            instruction.absx.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
             break;
         case ABSY:
             instruction.length = 3;
+            instruction.absy.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
             break;
         case IND:
             instruction.length = 3;
+            instruction.ind.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
             break;
         case INDX:
             instruction.length = 2;
+            instruction.indx.addr = mem[pc + 1];
             break;
         case INDY:
             instruction.length = 2;
+            instruction.indy.addr = mem[pc + 1];
             break;
     }
 
