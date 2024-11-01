@@ -242,10 +242,60 @@ Instruction parse_instruction(uint8_t* mem, Register pc) {
             instruction.addr_mode = IMPL;
             instruction.length = 1;
             break;
+        // ---------- CLV ----------
         case 0xB8:
             instruction.name = "CLV";
             instruction.addr_mode = IMPL;
             instruction.length = 1;
+            break;
+        // ---------- CMP ----------
+        case 0xC9:
+            instruction.name = "CMP";
+            instruction.addr_mode = IMM;
+            instruction.length = 2;
+            instruction.imm.imm = mem[pc + 1];
+            break;
+        case 0xC5:
+            instruction.name = "CMP";
+            instruction.addr_mode = ZP;
+            instruction.length = 2;
+            instruction.zp.addr = mem[pc + 1];
+            break;
+        case 0xD5:
+            instruction.name = "CMP";
+            instruction.addr_mode = ZPX;
+            instruction.length = 2;
+            instruction.zpx.addr = mem[pc + 1];
+            break;
+        case 0xCD:
+            instruction.name = "CMP";
+            instruction.addr_mode = ABS;
+            instruction.length = 3;
+            instruction.abs.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
+            break;
+        case 0xDD:
+            instruction.name = "CMP";
+            instruction.addr_mode = ABSX;
+            instruction.length = 3;
+            instruction.absx.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
+            break;
+        case 0xD9:
+            instruction.name = "CMP";
+            instruction.addr_mode = ABSY;
+            instruction.length = 3;
+            instruction.absy.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
+            break;
+        case 0xC1:
+            instruction.name = "CMP";
+            instruction.addr_mode = INDX;
+            instruction.length = 2;
+            instruction.indx.addr = mem[pc + 1];
+            break;
+        case 0xD1:
+            instruction.name = "CMP";
+            instruction.addr_mode = INDY;
+            instruction.length = 2;
+            instruction.indy.addr = mem[pc + 1];
             break;
         // ---------- LDA ----------
         case 0xA9:
