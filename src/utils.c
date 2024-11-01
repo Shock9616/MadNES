@@ -119,6 +119,36 @@ Instruction parse_instruction(uint8_t* mem, Register pc) {
             instruction.length = 2;
             instruction.indy.addr = mem[pc + 1];
             break;
+        // ---------- ASL ----------
+        case 0x0A:
+            instruction.name = "ASL";
+            instruction.addr_mode = ACCUM;
+            instruction.length = 1;
+            break;
+        case 0x06:
+            instruction.name = "ASL";
+            instruction.addr_mode = ZP;
+            instruction.length = 2;
+            instruction.zp.addr = mem[pc + 1];
+            break;
+        case 0x16:
+            instruction.name = "ASL";
+            instruction.addr_mode = ZPX;
+            instruction.length = 2;
+            instruction.zpx.addr = mem[pc + 1];
+            break;
+        case 0x0E:
+            instruction.name = "ASL";
+            instruction.addr_mode = ABS;
+            instruction.length = 3;
+            instruction.abs.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
+            break;
+        case 0x1E:
+            instruction.name = "ASL";
+            instruction.addr_mode = ABSX;
+            instruction.length = 3;
+            instruction.absx.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
+            break;
         // ---------- LDA ----------
         case 0xA9:
             instruction.name = "LDA";
