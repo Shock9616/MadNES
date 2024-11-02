@@ -496,6 +496,27 @@ Instruction parse_instruction(uint8_t* mem, Register pc) {
             instruction.name = "PLP";
             instruction.addr_mode = IMPL;
             break;
+        // ---------- ROL ----------
+        case 0x2A:
+            instruction.name = "ROL";
+            instruction.addr_mode = ACCUM;
+            break;
+        case 0x26:
+            instruction.name = "ROL";
+            instruction.addr_mode = ZP;
+            break;
+        case 0x36:
+            instruction.name = "ROL";
+            instruction.addr_mode = ZPX;
+            break;
+        case 0x2E:
+            instruction.name = "ROL";
+            instruction.addr_mode = ABS;
+            break;
+        case 0x3E:
+            instruction.name = "ROL";
+            instruction.addr_mode = ABSX;
+            break;
         // ---------- STA ----------
         case 0x85:
             instruction.name = "STA";
