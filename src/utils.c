@@ -2,10 +2,14 @@
 
 #include "types.h"
 
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 
 uint16_t concatenate_bytes(uint16_t ms_byte, uint16_t ls_byte);
+void set_flag(char flag, bool val, Processor* processor);
+uint8_t load(uint16_t addr, uint8_t* mem);
+void store(uint16_t addr, uint8_t val, uint8_t** mem);
 
 /**
  * Parses the location in memory pointed to by 'pc' and creates an Instruction
@@ -15,7 +19,7 @@ uint16_t concatenate_bytes(uint16_t ms_byte, uint16_t ls_byte);
  *
  * @returns An Instruction with all the information needed about it
  */
-Instruction parse_instruction(uint8_t* mem, Register pc) {
+Instruction parse_instruction(uint8_t* mem, uint16_t pc) {
     Instruction instruction;
 
     instruction.opcode = mem[pc];
@@ -743,6 +747,33 @@ Instruction parse_instruction(uint8_t* mem, Register pc) {
 }
 
 /**
+ * Execute the given instruction and set the appropriate flags
+ *
+ * @param instr - The instruction to execute
+ * @param mem - The byte array serving as system memory
+ * @param processor - The processor holding register values
+ */
+void execute_instruction(Instruction instr, uint8_t** mem, Processor* processor) {
+    if (instr.opcode == 0x69) {
+        // ---------- ADC (IMM) ----------
+        uint16_t sum = processor->A + instr.imm.imm;
+        if (sum >= 256) {
+            sum -= 256;
+            set_flag('C', 1, processor);
+        }
+        processor->A = sum;
+    } else if (instr.opcode == 0x65) {
+        // ---------- ADC (ZP) ----------
+        uint16_t sum = processor->A + (*mem)[instr.zp.addr];
+        if (sum >= 256) {
+            sum -= 256;
+            set_flag('C', 1, processor);
+        }
+        processor->A = sum;
+    }
+}
+
+/**
  * Prints the given instruction as it would be written in 6502 assembly
  *
  * @param instr - The instruction to print
@@ -801,4 +832,90 @@ void print_instruction(Instruction instr) {
  */
 uint16_t concatenate_bytes(uint16_t ms_byte, uint16_t ls_byte) {
     return (ms_byte << 8) | ls_byte;
+}
+
+/**
+ * Set the specified flag to the specified value
+ *
+ * @param flag - The flag to set (N, V, B, D, I, Z, C)
+ * @param val - The bit value to set the given flag to
+ */
+void set_flag(char flag, bool val, Processor* processor) {
+    switch (flag) {
+        case 'N':
+            if (val == 1) {
+                processor->P |= 0b10000000;
+            } else {
+                processor->P &= 0b01111111;
+            }
+            break;
+        case 'V':
+            if (val == 1) {
+                processor->P |= 0b01000000;
+            } else {
+                processor->P &= 0b10111111;
+            }
+            break;
+        case 'B':
+            if (val == 1) {
+                processor->P |= 0b00010000;
+            } else {
+                processor->P &= 0b11101111;
+            }
+            break;
+        case 'D':
+            if (val == 1) {
+                processor->P |= 0b00001000;
+            } else {
+                processor->P &= 0b11110111;
+            }
+            break;
+        case 'I':
+            if (val == 1) {
+                processor->P |= 0b00000100;
+            } else {
+                processor->P &= 0b11111011;
+            }
+            break;
+        case 'Z':
+            if (val == 1) {
+                processor->P |= 0b00000010;
+            } else {
+                processor->P &= 0b11111101;
+            }
+            break;
+        case 'C':
+            if (val == 1) {
+                processor->P |= 0b00000001;
+            } else {
+                processor->P &= 0b11111110;
+            }
+            break;
+        default:
+            fprintf(stderr, "ERROR: Invalid flag %c", flag);
+            break;
+    }
+}
+
+/**
+ * Load a byte of memory from the given address in memory
+ *
+ * @param addr - The address in memory to load the value of
+ * @param mem - The byte array serving as system memory
+ *
+ * @returns The byte of data stored at the given address
+ */
+uint8_t load(uint16_t addr, uint8_t* mem) {
+    return mem[addr];
+}
+
+/**
+ * Store a byte of memory to the given address in memory
+ *
+ * @param addr - The address in memory to store to
+ * @param val - The value to store to memory
+ * @param mem - The byte array serving as system memory
+ */
+void store(uint16_t addr, uint8_t val, uint8_t** mem) {
+    *mem[addr] = val;
 }

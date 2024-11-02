@@ -25,7 +25,7 @@
  *
  * @returns An Instruction with all the information needed about it
  */
-Instruction parse_instruction(uint8_t* mem, Register pc);
+Instruction parse_instruction(uint8_t* mem, uint16_t pc);
 
 /**
  * Prints the given instruction as it would be written in 6502 assembly
@@ -33,3 +33,12 @@ Instruction parse_instruction(uint8_t* mem, Register pc);
  * @param instr - The instruction to print
  */
 void print_instruction(Instruction instr);
+
+/**
+ * Execute the given instruction and set the appropriate flags
+ *
+ * @param instr - The instruction to execute
+ * @param mem - The byte array serving as system memory
+ * @param processor - The processor holding register values
+ */
+void execute_instruction(Instruction instr, uint8_t** mem, Processor* processor);

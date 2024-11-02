@@ -19,11 +19,12 @@ int main(int argc, char** argv) {
 
     Processor processor;
     // Set registers to default values
+    processor.PC = 0x0600;
+    processor.S = 0xFF;
+    processor.P = 0x40;
     processor.A = 0x0;
     processor.X = 0x0;
     processor.Y = 0x0;
-    processor.SP = 0xFF;
-    processor.PC = 0x0600;
 
     char* data_file = NULL;
 
@@ -63,7 +64,17 @@ int main(int argc, char** argv) {
         }
     }
     if (opt_run) {
-        printf("Run: %s\n", data_file);
+        while (prog_line_count > 0) {
+            Instruction instr = parse_instruction(memory, processor.PC);
+            execute_instruction(instr, &memory, &processor);
+            processor.PC += instr.length;
+            prog_line_count -= instr.length;
+        }
+
+        printf("A: 0x%02x\n", processor.A);
+        printf("X: 0x%02x\n", processor.X);
+        printf("Y: 0x%02x\n", processor.Y);
+        printf("P: 0x%02x\n", processor.P);
     }
 }
 

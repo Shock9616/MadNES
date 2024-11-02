@@ -6,7 +6,7 @@ BIN_DIR := $(BUILD_DIR)/bin
 
 # Compiler and flags
 CC := clang
-CFLAGS := -Wall -I $(INCLUDE_DIR)
+CFLAGS := -Wall -I $(INCLUDE_DIR) -g3
 
 # Source files, object files, and executable
 SRC_FILES := $(wildcard $(SRC_DIR)/*.c)
