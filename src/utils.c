@@ -625,6 +625,32 @@ Instruction parse_instruction(uint8_t* mem, Register pc) {
             instruction.name = "STA";
             instruction.addr_mode = INDY;
             break;
+        // ---------- STX ----------
+        case 0x86:
+            instruction.name = "STX";
+            instruction.addr_mode = ZP;
+            break;
+        case 0x96:
+            instruction.name = "STX";
+            instruction.addr_mode = ZPY;
+            break;
+        case 0x8E:
+            instruction.name = "STX";
+            instruction.addr_mode = ABS;
+            break;
+        // ---------- STY ----------
+        case 0x84:
+            instruction.name = "STY";
+            instruction.addr_mode = ZP;
+            break;
+        case 0x94:
+            instruction.name = "STY";
+            instruction.addr_mode = ZPX;
+            break;
+        case 0x8C:
+            instruction.name = "STY";
+            instruction.addr_mode = ABS;
+            break;
         default:
             fprintf(stderr, "ERROR: Invalid opcode 0x%02x\n", instruction.opcode);
             break;
