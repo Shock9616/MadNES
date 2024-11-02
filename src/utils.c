@@ -581,6 +581,21 @@ Instruction parse_instruction(uint8_t* mem, Register pc) {
             instruction.name = "SBC";
             instruction.addr_mode = INDY;
             break;
+        // ---------- SEC ----------
+        case 0x38:
+            instruction.name = "SEC";
+            instruction.addr_mode = IMPL;
+            break;
+        // ---------- SED ----------
+        case 0xF8:
+            instruction.name = "SED";
+            instruction.addr_mode = IMPL;
+            break;
+        // ---------- SEI ----------
+        case 0x78:
+            instruction.name = "SEI";
+            instruction.addr_mode = IMPL;
+            break;
         // ---------- STA ----------
         case 0x85:
             instruction.name = "STA";
