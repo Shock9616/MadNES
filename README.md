@@ -14,7 +14,7 @@ This is a very ambitious project, so only time will tell how far I actually get,
 but these are my goals for this project in roughly the order I plan to achieve
 them in:
 
-- [ ] Create a disassembler for 6502 assembly (in progress...)
+- [x] Create a disassembler for 6502 assembly
 - [ ] Create C implementations for all 56 instructions to emulate a normal 6502
       program (i.e. no graphics/sound/etc. just a normal CLI application)
 - [ ] Begin researching NES graphics and maybe try to get some simple homebrew
