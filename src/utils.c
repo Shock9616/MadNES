@@ -538,6 +538,49 @@ Instruction parse_instruction(uint8_t* mem, Register pc) {
             instruction.name = "ROR";
             instruction.addr_mode = ABSX;
             break;
+        // ---------- RTI ----------
+        case 0x40:
+            instruction.name = "RTI";
+            instruction.addr_mode = IMPL;
+            break;
+        // ---------- RTS ----------
+        case 0x60:
+            instruction.name = "RTS";
+            instruction.addr_mode = IMPL;
+            break;
+        // ---------- SBC ----------
+        case 0xE9:
+            instruction.name = "SBC";
+            instruction.addr_mode = IMM;
+            break;
+        case 0xE5:
+            instruction.name = "SBC";
+            instruction.addr_mode = ZP;
+            break;
+        case 0xF5:
+            instruction.name = "SBC";
+            instruction.addr_mode = ZPX;
+            break;
+        case 0xED:
+            instruction.name = "SBC";
+            instruction.addr_mode = ABS;
+            break;
+        case 0xFD:
+            instruction.name = "SBC";
+            instruction.addr_mode = ABSX;
+            break;
+        case 0xF9:
+            instruction.name = "SBC";
+            instruction.addr_mode = ABSY;
+            break;
+        case 0xE1:
+            instruction.name = "SBC";
+            instruction.addr_mode = INDX;
+            break;
+        case 0xF1:
+            instruction.name = "SBC";
+            instruction.addr_mode = INDY;
+            break;
         // ---------- STA ----------
         case 0x85:
             instruction.name = "STA";
