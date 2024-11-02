@@ -476,6 +476,26 @@ Instruction parse_instruction(uint8_t* mem, Register pc) {
             instruction.name = "ORA";
             instruction.addr_mode = INDY;
             break;
+        // ---------- PHA ----------
+        case 0x48:
+            instruction.name = "PHA";
+            instruction.addr_mode = IMPL;
+            break;
+        // ---------- PHP ----------
+        case 0x08:
+            instruction.name = "PHP";
+            instruction.addr_mode = IMPL;
+            break;
+        // ---------- PLA ----------
+        case 0x68:
+            instruction.name = "PLA";
+            instruction.addr_mode = IMPL;
+            break;
+        // ---------- PLP ----------
+        case 0x28:
+            instruction.name = "PLP";
+            instruction.addr_mode = IMPL;
+            break;
         // ---------- STA ----------
         case 0x85:
             instruction.name = "STA";
