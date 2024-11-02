@@ -517,6 +517,27 @@ Instruction parse_instruction(uint8_t* mem, Register pc) {
             instruction.name = "ROL";
             instruction.addr_mode = ABSX;
             break;
+        // ---------- ROR ----------
+        case 0x6A:
+            instruction.name = "ROR";
+            instruction.addr_mode = ACCUM;
+            break;
+        case 0x66:
+            instruction.name = "ROR";
+            instruction.addr_mode = ZP;
+            break;
+        case 0x76:
+            instruction.name = "ROR";
+            instruction.addr_mode = ZPX;
+            break;
+        case 0x6E:
+            instruction.name = "ROR";
+            instruction.addr_mode = ABS;
+            break;
+        case 0x7E:
+            instruction.name = "ROR";
+            instruction.addr_mode = ABSX;
+            break;
         // ---------- STA ----------
         case 0x85:
             instruction.name = "STA";
