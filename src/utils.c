@@ -651,6 +651,36 @@ Instruction parse_instruction(uint8_t* mem, Register pc) {
             instruction.name = "STY";
             instruction.addr_mode = ABS;
             break;
+        // ---------- TAX ----------
+        case 0xAA:
+            instruction.name = "TAX";
+            instruction.addr_mode = IMPL;
+            break;
+        // ---------- TAY ----------
+        case 0xA8:
+            instruction.name = "TAY";
+            instruction.addr_mode = IMPL;
+            break;
+        // ---------- TSX ----------
+        case 0xBA:
+            instruction.name = "TSX";
+            instruction.addr_mode = IMPL;
+            break;
+        // ---------- TXA ----------
+        case 0x8A:
+            instruction.name = "TXA";
+            instruction.addr_mode = IMPL;
+            break;
+        // ---------- TXS ----------
+        case 0x9A:
+            instruction.name = "TXS";
+            instruction.addr_mode = IMPL;
+            break;
+        // ---------- TYA ----------
+        case 0x98:
+            instruction.name = "TYA";
+            instruction.addr_mode = IMPL;
+            break;
         default:
             fprintf(stderr, "ERROR: Invalid opcode 0x%02x\n", instruction.opcode);
             break;
