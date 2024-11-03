@@ -1,7 +1,5 @@
 #include "types.h"
 
-#include <stdbool.h>
-
 // String formats to be filled in when printing 6502 instructions
 #define IMPL_FORMAT  "%s\n"
 #define ACCUM_FORMAT "%s  A\n"
@@ -33,14 +31,6 @@ void print_instruction(Instruction instr);
  * @returns The two bytes concatenated (e.x. ms_byte = 1010, ls_byte = 0101 returns 10100101)
  */
 uint16_t concatenate_bytes(uint16_t ms_byte, uint16_t ls_byte);
-
-/**
- * Set the specified flag to the specified value
- *
- * @param flag - The flag to set (N, V, B, D, I, Z, C)
- * @param val - The bit value to set the given flag to
- */
-void set_flag(char flag, bool val, Processor* processor);
 
 /**
  * Load a byte of memory from the given address in memory

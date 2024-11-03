@@ -830,3 +830,66 @@ void execute_instruction(Instruction instr, uint8_t** mem, Processor* processor)
             break;
     }
 }
+
+/**
+ * Set the specified flag to the specified value
+ *
+ * @param flag - The flag to set (N, V, B, D, I, Z, C)
+ * @param val - The bit value to set the given flag to
+ */
+void set_flag(char flag, bool val, Processor* processor) {
+    switch (flag) {
+        case 'N':
+            if (val == 1) {
+                processor->P |= 0b10000000;
+            } else {
+                processor->P &= 0b01111111;
+            }
+            break;
+        case 'V':
+            if (val == 1) {
+                processor->P |= 0b01000000;
+            } else {
+                processor->P &= 0b10111111;
+            }
+            break;
+        case 'B':
+            if (val == 1) {
+                processor->P |= 0b00010000;
+            } else {
+                processor->P &= 0b11101111;
+            }
+            break;
+        case 'D':
+            if (val == 1) {
+                processor->P |= 0b00001000;
+            } else {
+                processor->P &= 0b11110111;
+            }
+            break;
+        case 'I':
+            if (val == 1) {
+                processor->P |= 0b00000100;
+            } else {
+                processor->P &= 0b11111011;
+            }
+            break;
+        case 'Z':
+            if (val == 1) {
+                processor->P |= 0b00000010;
+            } else {
+                processor->P &= 0b11111101;
+            }
+            break;
+        case 'C':
+            if (val == 1) {
+                processor->P |= 0b00000001;
+            } else {
+                processor->P &= 0b11111110;
+            }
+            break;
+        default:
+            fprintf(stderr, "ERROR: Invalid flag %c", flag);
+            break;
+    }
+}
