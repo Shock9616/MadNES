@@ -64,11 +64,10 @@ int main(int argc, char** argv) {
         }
     }
     if (opt_run) {
-        while (prog_line_count > 0) {
+        while (processor.PC < 0x0600 + prog_line_count) {
             Instruction instr = parse_instruction(memory, processor.PC);
             execute_instruction(instr, &memory, &processor);
             processor.PC += instr.length;
-            prog_line_count -= instr.length;
         }
 
         printf("A: 0x%02x\n", processor.A);
