@@ -754,22 +754,69 @@ Instruction parse_instruction(uint8_t* mem, uint16_t pc) {
  * @param processor - The processor holding register values
  */
 void execute_instruction(Instruction instr, uint8_t** mem, Processor* processor) {
-    if (instr.opcode == 0x69) {
-        // ---------- ADC (IMM) ----------
-        uint16_t sum = processor->A + instr.imm.imm;
-        if (sum >= 256) {
-            sum -= 256;
-            set_flag('C', 1, processor);
-        }
-        processor->A = sum;
-    } else if (instr.opcode == 0x65) {
-        // ---------- ADC (ZP) ----------
-        uint16_t sum = processor->A + (*mem)[instr.zp.addr];
-        if (sum >= 256) {
-            sum -= 256;
-            set_flag('C', 1, processor);
-        }
-        processor->A = sum;
+    uint16_t sum;
+
+    switch (instr.opcode) {
+        case 0x69:
+            // ---------- ADC (IMM) ----------
+            sum = processor->A + instr.imm.imm;
+            if (sum >= 256) {
+                sum -= 256;
+                set_flag('C', 1, processor);
+            }
+            processor->A = (uint8_t)sum;
+            break;
+        case 0x65:
+            // ---------- ADC (ZP) ----------
+            sum = processor->A + (*mem)[instr.zp.addr];
+            if (sum >= 256) {
+                sum -= 256;
+                set_flag('C', 1, processor);
+            }
+            processor->A = (uint8_t)sum;
+            break;
+        case 0x75:
+            // ---------- ADC (ZPX) ----------
+            sum = processor->A + (*mem)[instr.zpx.addr + processor->X];
+            if (sum >= 256) {
+                sum -= 256;
+                set_flag('C', 1, processor);
+            }
+            processor->A = (uint8_t)sum;
+            break;
+        case 0x6D:
+            // ---------- ADC (ABS) ----------
+            sum = processor->A + (*mem)[instr.abs.addr];
+            if (sum >= 256) {
+                sum -= 256;
+                set_flag('C', 1, processor);
+            }
+            processor->A = (uint8_t)sum;
+            break;
+        case 0x7D:
+            // ---------- ADC (ABSX) ----------
+            sum = processor->A + (*mem)[instr.absx.addr + processor->X];
+            if (sum >= 256) {
+                sum -= 256;
+                set_flag('C', 1, processor);
+            }
+            processor->A = (uint8_t)sum;
+            break;
+        case 0x79:
+            // ---------- ADC (ABSY) ----------
+            sum = processor->A + (*mem)[instr.absy.addr + processor->Y];
+            if (sum >= 256) {
+                sum -= 256;
+                set_flag('C', 1, processor);
+            }
+            processor->A = (uint8_t)sum;
+            break;
+        case 0x61:
+            // TODO: Implement ADC (INDX)
+            break;
+        case 0x71:
+            // TODO: Implement ADC (INDY)
+            break;
     }
 }
 

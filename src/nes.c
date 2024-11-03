@@ -64,6 +64,19 @@ int main(int argc, char** argv) {
         }
     }
     if (opt_run) {
+        // ZP
+        memory[0x01] = 10;
+        // ZPX
+        processor.X = 0x10;
+        memory[0x11] = 10;
+        // ABS
+        memory[0xFF33] = 10;
+        // ABSX
+        memory[0xFF14] = 10;
+        // ABSY
+        processor.Y = 0x20;
+        memory[0xFF24] = 10;
+
         while (processor.PC < 0x0600 + prog_line_count) {
             Instruction instr = parse_instruction(memory, processor.PC);
             execute_instruction(instr, &memory, &processor);
