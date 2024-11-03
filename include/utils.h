@@ -13,7 +13,7 @@
 #define ABSY_FORMAT  "%s  $%04x,Y\n"
 #define IND_FORMAT   "%s  ($%04x)\n"
 #define INDX_FORMAT  "%s  ($%02x,X)\n"
-#define INDY_FORMAT  "%s  ($%02x,Y)\n"
+#define INDY_FORMAT  "%s  ($%02x),Y\n"
 
 /**
  * Prints the given instruction as it would be written in 6502 assembly

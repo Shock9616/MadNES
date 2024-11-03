@@ -877,8 +877,11 @@ uint8_t get_val(Instruction instr, uint8_t* mem, Processor processor) {
             lsb_addr = mem[instr.indx.addr + processor.X];
             msb_addr = mem[instr.indx.addr + processor.X + 1];
             val = mem[concatenate_bytes(msb_addr, lsb_addr)];
+            break;
         case INDY:
-            // TODO: Implement get_val for INDY
+            lsb_addr = mem[instr.indy.addr];
+            msb_addr = mem[instr.indy.addr + 1];
+            val = mem[concatenate_bytes(msb_addr, lsb_addr) + processor.Y];
             break;
         default:
             fprintf(stderr, "ERROR: Addressing mode doesn't return a value");
