@@ -1,6 +1,6 @@
 #include "types.h"
 
-#include <stdint.h>
+#include <stdbool.h>
 
 // String formats to be filled in when printing 6502 instructions
 #define IMPL_FORMAT  "%s\n"
@@ -18,16 +18,6 @@
 #define INDY_FORMAT  "%s  ($%02x,Y)\n"
 
 /**
- * Parses the location in memory pointed to by 'pc' and creates an Instruction
- *
- * @param mem - The byte array serving as system memory
- * @param pc - The program counter (points to the current instruction in memory)
- *
- * @returns An Instruction with all the information needed about it
- */
-Instruction parse_instruction(uint8_t* mem, uint16_t pc);
-
-/**
  * Prints the given instruction as it would be written in 6502 assembly
  *
  * @param instr - The instruction to print
@@ -35,10 +25,38 @@ Instruction parse_instruction(uint8_t* mem, uint16_t pc);
 void print_instruction(Instruction instr);
 
 /**
- * Execute the given instruction and set the appropriate flags
+ * Concatenate the most siginificant byte and the least significant byte
  *
- * @param instr - The instruction to execute
- * @param mem - The byte array serving as system memory
- * @param processor - The processor holding register values
+ * @param ms_byte - The most significant byte (e.x. 1010 -> 1010xxxx)
+ * @param ls_byte - The least significant byte (e.x. 0101 -> xxxx0101)
+ *
+ * @returns The two bytes concatenated (e.x. ms_byte = 1010, ls_byte = 0101 returns 10100101)
  */
-void execute_instruction(Instruction instr, uint8_t** mem, Processor* processor);
+uint16_t concatenate_bytes(uint16_t ms_byte, uint16_t ls_byte);
+
+/**
+ * Set the specified flag to the specified value
+ *
+ * @param flag - The flag to set (N, V, B, D, I, Z, C)
+ * @param val - The bit value to set the given flag to
+ */
+void set_flag(char flag, bool val, Processor* processor);
+
+/**
+ * Load a byte of memory from the given address in memory
+ *
+ * @param addr - The address in memory to load the value of
+ * @param mem - The byte array serving as system memory
+ *
+ * @returns The byte of data stored at the given address
+ */
+uint8_t load(uint16_t addr, uint8_t* mem);
+
+/**
+ * Store a byte of memory to the given address in memory
+ *
+ * @param addr - The address in memory to store to
+ * @param val - The value to store to memory
+ * @param mem - The byte array serving as system memory
+ */
+void store(uint16_t addr, uint8_t val, uint8_t** mem);

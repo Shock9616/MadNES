@@ -1,3 +1,4 @@
+#include "6502.h"
 #include "types.h"
 #include "utils.h"
 
@@ -64,6 +65,11 @@ int main(int argc, char** argv) {
         }
     }
     if (opt_run) {
+        memory[0x24] = 0x74;
+        memory[0x25] = 0x10;
+        memory[0x1074] = 10;
+        processor.X = 4;
+
         while (processor.PC < 0x0600 + prog_line_count) {
             Instruction instr = parse_instruction(memory, processor.PC);
             execute_instruction(instr, &memory, &processor);
