@@ -2,6 +2,7 @@
 
 #include "utils.h"
 
+#include <stdint.h>
 #include <stdio.h>
 
 /**
@@ -748,80 +749,17 @@ Instruction parse_instruction(uint8_t* mem, uint16_t pc) {
  */
 void execute_instruction(Instruction instr, uint8_t** mem, Processor* processor) {
     uint16_t sum;
-    uint8_t lsb_addr;
-    uint8_t msb_addr;
 
     switch (instr.opcode) {
         case 0x69:
-            // ---------- ADC (IMM) ----------
-            sum = processor->A + instr.imm.imm;
-            if (sum >= 256) {
-                sum -= 256;
-                set_flag('C', 1, processor);
-            }
-            processor->A = (uint8_t)sum;
-            break;
         case 0x65:
-            // ---------- ADC (ZP) ----------
-            sum = processor->A + (*mem)[instr.zp.addr];
-            if (sum >= 256) {
-                sum -= 256;
-                set_flag('C', 1, processor);
-            }
-            processor->A = (uint8_t)sum;
-            break;
         case 0x75:
-            // ---------- ADC (ZPX) ----------
-            sum = processor->A + (*mem)[instr.zpx.addr + processor->X];
-            if (sum >= 256) {
-                sum -= 256;
-                set_flag('C', 1, processor);
-            }
-            processor->A = (uint8_t)sum;
-            break;
         case 0x6D:
-            // ---------- ADC (ABS) ----------
-            sum = processor->A + (*mem)[instr.abs.addr];
-            if (sum >= 256) {
-                sum -= 256;
-                set_flag('C', 1, processor);
-            }
-            processor->A = (uint8_t)sum;
-            break;
         case 0x7D:
-            // ---------- ADC (ABSX) ----------
-            sum = processor->A + (*mem)[instr.absx.addr + processor->X];
-            if (sum >= 256) {
-                sum -= 256;
-                set_flag('C', 1, processor);
-            }
-            processor->A = (uint8_t)sum;
-            break;
         case 0x79:
-            // ---------- ADC (ABSY) ----------
-            sum = processor->A + (*mem)[instr.absy.addr + processor->Y];
-            if (sum >= 256) {
-                sum -= 256;
-                set_flag('C', 1, processor);
-            }
-            processor->A = (uint8_t)sum;
-            break;
         case 0x61:
-            // ---------- ADC (INDX) ----------
-            lsb_addr = (*mem)[instr.indx.addr + processor->X];
-            msb_addr = (*mem)[instr.indx.addr + 1 + processor->X];
-            sum = processor->A + (*mem)[concatenate_bytes(msb_addr, lsb_addr)];
-            if (sum >= 256) {
-                sum -= 256;
-                set_flag('C', 1, processor);
-            }
-            processor->A = (uint8_t)sum;
-            break;
         case 0x71:
-            // ---------- ADC (INDY) ----------
-            lsb_addr = instr.indy.addr;
-            msb_addr = instr.indy.addr + 1;
-            sum = processor->A + (*mem)[concatenate_bytes(msb_addr, lsb_addr) + processor->Y];
+            sum = processor->A + get_val(instr, *mem, *processor);
             if (sum >= 256) {
                 sum -= 256;
                 set_flag('C', 1, processor);
@@ -892,4 +830,60 @@ void set_flag(char flag, bool val, Processor* processor) {
             fprintf(stderr, "ERROR: Invalid flag %c", flag);
             break;
     }
+}
+
+/**
+ * Return the required value based on the instruction's addressing mode
+ *
+ * @param instr - The instruction to use for getting the required value
+ * @param mem - The byte array serving as system memory
+ * @param processor - The processor holding register values
+ *
+ * @returns The byte of data required by the instruction
+ */
+uint8_t get_val(Instruction instr, uint8_t* mem, Processor processor) {
+    uint8_t val = 0;
+    uint8_t lsb_addr;
+    uint8_t msb_addr;
+
+    switch (instr.addr_mode) {
+        case IMM:
+            val = instr.imm.imm;
+            break;
+        case ZP:
+            val = mem[instr.zp.addr];
+            break;
+        case ZPX:
+            val = mem[instr.zpx.addr + processor.X];
+            break;
+        case ZPY:
+            // TODO: Implement get_val for ZPY
+            break;
+        case REL:
+            // TODO: Implement get_val for REL
+        case ABS:
+            val = mem[instr.abs.addr];
+            break;
+        case ABSX:
+            val = mem[instr.absx.addr + processor.X];
+            break;
+        case ABSY:
+            val = mem[instr.absy.addr + processor.Y];
+            break;
+        case IND:
+            // TODO: Implement get_val for IND
+            break;
+        case INDX:
+            lsb_addr = mem[instr.indx.addr + processor.X];
+            msb_addr = mem[instr.indx.addr + processor.X + 1];
+            val = mem[concatenate_bytes(msb_addr, lsb_addr)];
+        case INDY:
+            // TODO: Implement get_val for INDY
+            break;
+        default:
+            fprintf(stderr, "ERROR: Addressing mode doesn't return a value");
+            break;
+    }
+
+    return val;
 }
