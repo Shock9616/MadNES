@@ -797,6 +797,54 @@ void execute_instruction(Instruction instr, uint8_t** mem, Processor* processor)
 
             processor->A = val;
             break;
+        // ---------- LDX ----------
+        case 0xA2:  // Immediate
+        case 0xA6:  // Zero Page
+        case 0xB6:  // Zero Page Y
+        case 0xAE:  // Absolute
+        case 0xBE:  // Absolute Y
+            val = get_val(instr, *mem, *processor);
+
+            // Set the "Zero" flag
+            if (val == 0) {
+                set_flag('Z', 1, processor);
+            } else {
+                set_flag('Z', 0, processor);
+            }
+
+            // Set the "Negative flag"
+            if ((val & 0x80) >> 7 == 1) {
+                set_flag('N', 1, processor);
+            } else {
+                set_flag('N', 0, processor);
+            }
+
+            processor->X = val;
+            break;
+        // ---------- LDY ----------
+        case 0xA0:  // Immediate
+        case 0xA4:  // Zero Page
+        case 0xB4:  // Zero Page X
+        case 0xAC:  // Absolute
+        case 0xBC:  // Absolute X
+            val = get_val(instr, *mem, *processor);
+
+            // Set the "Zero" flag
+            if (val == 0) {
+                set_flag('Z', 1, processor);
+            } else {
+                set_flag('Z', 0, processor);
+            }
+
+            // Set the "Negative flag"
+            if ((val & 0x80) >> 7 == 1) {
+                set_flag('N', 1, processor);
+            } else {
+                set_flag('N', 0, processor);
+            }
+
+            processor->Y = val;
+            break;
         // ---------- STA ----------
         case 0x85:  // Zero Page
         case 0x95:  // Zero Page X
