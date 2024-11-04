@@ -797,8 +797,43 @@ void execute_instruction(Instruction instr, uint8_t** mem, Processor* processor)
                 set_flag('N', 0, processor);
             }
 
-            processor->A = val;
+            processor->A = (uint8_t)val;
             break;
+        // ---------- ASL ----------
+        case 0x0A:  // Accumulator
+            // Set the "Carry" flag
+            set_flag('C', (processor->A & 0x80) >> 7, processor);
+
+            processor->A <<= 1;
+
+            // Set the "Negative" flag
+            if ((processor->A & 0x80) >> 7 == 1) {
+                set_flag('N', 1, processor);
+            } else {
+                set_flag('N', 0, processor);
+            }
+            break;
+        case 0x06:  // Zero Page
+        case 0x16:  // Zero Page X
+        case 0x0E:  // Absolute
+        case 0x1E:  // Absolute X
+            val = get_val(instr, *mem, *processor);
+
+            // Set the "Carry" flag
+            set_flag('C', (val & 0x80) >> 7, processor);
+
+            val <<= 1;
+
+            // Set the "Negative" flag
+            if ((val & 0x80) >> 7 == 1) {
+                set_flag('N', 1, processor);
+            } else {
+                set_flag('N', 0, processor);
+            }
+
+            (*mem)[get_addr(instr, *mem, *processor)] = (uint8_t)val;
+            break;
+
         // ---------- LDA ----------
         case 0xA9:  // Immediate
         case 0xA5:  // Zero Page
@@ -824,7 +859,7 @@ void execute_instruction(Instruction instr, uint8_t** mem, Processor* processor)
                 set_flag('N', 0, processor);
             }
 
-            processor->A = val;
+            processor->A = (uint8_t)val;
             break;
         // ---------- LDX ----------
         case 0xA2:  // Immediate
@@ -848,7 +883,7 @@ void execute_instruction(Instruction instr, uint8_t** mem, Processor* processor)
                 set_flag('N', 0, processor);
             }
 
-            processor->X = val;
+            processor->X = (uint8_t)val;
             break;
         // ---------- LDY ----------
         case 0xA0:  // Immediate
@@ -872,7 +907,7 @@ void execute_instruction(Instruction instr, uint8_t** mem, Processor* processor)
                 set_flag('N', 0, processor);
             }
 
-            processor->Y = val;
+            processor->Y = (uint8_t)val;
             break;
         // ---------- STA ----------
         case 0x85:  // Zero Page
