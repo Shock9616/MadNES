@@ -65,9 +65,13 @@ int main(int argc, char** argv) {
         }
     }
     if (opt_run) {
+        memory[0x08] = 10;
         memory[0x24] = 0x70;
         memory[0x25] = 0x10;
+        memory[0x1070] = 10;
         memory[0x1074] = 10;
+        memory[0x1010] = 10;
+        processor.X = 4;
         processor.Y = 4;
 
         while (processor.PC < 0x0600 + prog_line_count) {

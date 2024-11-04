@@ -759,6 +759,7 @@ void execute_instruction(Instruction instr, uint8_t** mem, Processor* processor)
         case 0x79:
         case 0x61:
         case 0x71:
+            printf("Opcode: 0x%02x: %d\n", instr.opcode, get_val(instr, *mem, *processor));
             sum = processor->A + get_val(instr, *mem, *processor);
             if (sum >= 256) {
                 sum -= 256;
