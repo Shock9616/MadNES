@@ -766,9 +766,38 @@ void execute_instruction(Instruction instr, uint8_t** mem, Processor* processor)
             if (val >= 256) {
                 val -= 256;
                 set_flag('C', 1, processor);
+            } else {
+                set_flag('C', 0, processor);
             }
 
             processor->A = (uint8_t)val;
+            break;
+        // ---------- AND ----------
+        case 0x29:  // Immediate
+        case 0x25:  // Zero Page
+        case 0x35:  // Zero Page X
+        case 0x2D:  // Absolute
+        case 0x3D:  // Absolute X
+        case 0x39:  // Absolute Y
+        case 0x21:  // Indirect X
+        case 0x31:  // Indirect Y
+            val = processor->A & get_val(instr, *mem, *processor);
+
+            // Set the "Zero" flag
+            if (val == 0) {
+                set_flag('Z', 1, processor);
+            } else {
+                set_flag('Z', 0, processor);
+            }
+
+            // Set the "Negative" flag
+            if ((val & 0x80) >> 7 == 1) {
+                set_flag('N', 1, processor);
+            } else {
+                set_flag('N', 0, processor);
+            }
+
+            processor->A = val;
             break;
         // ---------- LDA ----------
         case 0xA9:  // Immediate

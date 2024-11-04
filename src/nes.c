@@ -65,8 +65,6 @@ int main(int argc, char** argv) {
         }
     }
     if (opt_run) {
-        memory[0x10] = 10;
-
         while (processor.PC < 0x0600 + prog_line_count) {
             Instruction instr = parse_instruction(memory, processor.PC);
             execute_instruction(instr, &memory, &processor);
