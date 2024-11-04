@@ -748,24 +748,64 @@ Instruction parse_instruction(uint8_t* mem, uint16_t pc) {
  * @param processor - The processor holding register values
  */
 void execute_instruction(Instruction instr, uint8_t** mem, Processor* processor) {
-    uint16_t sum;
+    uint16_t val;
 
     switch (instr.opcode) {
-        case 0x69:
-        case 0x65:
-        case 0x75:
-        case 0x6D:
-        case 0x7D:
-        case 0x79:
-        case 0x61:
-        case 0x71:
-            printf("Opcode: 0x%02x: %d\n", instr.opcode, get_val(instr, *mem, *processor));
-            sum = processor->A + get_val(instr, *mem, *processor);
-            if (sum >= 256) {
-                sum -= 256;
+        // ---------- ADC ----------
+        case 0x69:  // Immediate
+        case 0x65:  // Zero Page
+        case 0x75:  // Zero Page X
+        case 0x6D:  // Absolute
+        case 0x7D:  // Absolute X
+        case 0x79:  // Absolute Y
+        case 0x61:  // Indirect X (Indexed Indirect)
+        case 0x71:  // Indirect Y (Indirect Indexed)
+            val = processor->A + get_val(instr, *mem, *processor);
+
+            // Set the "Carry" flag
+            if (val >= 256) {
+                val -= 256;
                 set_flag('C', 1, processor);
             }
-            processor->A = (uint8_t)sum;
+
+            processor->A = (uint8_t)val;
+            break;
+        // ---------- LDA ----------
+        case 0xA9:  // Immediate
+        case 0xA5:  // Zero Page
+        case 0xB5:  // Zero Page X
+        case 0xAD:  // Absolute
+        case 0xBD:  // Absolute X
+        case 0xB9:  // Absolute Y
+        case 0xA1:  // Indirect X (Indexed Indirect)
+        case 0xB1:  // Indirect Y (Indirect Indexed)
+            val = get_val(instr, *mem, *processor);
+
+            // Set the "Zero" flag
+            if (val == 0) {
+                set_flag('Z', 1, processor);
+            } else {
+                set_flag('Z', 0, processor);
+            }
+
+            // Set the "Negative flag"
+            if ((val & 0x80) >> 7 == 1) {
+                set_flag('N', 1, processor);
+            } else {
+                set_flag('N', 0, processor);
+            }
+
+            processor->A = val;
+            break;
+        // ---------- STA ----------
+        case 0x85:  // Zero Page
+        case 0x95:  // Zero Page X
+        case 0x8D:  // Absolute
+        case 0x9D:  // Absolute X
+        case 0x99:  // Absolute Y
+        case 0x81:  // Indirect X
+        case 0x91:  // Indirect Y
+            (*mem)[get_addr(instr, *mem, *processor)] = processor->A;
             break;
     }
 }
@@ -890,4 +930,60 @@ uint8_t get_val(Instruction instr, uint8_t* mem, Processor processor) {
     }
 
     return val;
+}
+
+/**
+ * Return the required memory address based on the instruction's addressing mode
+ *
+ * @param instr - The instruction to use for getting the required value
+ * @param mem - The byte array serving as system memory
+ * @param processor - The processor holding register values
+ *
+ * @returns The memory address required by the instruction
+ */
+uint16_t get_addr(Instruction instr, uint8_t* mem, Processor processor) {
+    uint16_t addr = 0;
+    uint8_t lsb_addr;
+    uint8_t msb_addr;
+
+    switch (instr.addr_mode) {
+        case ZP:
+            addr = instr.zp.addr;
+            break;
+        case ZPX:
+            addr = instr.zpx.addr + processor.X;
+            break;
+        case ZPY:
+            // TODO: Implement get_addr for ZPY
+            break;
+        case REL:
+            // TODO: Implement get_addr for REL
+        case ABS:
+            addr = instr.abs.addr;
+            break;
+        case ABSX:
+            addr = instr.absx.addr + processor.X;
+            break;
+        case ABSY:
+            addr = instr.absy.addr + processor.Y;
+            break;
+        case IND:
+            // TODO: Implement get_addr for IND
+            break;
+        case INDX:
+            lsb_addr = mem[instr.indx.addr + processor.X];
+            msb_addr = mem[instr.indx.addr + processor.X + 1];
+            addr = concatenate_bytes(msb_addr, lsb_addr);
+            break;
+        case INDY:
+            lsb_addr = mem[instr.indy.addr];
+            msb_addr = mem[instr.indy.addr + 1];
+            addr = concatenate_bytes(msb_addr, lsb_addr) + processor.Y;
+            break;
+        default:
+            fprintf(stderr, "ERROR: Instruction doesn't support that addressing mode");
+            break;
+    }
+
+    return addr;
 }

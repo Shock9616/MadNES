@@ -22,7 +22,7 @@ int main(int argc, char** argv) {
     // Set registers to default values
     processor.PC = 0x0600;
     processor.S = 0xFF;
-    processor.P = 0x40;
+    processor.P = 0x30;
     processor.A = 0x0;
     processor.X = 0x0;
     processor.Y = 0x0;
@@ -65,6 +65,8 @@ int main(int argc, char** argv) {
         }
     }
     if (opt_run) {
+        memory[0x10] = 10;
+
         while (processor.PC < 0x0600 + prog_line_count) {
             Instruction instr = parse_instruction(memory, processor.PC);
             execute_instruction(instr, &memory, &processor);
