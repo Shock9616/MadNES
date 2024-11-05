@@ -1,6 +1,7 @@
 #ifndef TYPES_H
 #define TYPES_H
 
+#include <stdbool.h>
 #include <stdint.h>
 
 #define MEMORY_SPACE (2000)  // 2kb of memory
@@ -13,6 +14,7 @@ typedef struct {
     uint8_t A;    // Accumulator
     uint8_t X;    // Index register X
     uint8_t Y;    // Index register Y
+    bool halted;  // Whether the processor is halted (like when BRK is called)
 } Processor;
 
 // All possible addressing modes in 6502 assembly

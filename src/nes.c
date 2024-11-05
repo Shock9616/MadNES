@@ -7,6 +7,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 
 // Pointer to simulator memory
@@ -14,6 +15,7 @@ uint8_t* memory;
 #define MAX_SIZE 50
 
 int loadFile(uint8_t* mem, int start_addr, const char* file_path);
+int intToBin(uint8_t n);
 
 int main(int argc, char** argv) {
     bool opt_disassemble = false, opt_run = false;
@@ -65,16 +67,20 @@ int main(int argc, char** argv) {
         }
     }
     if (opt_run) {
-        while (processor.PC < 0x0600 + prog_line_count) {
+        processor.halted = false;
+
+        while (processor.PC < 0x0600 + prog_line_count && !processor.halted) {
             Instruction instr = parse_instruction(memory, processor.PC);
             execute_instruction(instr, &memory, &processor);
             processor.PC += instr.length;
         }
 
-        printf("A: 0x%02x\n", processor.A);
-        printf("X: 0x%02x\n", processor.X);
-        printf("Y: 0x%02x\n", processor.Y);
-        printf("P: 0x%02x\n", processor.P);
+        printf("-------- Debug Output --------\n");
+        printf("     A=$%02x  X=$%02x  Y=$%02x\n", processor.A, processor.X, processor.Y);
+        printf("      SP=$%02x  PC=$%04x\n", processor.S, processor.PC);
+        printf("          NV-BDIZC\n");
+        printf("          %08d\n", intToBin(processor.P));
+        printf("------------------------------\n");
     }
 }
 
@@ -107,4 +113,17 @@ int loadFile(uint8_t* mem, int start_addr, const char* file_path) {
 
     fclose(file);
     return program_size;
+}
+
+/**
+ * Convert the given 8-bit integer into a base 10 representation of its binary
+ * form (e.x. 0xFF -> 11111111)
+ * https://stackoverflow.com/a/5488546
+ *
+ * @param n - The integer to be converted
+ *
+ * @returns A base 10 representation of n's binary form
+ */
+int intToBin(uint8_t n) {
+    return (n == 0 || n == 1 ? n : ((n % 2) + 10 * intToBin(n / 2)));
 }
