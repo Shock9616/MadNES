@@ -866,6 +866,23 @@ void execute_instruction(Instruction instr, uint8_t** mem, Processor* processor)
             set_flag('V', (val >> 6) & 1, processor);
             set_flag('N', (val >> 7) & 1, processor);
             break;
+        // ---------- BMI ----------
+        case 0x30:  // Relative
+            if (get_flag('N', processor) == 1) {
+                processor->PC = get_addr(instr, *mem, *processor);
+            }
+            break;
+        // ---------- BNE ----------
+        case 0xD0:
+            if (get_flag('Z', processor) == 0) {
+                processor->PC = get_addr(instr, *mem, *processor);
+            }
+            break;
+        case 0x10:
+            if (get_flag('N', processor) == 0) {
+                processor->PC = get_addr(instr, *mem, *processor);
+            }
+            break;
         // ---------- CLC ----------
         case 0x18:
             set_flag('C', 0, processor);
