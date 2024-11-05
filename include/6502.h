@@ -51,3 +51,5 @@ uint8_t get_val(Instruction instr, uint8_t* mem, Processor processor);
  * @returns The memory address required by the instruction
  */
 uint16_t get_addr(Instruction instr, uint8_t* mem, Processor processor);
+
+bool get_flag(char flag, Processor* processor);
