@@ -848,9 +848,23 @@ void execute_instruction(Instruction instr, uint8_t** mem, Processor* processor)
         // ---------- BEQ ----------
         case 0xF0:  // Relative
             if (get_flag('Z', processor) == 1) {
-                printf("Equal\n");
                 processor->PC = get_addr(instr, *mem, *processor);
             }
+            break;
+        // ---------- BIT ----------
+        case 0x24:  // Zero Page
+        case 0x2C:  // Absolute
+            val = processor->A & get_val(instr, *mem, *processor);
+
+            // Set the "Zero" flag
+            if (val == 0) {
+                set_flag('Z', 1, processor);
+            } else {
+                set_flag('Z', 0, processor);
+            }
+
+            set_flag('V', (val >> 6) & 1, processor);
+            set_flag('N', (val >> 7) & 1, processor);
             break;
         // ---------- CLC ----------
         case 0x18:

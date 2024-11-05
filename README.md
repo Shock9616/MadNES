@@ -85,7 +85,7 @@ formatted like the one above. For example, to disassemble the file I made to
 test the `LDA` instruction, run this command:
 
 ```
-./build/bin/nes -d ./input/tests/lda.input
+./build/bin/nes -d ./input/d_tests/lda.input
 ```
 
 and you should get the output
