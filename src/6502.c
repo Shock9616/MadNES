@@ -749,6 +749,7 @@ Instruction parse_instruction(uint8_t* mem, uint16_t pc) {
  */
 void execute_instruction(Instruction instr, uint8_t** mem, Processor* processor) {
     uint16_t val;
+    uint16_t irq_vector;
 
     switch (instr.opcode) {
         // ---------- ADC ----------
@@ -768,6 +769,20 @@ void execute_instruction(Instruction instr, uint8_t** mem, Processor* processor)
                 set_flag('C', 1, processor);
             } else {
                 set_flag('C', 0, processor);
+            }
+
+            // Set the "Zero" flag
+            if (val == 0) {
+                set_flag('Z', 1, processor);
+            } else {
+                set_flag('Z', 0, processor);
+            }
+
+            // Set the "Negative" flag
+            if ((val & 0x80) >> 7 == 1) {
+                set_flag('N', 1, processor);
+            } else {
+                set_flag('N', 0, processor);
             }
 
             processor->A = (uint8_t)val;
@@ -878,10 +893,30 @@ void execute_instruction(Instruction instr, uint8_t** mem, Processor* processor)
                 processor->PC = get_addr(instr, *mem, *processor);
             }
             break;
+        // ---------- BPL ----------
         case 0x10:
             if (get_flag('N', processor) == 0) {
                 processor->PC = get_addr(instr, *mem, *processor);
             }
+            break;
+        // ---------- BRK ----------
+        case 0x00:  // Implied
+            // Push the program counter onto the stack
+            stack_push(processor->PC & 0xFF, mem, processor);
+            stack_push((processor->PC >> 8) & 0xFF, mem, processor);
+
+            // Set the "Break" flag and push the processor status onto the stack
+            set_flag('B', 1, processor);
+            stack_push(processor->P, mem, processor);
+
+            // Set the program counter to the IRQ interrupt vector
+            irq_vector = (*mem)[0xFFFE] | ((*mem)[0xFFFF] << 8);
+            if (irq_vector == 0x0000) {
+                processor->halted = true;
+            } else {
+                processor->PC = irq_vector;
+            }
+
             break;
         // ---------- CLC ----------
         case 0x18:
@@ -1196,4 +1231,18 @@ uint16_t get_addr(Instruction instr, uint8_t* mem, Processor processor) {
     }
 
     return addr;
+}
+
+void stack_push(uint8_t val, uint8_t** mem, Processor* processor) {
+    (*mem)[0x0100 + processor->S--] = val;
+}
+
+uint8_t stack_peek(uint8_t* mem, Processor processor) {
+    return mem[0x100 + processor.S];
+}
+
+uint8_t stack_pull(uint8_t** mem, Processor* processor) {
+    uint8_t val = (*mem)[0x0100 + processor->S];
+    (*mem)[0x0100 + processor->S++] = 0x00;
+    return val;
 }
