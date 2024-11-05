@@ -1005,7 +1005,7 @@ void set_flag(char flag, bool val, Processor* processor) {
             }
             break;
         default:
-            fprintf(stderr, "ERROR: Invalid flag %c", flag);
+            fprintf(stderr, "ERROR: Invalid flag %c\n", flag);
             break;
     }
 }
@@ -1036,7 +1036,7 @@ bool get_flag(char flag, Processor* processor) {
             val = processor->P & 1;
             break;
         default:
-            fprintf(stderr, "ERROR: Invalid flag %c", flag);
+            fprintf(stderr, "ERROR: Invalid flag %c\n", flag);
             break;
     }
 
@@ -1099,7 +1099,7 @@ uint8_t get_val(Instruction instr, uint8_t* mem, Processor processor) {
             val = mem[concatenate_bytes(msb_addr, lsb_addr) + processor.Y];
             break;
         default:
-            fprintf(stderr, "ERROR: Addressing mode doesn't return a value");
+            fprintf(stderr, "ERROR: Addressing mode doesn't return a value\n");
             break;
     }
 
