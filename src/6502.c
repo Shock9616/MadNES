@@ -986,6 +986,62 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
             }
 
             break;
+        // ---------- CPX ----------
+        case 0xE0:  // Immediate
+        case 0xE4:  // Zero Page
+        case 0xEC:  // Absolute
+            val = processor->X - getVal(instr, *mem, *processor);
+
+            // Set the "Carry" flag
+            if (val >= 0) {
+                setFlag('C', 1, processor);
+            } else {
+                setFlag('C', 0, processor);
+            }
+
+            // Set the "Zero" flag
+            if (val == 0) {
+                setFlag('Z', 1, processor);
+            } else {
+                setFlag('Z', 0, processor);
+            }
+
+            // Set the "Negative" flag
+            if ((val & 0x80) >> 7 == 1) {
+                setFlag('N', 1, processor);
+            } else {
+                setFlag('N', 0, processor);
+            }
+
+            break;
+        // ---------- CPY ----------
+        case 0xC0:  // Immediate
+        case 0xC4:  // Zero Page
+        case 0xCC:  // Absolute
+            val = processor->Y - getVal(instr, *mem, *processor);
+
+            // Set the "Carry" flag
+            if (val >= 0) {
+                setFlag('C', 1, processor);
+            } else {
+                setFlag('C', 0, processor);
+            }
+
+            // Set the "Zero" flag
+            if (val == 0) {
+                setFlag('Z', 1, processor);
+            } else {
+                setFlag('Z', 0, processor);
+            }
+
+            // Set the "Negative" flag
+            if ((val & 0x80) >> 7 == 1) {
+                setFlag('N', 1, processor);
+            } else {
+                setFlag('N', 0, processor);
+            }
+
+            break;
         // ---------- LDA ----------
         case 0xA9:  // Immediate
         case 0xA5:  // Zero Page
