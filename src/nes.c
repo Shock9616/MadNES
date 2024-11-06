@@ -60,8 +60,8 @@ int main(int argc, char** argv) {
 
     if (opt_disassemble) {
         while (prog_line_count > 0) {
-            Instruction instr = parse_instruction(memory, processor.PC);
-            print_instruction(instr);
+            Instruction instr = parseInstruction(memory, processor.PC);
+            printInstruction(instr);
             processor.PC += instr.length;
             prog_line_count -= instr.length;
         }
@@ -70,8 +70,8 @@ int main(int argc, char** argv) {
         processor.halted = false;
 
         while (processor.PC < 0x0600 + prog_line_count && !processor.halted) {
-            Instruction instr = parse_instruction(memory, processor.PC);
-            execute_instruction(instr, &memory, &processor);
+            Instruction instr = parseInstruction(memory, processor.PC);
+            executeInstruction(instr, &memory, &processor);
             processor.PC += instr.length;
         }
 

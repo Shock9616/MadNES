@@ -11,7 +11,7 @@
  *
  * @param instr - The instruction to print
  */
-void print_instruction(Instruction instr) {
+void printInstruction(Instruction instr) {
     switch (instr.addr_mode) {
         case IMPL:
             printf(IMPL_FORMAT, instr.name);
@@ -63,29 +63,6 @@ void print_instruction(Instruction instr) {
  *
  * @returns The two bytes concatenated (e.x. ms_byte = 1010, ls_byte = 0101 returns 10100101)
  */
-uint16_t concatenate_bytes(uint16_t ms_byte, uint16_t ls_byte) {
+uint16_t concatenateBytes(uint16_t ms_byte, uint16_t ls_byte) {
     return (ms_byte << 8) | ls_byte;
-}
-
-/**
- * Load a byte of memory from the given address in memory
- *
- * @param addr - The address in memory to load the value of
- * @param mem - The byte array serving as system memory
- *
- * @returns The byte of data stored at the given address
- */
-uint8_t load(uint16_t addr, uint8_t* mem) {
-    return mem[addr];
-}
-
-/**
- * Store a byte of memory to the given address in memory
- *
- * @param addr - The address in memory to store to
- * @param val - The value to store to memory
- * @param mem - The byte array serving as system memory
- */
-void store(uint16_t addr, uint8_t val, uint8_t** mem) {
-    *mem[addr] = val;
 }

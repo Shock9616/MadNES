@@ -11,7 +11,7 @@
  *
  * @returns An Instruction with all the information needed about it
  */
-Instruction parse_instruction(uint8_t* mem, uint16_t pc);
+Instruction parseInstruction(uint8_t* mem, uint16_t pc);
 
 /**
  * Execute the given instruction and set the appropriate flags
@@ -20,7 +20,7 @@ Instruction parse_instruction(uint8_t* mem, uint16_t pc);
  * @param mem - The byte array serving as system memory
  * @param processor - The processor holding register values
  */
-void execute_instruction(Instruction instr, uint8_t** mem, Processor* processor);
+void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor);
 
 /**
  * Set the specified flag to the specified value
@@ -28,7 +28,7 @@ void execute_instruction(Instruction instr, uint8_t** mem, Processor* processor)
  * @param flag - The flag to set (N, V, B, D, I, Z, C)
  * @param val - The bit value to set the given flag to
  */
-void set_flag(char flag, bool val, Processor* processor);
+void setFlag(char flag, bool val, Processor* processor);
 
 /**
  * Return the value of the given status flag
@@ -38,7 +38,7 @@ void set_flag(char flag, bool val, Processor* processor);
  *
  * @returns The value of the given flag
  */
-bool get_flag(char flag, Processor* processor);
+bool getFlag(char flag, Processor* processor);
 
 /**
  * Return the required value based on the instruction's addressing mode
@@ -49,7 +49,7 @@ bool get_flag(char flag, Processor* processor);
  *
  * @returns The byte of data required by the instruction
  */
-uint8_t get_val(Instruction instr, uint8_t* mem, Processor processor);
+uint8_t getVal(Instruction instr, uint8_t* mem, Processor processor);
 
 /**
  * Return the required memory address based on the instruction's addressing mode
@@ -60,7 +60,7 @@ uint8_t get_val(Instruction instr, uint8_t* mem, Processor processor);
  *
  * @returns The memory address required by the instruction
  */
-uint16_t get_addr(Instruction instr, uint8_t* mem, Processor processor);
+uint16_t getAddr(Instruction instr, uint8_t* mem, Processor processor);
 
 /**
  * Push the given value onto the stack (0x01FF - 0x0100)
@@ -69,7 +69,7 @@ uint16_t get_addr(Instruction instr, uint8_t* mem, Processor processor);
  * @param mem - The byte array serving as system memory
  * @param processor - The processor holding register values
  */
-void stack_push(uint8_t val, uint8_t** mem, Processor* processor);
+void stackPush(uint8_t val, uint8_t** mem, Processor* processor);
 
 /**
  * Return the value at the top of the stack
@@ -77,7 +77,7 @@ void stack_push(uint8_t val, uint8_t** mem, Processor* processor);
  * @param mem - The byte array serving as system memory
  * @param processor - The processor holding register values
  */
-uint8_t stack_peek(uint8_t* mem, Processor processor);
+uint8_t stackPeek(uint8_t* mem, Processor processor);
 
 /**
  * Return and remove the value at the top of the stack
@@ -85,4 +85,4 @@ uint8_t stack_peek(uint8_t* mem, Processor processor);
  * @param mem - The byte array serving as system memory
  * @param processor - The processor holding register values
  */
-uint8_t stack_pull(uint8_t** mem, Processor* processor);
+uint8_t stackPull(uint8_t** mem, Processor* processor);

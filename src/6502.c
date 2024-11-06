@@ -13,7 +13,7 @@
  *
  * @returns An Instruction with all the information needed about it
  */
-Instruction parse_instruction(uint8_t* mem, uint16_t pc) {
+Instruction parseInstruction(uint8_t* mem, uint16_t pc) {
     Instruction instruction;
 
     instruction.opcode = mem[pc];
@@ -713,19 +713,19 @@ Instruction parse_instruction(uint8_t* mem, uint16_t pc) {
             break;
         case ABS:
             instruction.length = 3;
-            instruction.abs.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
+            instruction.abs.addr = concatenateBytes(mem[pc + 2], mem[pc + 1]);
             break;
         case ABSX:
             instruction.length = 3;
-            instruction.absx.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
+            instruction.absx.addr = concatenateBytes(mem[pc + 2], mem[pc + 1]);
             break;
         case ABSY:
             instruction.length = 3;
-            instruction.absy.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
+            instruction.absy.addr = concatenateBytes(mem[pc + 2], mem[pc + 1]);
             break;
         case IND:
             instruction.length = 3;
-            instruction.ind.addr = concatenate_bytes(mem[pc + 2], mem[pc + 1]);
+            instruction.ind.addr = concatenateBytes(mem[pc + 2], mem[pc + 1]);
             break;
         case INDX:
             instruction.length = 2;
@@ -747,7 +747,7 @@ Instruction parse_instruction(uint8_t* mem, uint16_t pc) {
  * @param mem - The byte array serving as system memory
  * @param processor - The processor holding register values
  */
-void execute_instruction(Instruction instr, uint8_t** mem, Processor* processor) {
+void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) {
     uint16_t val;
     uint16_t irq_vector;
 
@@ -761,36 +761,36 @@ void execute_instruction(Instruction instr, uint8_t** mem, Processor* processor)
         case 0x79:  // Absolute Y
         case 0x61:  // Indirect X (Indexed Indirect)
         case 0x71:  // Indirect Y (Indirect Indexed)
-            val = processor->A + get_val(instr, *mem, *processor) + get_flag('C', processor);
+            val = processor->A + getVal(instr, *mem, *processor) + getFlag('C', processor);
 
             // Set the "Carry" flag
             if (val >= 256) {
                 val -= 256;
-                set_flag('C', 1, processor);
+                setFlag('C', 1, processor);
             } else {
-                set_flag('C', 0, processor);
+                setFlag('C', 0, processor);
             }
 
             // Set the "Overflow" flag
-            if (~((processor->A & 0x80) ^ (get_val(instr, *mem, *processor))) &
+            if (~((processor->A & 0x80) ^ (getVal(instr, *mem, *processor))) &
                 ((processor->A & 0x80) ^ (val & 0x80))) {
-                set_flag('V', 1, processor);
+                setFlag('V', 1, processor);
             } else {
-                set_flag('V', 0, processor);
+                setFlag('V', 0, processor);
             }
 
             // Set the "Zero" flag
             if (val == 0) {
-                set_flag('Z', 1, processor);
+                setFlag('Z', 1, processor);
             } else {
-                set_flag('Z', 0, processor);
+                setFlag('Z', 0, processor);
             }
 
             // Set the "Negative" flag
             if ((val & 0x80) >> 7 == 1) {
-                set_flag('N', 1, processor);
+                setFlag('N', 1, processor);
             } else {
-                set_flag('N', 0, processor);
+                setFlag('N', 0, processor);
             }
 
             processor->A = (uint8_t)val;
@@ -804,20 +804,20 @@ void execute_instruction(Instruction instr, uint8_t** mem, Processor* processor)
         case 0x39:  // Absolute Y
         case 0x21:  // Indirect X
         case 0x31:  // Indirect Y
-            val = processor->A & get_val(instr, *mem, *processor);
+            val = processor->A & getVal(instr, *mem, *processor);
 
             // Set the "Zero" flag
             if (val == 0) {
-                set_flag('Z', 1, processor);
+                setFlag('Z', 1, processor);
             } else {
-                set_flag('Z', 0, processor);
+                setFlag('Z', 0, processor);
             }
 
             // Set the "Negative" flag
             if ((val & 0x80) >> 7 == 1) {
-                set_flag('N', 1, processor);
+                setFlag('N', 1, processor);
             } else {
-                set_flag('N', 0, processor);
+                setFlag('N', 0, processor);
             }
 
             processor->A = (uint8_t)val;
@@ -825,97 +825,97 @@ void execute_instruction(Instruction instr, uint8_t** mem, Processor* processor)
         // ---------- ASL ----------
         case 0x0A:  // Accumulator
             // Set the "Carry" flag
-            set_flag('C', (processor->A & 0x80) >> 7, processor);
+            setFlag('C', (processor->A & 0x80) >> 7, processor);
 
             processor->A <<= 1;
 
             // Set the "Negative" flag
             if ((processor->A & 0x80) >> 7 == 1) {
-                set_flag('N', 1, processor);
+                setFlag('N', 1, processor);
             } else {
-                set_flag('N', 0, processor);
+                setFlag('N', 0, processor);
             }
             break;
         case 0x06:  // Zero Page
         case 0x16:  // Zero Page X
         case 0x0E:  // Absolute
         case 0x1E:  // Absolute X
-            val = get_val(instr, *mem, *processor);
+            val = getVal(instr, *mem, *processor);
 
             // Set the "Carry" flag
-            set_flag('C', (val & 0x80) >> 7, processor);
+            setFlag('C', (val & 0x80) >> 7, processor);
 
             val <<= 1;
 
             // Set the "Negative" flag
             if ((val & 0x80) >> 7 == 1) {
-                set_flag('N', 1, processor);
+                setFlag('N', 1, processor);
             } else {
-                set_flag('N', 0, processor);
+                setFlag('N', 0, processor);
             }
 
-            (*mem)[get_addr(instr, *mem, *processor)] = (uint8_t)val;
+            (*mem)[getAddr(instr, *mem, *processor)] = (uint8_t)val;
             break;
         // ---------- BCC ----------
         case 0x90:  // Relative
-            if (get_flag('C', processor) == 0) {
-                processor->PC = get_addr(instr, *mem, *processor);
+            if (getFlag('C', processor) == 0) {
+                processor->PC = getAddr(instr, *mem, *processor);
             }
             break;
         // ---------- BCS ----------
         case 0xB0:  // Relative
-            if (get_flag('C', processor) == 1) {
-                processor->PC = get_addr(instr, *mem, *processor);
+            if (getFlag('C', processor) == 1) {
+                processor->PC = getAddr(instr, *mem, *processor);
             }
             break;
         // ---------- BEQ ----------
         case 0xF0:  // Relative
-            if (get_flag('Z', processor) == 1) {
-                processor->PC = get_addr(instr, *mem, *processor);
+            if (getFlag('Z', processor) == 1) {
+                processor->PC = getAddr(instr, *mem, *processor);
             }
             break;
         // ---------- BIT ----------
         case 0x24:  // Zero Page
         case 0x2C:  // Absolute
-            val = processor->A & get_val(instr, *mem, *processor);
+            val = processor->A & getVal(instr, *mem, *processor);
 
             // Set the "Zero" flag
             if (val == 0) {
-                set_flag('Z', 1, processor);
+                setFlag('Z', 1, processor);
             } else {
-                set_flag('Z', 0, processor);
+                setFlag('Z', 0, processor);
             }
 
-            set_flag('V', (val >> 6) & 1, processor);
-            set_flag('N', (val >> 7) & 1, processor);
+            setFlag('V', (val >> 6) & 1, processor);
+            setFlag('N', (val >> 7) & 1, processor);
             break;
         // ---------- BMI ----------
         case 0x30:  // Relative
-            if (get_flag('N', processor) == 1) {
-                processor->PC = get_addr(instr, *mem, *processor);
+            if (getFlag('N', processor) == 1) {
+                processor->PC = getAddr(instr, *mem, *processor);
             }
             break;
         // ---------- BNE ----------
         case 0xD0:
-            if (get_flag('Z', processor) == 0) {
-                processor->PC = get_addr(instr, *mem, *processor);
+            if (getFlag('Z', processor) == 0) {
+                processor->PC = getAddr(instr, *mem, *processor);
             }
             break;
         // ---------- BPL ----------
         case 0x10:
-            if (get_flag('N', processor) == 0) {
-                processor->PC = get_addr(instr, *mem, *processor);
+            if (getFlag('N', processor) == 0) {
+                processor->PC = getAddr(instr, *mem, *processor);
             }
             break;
         // ---------- BRK ----------
         case 0x00:  // Implied
             // Push the program counter onto the stack
-            stack_push(processor->PC & 0xFF, mem, processor);
-            stack_push((processor->PC >> 8) & 0xFF, mem, processor);
+            stackPush(processor->PC & 0xFF, mem, processor);
+            stackPush((processor->PC >> 8) & 0xFF, mem, processor);
 
             // Set the "Break" flag and push the processor status onto the stack
-            set_flag('B', 1, processor);
-            stack_push(processor->P, mem, processor);
+            setFlag('B', 1, processor);
+            stackPush(processor->P, mem, processor);
 
             // Set the program counter to the IRQ interrupt vector
             irq_vector = (*mem)[0xFFFE] | ((*mem)[0xFFFF] << 8);
@@ -927,19 +927,19 @@ void execute_instruction(Instruction instr, uint8_t** mem, Processor* processor)
             break;
         // ---------- BVC ----------
         case 0x50:  // Relative
-            if (get_flag('V', processor) == 0) {
-                processor->PC = get_addr(instr, *mem, *processor);
+            if (getFlag('V', processor) == 0) {
+                processor->PC = getAddr(instr, *mem, *processor);
             }
             break;
         // ---------- BVS ----------
         case 0x70:  // Relative
-            if (get_flag('V', processor) == 1) {
-                processor->PC = get_addr(instr, *mem, *processor);
+            if (getFlag('V', processor) == 1) {
+                processor->PC = getAddr(instr, *mem, *processor);
             }
             break;
         // ---------- CLC ----------
         case 0x18:
-            set_flag('C', 0, processor);
+            setFlag('C', 0, processor);
             break;
         // ---------- LDA ----------
         case 0xA9:  // Immediate
@@ -950,20 +950,20 @@ void execute_instruction(Instruction instr, uint8_t** mem, Processor* processor)
         case 0xB9:  // Absolute Y
         case 0xA1:  // Indirect X (Indexed Indirect)
         case 0xB1:  // Indirect Y (Indirect Indexed)
-            val = get_val(instr, *mem, *processor);
+            val = getVal(instr, *mem, *processor);
 
             // Set the "Zero" flag
             if (val == 0) {
-                set_flag('Z', 1, processor);
+                setFlag('Z', 1, processor);
             } else {
-                set_flag('Z', 0, processor);
+                setFlag('Z', 0, processor);
             }
 
             // Set the "Negative flag"
             if ((val & 0x80) >> 7 == 1) {
-                set_flag('N', 1, processor);
+                setFlag('N', 1, processor);
             } else {
-                set_flag('N', 0, processor);
+                setFlag('N', 0, processor);
             }
 
             processor->A = (uint8_t)val;
@@ -974,20 +974,20 @@ void execute_instruction(Instruction instr, uint8_t** mem, Processor* processor)
         case 0xB6:  // Zero Page Y
         case 0xAE:  // Absolute
         case 0xBE:  // Absolute Y
-            val = get_val(instr, *mem, *processor);
+            val = getVal(instr, *mem, *processor);
 
             // Set the "Zero" flag
             if (val == 0) {
-                set_flag('Z', 1, processor);
+                setFlag('Z', 1, processor);
             } else {
-                set_flag('Z', 0, processor);
+                setFlag('Z', 0, processor);
             }
 
             // Set the "Negative flag"
             if ((val & 0x80) >> 7 == 1) {
-                set_flag('N', 1, processor);
+                setFlag('N', 1, processor);
             } else {
-                set_flag('N', 0, processor);
+                setFlag('N', 0, processor);
             }
 
             processor->X = (uint8_t)val;
@@ -998,27 +998,27 @@ void execute_instruction(Instruction instr, uint8_t** mem, Processor* processor)
         case 0xB4:  // Zero Page X
         case 0xAC:  // Absolute
         case 0xBC:  // Absolute X
-            val = get_val(instr, *mem, *processor);
+            val = getVal(instr, *mem, *processor);
 
             // Set the "Zero" flag
             if (val == 0) {
-                set_flag('Z', 1, processor);
+                setFlag('Z', 1, processor);
             } else {
-                set_flag('Z', 0, processor);
+                setFlag('Z', 0, processor);
             }
 
             // Set the "Negative flag"
             if ((val & 0x80) >> 7 == 1) {
-                set_flag('N', 1, processor);
+                setFlag('N', 1, processor);
             } else {
-                set_flag('N', 0, processor);
+                setFlag('N', 0, processor);
             }
 
             processor->Y = (uint8_t)val;
             break;
         // ---------- SEC ----------
         case 0x38:
-            set_flag('C', 1, processor);
+            setFlag('C', 1, processor);
         // ---------- STA ----------
         case 0x85:  // Zero Page
         case 0x95:  // Zero Page X
@@ -1027,7 +1027,7 @@ void execute_instruction(Instruction instr, uint8_t** mem, Processor* processor)
         case 0x99:  // Absolute Y
         case 0x81:  // Indirect X
         case 0x91:  // Indirect Y
-            (*mem)[get_addr(instr, *mem, *processor)] = processor->A;
+            (*mem)[getAddr(instr, *mem, *processor)] = processor->A;
             break;
     }
 }
@@ -1038,7 +1038,7 @@ void execute_instruction(Instruction instr, uint8_t** mem, Processor* processor)
  * @param flag - The flag to set (N, V, B, D, I, Z, C)
  * @param val - The bit value to set the given flag to
  */
-void set_flag(char flag, bool val, Processor* processor) {
+void setFlag(char flag, bool val, Processor* processor) {
     switch (flag) {
         case 'N':
             if (val == 1) {
@@ -1103,7 +1103,7 @@ void set_flag(char flag, bool val, Processor* processor) {
  *
  * @returns The value of the given flag
  */
-bool get_flag(char flag, Processor* processor) {
+bool getFlag(char flag, Processor* processor) {
     bool val = 0;
 
     switch (flag) {
@@ -1145,7 +1145,7 @@ bool get_flag(char flag, Processor* processor) {
  *
  * @returns The byte of data required by the instruction
  */
-uint8_t get_val(Instruction instr, uint8_t* mem, Processor processor) {
+uint8_t getVal(Instruction instr, uint8_t* mem, Processor processor) {
     uint8_t val = 0;
     uint8_t lsb_addr;
     uint8_t msb_addr;
@@ -1184,12 +1184,12 @@ uint8_t get_val(Instruction instr, uint8_t* mem, Processor processor) {
         case INDX:
             lsb_addr = mem[instr.indx.addr + processor.X];
             msb_addr = mem[instr.indx.addr + processor.X + 1];
-            val = mem[concatenate_bytes(msb_addr, lsb_addr)];
+            val = mem[concatenateBytes(msb_addr, lsb_addr)];
             break;
         case INDY:
             lsb_addr = mem[instr.indy.addr];
             msb_addr = mem[instr.indy.addr + 1];
-            val = mem[concatenate_bytes(msb_addr, lsb_addr) + processor.Y];
+            val = mem[concatenateBytes(msb_addr, lsb_addr) + processor.Y];
             break;
         default:
             fprintf(stderr, "ERROR: Addressing mode doesn't return a value\n");
@@ -1208,7 +1208,7 @@ uint8_t get_val(Instruction instr, uint8_t* mem, Processor processor) {
  *
  * @returns The memory address required by the instruction
  */
-uint16_t get_addr(Instruction instr, uint8_t* mem, Processor processor) {
+uint16_t getAddr(Instruction instr, uint8_t* mem, Processor processor) {
     uint16_t addr = 0;
     uint8_t lsb_addr;
     uint8_t msb_addr;
@@ -1245,12 +1245,12 @@ uint16_t get_addr(Instruction instr, uint8_t* mem, Processor processor) {
         case INDX:
             lsb_addr = mem[instr.indx.addr + processor.X];
             msb_addr = mem[instr.indx.addr + processor.X + 1];
-            addr = concatenate_bytes(msb_addr, lsb_addr);
+            addr = concatenateBytes(msb_addr, lsb_addr);
             break;
         case INDY:
             lsb_addr = mem[instr.indy.addr];
             msb_addr = mem[instr.indy.addr + 1];
-            addr = concatenate_bytes(msb_addr, lsb_addr) + processor.Y;
+            addr = concatenateBytes(msb_addr, lsb_addr) + processor.Y;
             break;
         default:
             fprintf(stderr, "ERROR: Instruction doesn't support that addressing mode\n");
@@ -1267,7 +1267,7 @@ uint16_t get_addr(Instruction instr, uint8_t* mem, Processor processor) {
  * @param mem - The byte array serving as system memory
  * @param processor - The processor holding register values
  */
-void stack_push(uint8_t val, uint8_t** mem, Processor* processor) {
+void stackPush(uint8_t val, uint8_t** mem, Processor* processor) {
     (*mem)[0x0100 + processor->S--] = val;
 }
 
@@ -1277,7 +1277,7 @@ void stack_push(uint8_t val, uint8_t** mem, Processor* processor) {
  * @param mem - The byte array serving as system memory
  * @param processor - The processor holding register values
  */
-uint8_t stack_peek(uint8_t* mem, Processor processor) {
+uint8_t stackPeek(uint8_t* mem, Processor processor) {
     return mem[0x100 + processor.S];
 }
 
@@ -1287,7 +1287,7 @@ uint8_t stack_peek(uint8_t* mem, Processor processor) {
  * @param mem - The byte array serving as system memory
  * @param processor - The processor holding register values
  */
-uint8_t stack_pull(uint8_t** mem, Processor* processor) {
+uint8_t stackPull(uint8_t** mem, Processor* processor) {
     uint8_t val = (*mem)[0x0100 + processor->S];
     (*mem)[0x0100 + processor->S++] = 0x00;
     return val;
