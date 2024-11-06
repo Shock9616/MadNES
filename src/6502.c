@@ -1104,6 +1104,33 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
             }
 
             break;
+        // ---------- EOR ----------
+        case 0x49:  // Immediate
+        case 0x45:  // Zero Page
+        case 0x55:  // ZEro Page X
+        case 0x4D:  // Absolute
+        case 0x5D:  // Absolute X
+        case 0x59:  // Absolute Y
+        case 0x41:  // Indirect X
+        case 0x51:  // Indirect Y
+            val = processor->A ^ getVal(instr, *mem, *processor);
+
+            // Set the "Zero" flag
+            if (val == 0) {
+                setFlag('Z', 1, processor);
+            } else {
+                setFlag('Z', 0, processor);
+            }
+
+            // Set the "Negative" flag
+            if ((val & 0x80) >> 7 == 1) {
+                setFlag('N', 1, processor);
+            } else {
+                setFlag('N', 0, processor);
+            }
+
+            processor->A = val;
+            break;
         // ---------- LDA ----------
         case 0xA9:  // Immediate
         case 0xA5:  // Zero Page
