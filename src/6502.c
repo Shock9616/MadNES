@@ -941,6 +941,18 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
         case 0x18:
             setFlag('C', 0, processor);
             break;
+        // ---------- CLD ----------
+        case 0xD8:
+            setFlag('D', 0, processor);
+            break;
+        // ---------- CLI ----------
+        case 0x58:
+            setFlag('I', 0, processor);
+            break;
+        // ---------- CLV ----------
+        case 0xB8:
+            setFlag('V', 0, processor);
+            break;
         // ---------- LDA ----------
         case 0xA9:  // Immediate
         case 0xA5:  // Zero Page
@@ -1019,6 +1031,15 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
         // ---------- SEC ----------
         case 0x38:
             setFlag('C', 1, processor);
+            break;
+        // ---------- SED ----------
+        case 0xF8:
+            setFlag('D', 1, processor);
+            break;
+        // ---------- SEI ----------
+        case 0x78:
+            setFlag('I', 1, processor);
+            break;
         // ---------- STA ----------
         case 0x85:  // Zero Page
         case 0x95:  // Zero Page X
