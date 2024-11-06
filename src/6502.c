@@ -771,6 +771,14 @@ void execute_instruction(Instruction instr, uint8_t** mem, Processor* processor)
                 set_flag('C', 0, processor);
             }
 
+            // Set the "Overflow" flag
+            if (~((processor->A & 0x80) ^ (get_val(instr, *mem, *processor))) &
+                ((processor->A & 0x80) ^ (val & 0x80))) {
+                set_flag('V', 1, processor);
+            } else {
+                set_flag('V', 0, processor);
+            }
+
             // Set the "Zero" flag
             if (val == 0) {
                 set_flag('Z', 1, processor);
@@ -916,7 +924,18 @@ void execute_instruction(Instruction instr, uint8_t** mem, Processor* processor)
             } else {
                 processor->PC = irq_vector;
             }
-
+            break;
+        // ---------- BVC ----------
+        case 0x50:  // Relative
+            if (get_flag('V', processor) == 0) {
+                processor->PC = get_addr(instr, *mem, *processor);
+            }
+            break;
+        // ---------- BVS ----------
+        case 0x70:  // Relative
+            if (get_flag('V', processor) == 1) {
+                processor->PC = get_addr(instr, *mem, *processor);
+            }
             break;
         // ---------- CLC ----------
         case 0x18:
