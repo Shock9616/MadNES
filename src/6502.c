@@ -1042,6 +1042,68 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
             }
 
             break;
+        // ---------- DEC ----------
+        case 0xC6:  // Zero Page
+        case 0xD6:  // Zero Page X
+        case 0xCE:  // Absolute
+        case 0xDE:  // Absolute X
+            val = getVal(instr, *mem, *processor);
+            val--;
+
+            // Set the "Zero" flag
+            if (val == 0) {
+                setFlag('Z', 1, processor);
+            } else {
+                setFlag('Z', 0, processor);
+            }
+
+            // Set the "Negative" flag
+            if ((val & 0x80) >> 7 == 1) {
+                setFlag('N', 1, processor);
+            } else {
+                setFlag('N', 0, processor);
+            }
+
+            (*mem)[getAddr(instr, *mem, *processor)] = val;
+            break;
+        // ---------- DEX ----------
+        case 0xCA:  // Implied
+            processor->X--;
+
+            // Set the "Zero" flag
+            if (processor->X == 0) {
+                setFlag('Z', 1, processor);
+            } else {
+                setFlag('Z', 0, processor);
+            }
+
+            // Set the "Negative" flag
+            if ((processor->X & 0x80) >> 7 == 1) {
+                setFlag('N', 1, processor);
+            } else {
+                setFlag('N', 0, processor);
+            }
+
+            break;
+        // ---------- DEY ----------
+        case 0x88:  // Implied
+            processor->Y--;
+
+            // Set the "Zero" flag
+            if (processor->Y == 0) {
+                setFlag('Z', 1, processor);
+            } else {
+                setFlag('Z', 0, processor);
+            }
+
+            // Set the "Negative" flag
+            if ((processor->Y & 0x80) >> 7 == 1) {
+                setFlag('N', 1, processor);
+            } else {
+                setFlag('N', 0, processor);
+            }
+
+            break;
         // ---------- LDA ----------
         case 0xA9:  // Immediate
         case 0xA5:  // Zero Page
