@@ -748,7 +748,7 @@ Instruction parseInstruction(uint8_t* mem, uint16_t pc) {
  * @param processor - The processor holding register values
  */
 void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) {
-    uint16_t val;
+    int16_t val;
     uint16_t irq_vector;
 
     switch (instr.opcode) {
@@ -938,20 +938,53 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
             }
             break;
         // ---------- CLC ----------
-        case 0x18:
+        case 0x18:  // Implied
             setFlag('C', 0, processor);
             break;
         // ---------- CLD ----------
-        case 0xD8:
+        case 0xD8:  // Implied
             setFlag('D', 0, processor);
             break;
         // ---------- CLI ----------
-        case 0x58:
+        case 0x58:  // Implied
             setFlag('I', 0, processor);
             break;
         // ---------- CLV ----------
-        case 0xB8:
+        case 0xB8:  // Implied
             setFlag('V', 0, processor);
+            break;
+        // ---------- CMP ----------
+        case 0xC9:  // Immediate
+        case 0xC5:  // Zero Page
+        case 0xD5:  // Zero Page X
+        case 0xCD:  // Absolute
+        case 0xDD:  // Absolute X
+        case 0xD9:  // Absolute Y
+        case 0xC1:  // Indirect X
+        case 0xD1:  // Indirect Y
+            val = processor->A - getVal(instr, *mem, *processor);
+
+            // Set the "Carry" flag
+            if (val >= 0) {
+                setFlag('C', 1, processor);
+            } else {
+                setFlag('C', 0, processor);
+            }
+
+            // Set the "Zero" flag
+            if (val == 0) {
+                setFlag('Z', 1, processor);
+            } else {
+                setFlag('Z', 0, processor);
+            }
+
+            // Set the "Negative" flag
+            if ((val & 0x80) >> 7 == 1) {
+                setFlag('N', 1, processor);
+            } else {
+                setFlag('N', 0, processor);
+            }
+
             break;
         // ---------- LDA ----------
         case 0xA9:  // Immediate
