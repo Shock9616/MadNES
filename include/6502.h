@@ -72,14 +72,6 @@ uint16_t getAddr(Instruction instr, uint8_t* mem, Processor processor);
 void stackPush(uint8_t val, uint8_t** mem, Processor* processor);
 
 /**
- * Return the value at the top of the stack
- *
- * @param mem - The byte array serving as system memory
- * @param processor - The processor holding register values
- */
-uint8_t stackPeek(uint8_t* mem, Processor processor);
-
-/**
  * Return and remove the value at the top of the stack
  *
  * @param mem - The byte array serving as system memory

@@ -1200,6 +1200,14 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
             // doesn't skip the next instruction
             processor->PC = getAddr(instr, *mem, *processor) - instr.length;
             break;
+        // ---------- JSR ----------
+        case 0x20:  // Absolute
+            // Push the most significant byte first, then the least significant
+            stackPush((processor->PC >> 8) & 0xFF, mem, processor);
+            stackPush((processor->PC + 2) & 0xFF, mem, processor);
+
+            processor->PC = getAddr(instr, *mem, *processor) - instr.length;
+            break;
         // ---------- LDA ----------
         case 0xA9:  // Immediate
         case 0xA5:  // Zero Page
@@ -1274,6 +1282,14 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
             }
 
             processor->Y = (uint8_t)val;
+            break;
+        // ---------- RTS ----------
+        case 0x60:  // Implied
+            // Pull the least significant byte first, the the most significant
+            val = stackPull(mem, processor);
+            val = concatenateBytes(stackPull(mem, processor), val);
+
+            processor->PC = val;
             break;
         // ---------- SEC ----------
         case 0x38:
@@ -1539,17 +1555,8 @@ uint16_t getAddr(Instruction instr, uint8_t* mem, Processor processor) {
  * @param processor - The processor holding register values
  */
 void stackPush(uint8_t val, uint8_t** mem, Processor* processor) {
-    (*mem)[0x0100 + processor->S--] = val;
-}
-
-/**
- * Return the value at the top of the stack
- *
- * @param mem - The byte array serving as system memory
- * @param processor - The processor holding register values
- */
-uint8_t stackPeek(uint8_t* mem, Processor processor) {
-    return mem[0x100 + processor.S];
+    (*mem)[0x0100 + processor->S] = val;
+    processor->S--;
 }
 
 /**
@@ -1559,7 +1566,7 @@ uint8_t stackPeek(uint8_t* mem, Processor processor) {
  * @param processor - The processor holding register values
  */
 uint8_t stackPull(uint8_t** mem, Processor* processor) {
+    processor->S++;
     uint8_t val = (*mem)[0x0100 + processor->S];
-    (*mem)[0x0100 + processor->S++] = 0x00;
     return val;
 }
