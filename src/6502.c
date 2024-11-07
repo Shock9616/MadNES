@@ -1362,6 +1362,36 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
 
             processor->A = val;
             break;
+        // ---------- PHA ----------
+        case 0x48:  // Implied
+            stackPush(processor->A, mem, processor);
+            break;
+        // ---------- PHP ----------
+        case 0x08:  // Implied
+            stackPush(processor->P, mem, processor);
+            break;
+        // ---------- PLA ----------
+        case 0x68:  // Implied
+            processor->A = stackPull(mem, processor);
+
+            // Set the "Zero" flag
+            if (processor->A == 0) {
+                setFlag('Z', 1, processor);
+            } else {
+                setFlag('Z', 0, processor);
+            }
+
+            // Set the "Negative" flag
+            if ((processor->A & 0x80) >> 7 == 1) {
+                setFlag('N', 1, processor);
+            } else {
+                setFlag('N', 0, processor);
+            }
+            break;
+        // ---------- PLP ----------
+        case 0x28:  // Implied
+            processor->P = stackPull(mem, processor);
+            break;
         // ---------- RTS ----------
         case 0x60:  // Implied
             // Pull the least significant byte first, the the most significant
