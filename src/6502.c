@@ -1288,7 +1288,6 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
             // Set the "Carry" flag
             setFlag('C', (processor->A & 0x01), processor);
 
-            // TODO: Check that this is actually LOGICAL shift right
             processor->A >>= 1;
 
             // Set the "Zero" flag
@@ -1332,6 +1331,36 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
             }
 
             (*mem)[getAddr(instr, *mem, *processor)] = (uint8_t)val;
+            break;
+        // ---------- NOP ----------
+        case 0xEA:  // Implied
+            break;
+        // ---------- ORA ----------
+        case 0x09:  // Immediate
+        case 0x05:  // Zero Page
+        case 0x15:  // Zero Page X
+        case 0x0D:  // Absolute
+        case 0x1D:  // Absolute X
+        case 0x19:  // Absolute Y
+        case 0x01:  // Indirect X
+        case 0x11:  // Indirect Y
+            val = processor->A | getVal(instr, *mem, *processor);
+
+            // Set the "Zero" flag
+            if (val == 0) {
+                setFlag('Z', 1, processor);
+            } else {
+                setFlag('Z', 0, processor);
+            }
+
+            // Set the "Negative" flag
+            if ((val & 0x80) >> 7 == 1) {
+                setFlag('N', 1, processor);
+            } else {
+                setFlag('N', 0, processor);
+            }
+
+            processor->A = val;
             break;
         // ---------- RTS ----------
         case 0x60:  // Implied
