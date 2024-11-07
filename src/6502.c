@@ -910,8 +910,8 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
         // ---------- BRK ----------
         case 0x00:  // Implied
             // Push the program counter onto the stack
-            stackPush(processor->PC & 0xFF, mem, processor);
             stackPush((processor->PC >> 8) & 0xFF, mem, processor);
+            stackPush(processor->PC & 0xFF, mem, processor);
 
             // Set the "Break" flag and push the processor status onto the stack
             setFlag('B', 1, processor);
