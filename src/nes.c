@@ -69,7 +69,7 @@ int main(int argc, char** argv) {
     if (opt_run) {
         processor.halted = false;
 
-        while (processor.PC < 0x0600 + prog_line_count && !processor.halted) {
+        while (processor.PC != 0x0600 + prog_line_count && !processor.halted) {
             Instruction instr = parseInstruction(memory, processor.PC);
             executeInstruction(instr, &memory, &processor);
             processor.PC += instr.length;

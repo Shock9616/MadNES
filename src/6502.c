@@ -1193,6 +1193,13 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
             }
 
             break;
+        // ---------- JMP ----------
+        case 0x4C:  // Absolute
+        case 0x6C:  // Indirect
+            // Subtracting length to make sure that the PC being incremented
+            // doesn't skip the next instruction
+            processor->PC = getAddr(instr, *mem, *processor) - instr.length;
+            break;
         // ---------- LDA ----------
         case 0xA9:  // Immediate
         case 0xA5:  // Zero Page
@@ -1501,7 +1508,10 @@ uint16_t getAddr(Instruction instr, uint8_t* mem, Processor processor) {
             addr = instr.absy.addr + processor.Y;
             break;
         case IND:
-            // TODO: Implement get_addr for IND
+            printf("IND\n");
+            lsb_addr = mem[instr.ind.addr];
+            msb_addr = mem[instr.ind.addr + 1];
+            addr = concatenateBytes(msb_addr, lsb_addr);
             break;
         case INDX:
             lsb_addr = mem[instr.indx.addr + processor.X];
