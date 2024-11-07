@@ -1283,6 +1283,56 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
 
             processor->Y = (uint8_t)val;
             break;
+        // ---------- LSR ----------
+        case 0x4A:  // Accumulator
+            // Set the "Carry" flag
+            setFlag('C', (processor->A & 0x01), processor);
+
+            // TODO: Check that this is actually LOGICAL shift right
+            processor->A >>= 1;
+
+            // Set the "Zero" flag
+            if (processor->A == 0) {
+                setFlag('Z', 1, processor);
+            } else {
+                setFlag('Z', 0, processor);
+            }
+
+            // Set the "Negative" flag
+            if ((processor->A & 0x80) >> 7 == 1) {
+                setFlag('N', 1, processor);
+            } else {
+                setFlag('N', 0, processor);
+            }
+            break;
+        case 0x46:  // Zero Page
+        case 0x56:  // Zero Page X
+        case 0x4E:  // Absolute
+        case 0x5E:  // Absolute X
+            val = getVal(instr, *mem, *processor);
+
+            // Set the "Carry" flag
+            setFlag('C', (val & 0x01), processor);
+
+            // TODO: Check that this is actually LOGICAL shift right
+            val >>= 1;
+
+            // Set the "Zero" flag
+            if (val == 0) {
+                setFlag('Z', 1, processor);
+            } else {
+                setFlag('Z', 0, processor);
+            }
+
+            // Set the "Negative" flag
+            if ((val & 0x80) >> 7 == 1) {
+                setFlag('N', 1, processor);
+            } else {
+                setFlag('N', 0, processor);
+            }
+
+            (*mem)[getAddr(instr, *mem, *processor)] = (uint8_t)val;
+            break;
         // ---------- RTS ----------
         case 0x60:  // Implied
             // Pull the least significant byte first, the the most significant
