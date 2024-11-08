@@ -1313,7 +1313,6 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
             // Set the "Carry" flag
             setFlag('C', (val & 0x01), processor);
 
-            // TODO: Check that this is actually LOGICAL shift right
             val >>= 1;
 
             // Set the "Zero" flag
@@ -1391,6 +1390,80 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
         // ---------- PLP ----------
         case 0x28:  // Implied
             processor->P = stackPull(mem, processor);
+            break;
+        // ---------- ROL ----------
+        case 0x2A:  // Accumulator
+            val = processor->A;
+
+            val <<= 1;
+
+            // Set bit 0 to the current value of the carry flag
+            if (getFlag('C', processor) == 1) {
+                val |= 0b00000001;
+            } else {
+                val &= 0b11111110;
+            }
+
+            // Set the carry flag to the old bit 7
+            setFlag('C', (val >> 8) & 0x01, processor);
+
+            processor->A = (uint8_t)val;
+        case 0x26:  // Zero Page
+        case 0x36:  // Zero Page X
+        case 0x2E:  // Absolute
+        case 0x3E:  // Absolute X
+            val = getVal(instr, *mem, *processor);
+
+            val <<= 1;
+
+            // Set bit 0 to the current value of the carry flag
+            if (getFlag('C', processor) == 1) {
+                val |= 0b00000001;
+            } else {
+                val &= 0b11111110;
+            }
+
+            // Set the carry flag to the old bit 7
+            setFlag('C', (val >> 8) & 0x01, processor);
+
+            (*mem)[getAddr(instr, *mem, *processor)] = (uint8_t)val;
+            break;
+        // ---------- ROR ----------
+        case 0x6A:  // Accumulator
+            val = processor->A;
+
+            // Set new bit 7 to the current value of the carry flag
+            if (getFlag('C', processor) == 1) {
+                val |= 0b100000000;
+            } else {
+                val &= 0b011111111;
+            }
+
+            // Set the carry flag to the old bit 0
+            setFlag('C', val & 0x01, processor);
+
+            val >>= 1;
+
+            processor->A = (uint8_t)val;
+        case 0x66:  // Zero Page
+        case 0x76:  // Zero Page X
+        case 0x6E:  // Absolute
+        case 0x7E:  // Absolute X
+            val = getVal(instr, *mem, *processor);
+
+            // Set new bit 7 to the current value of the carry flag
+            if (getFlag('C', processor) == 1) {
+                val |= 0b00000001;
+            } else {
+                val &= 0b11111110;
+            }
+
+            // Set the carry flag to the old bit 0
+            setFlag('C', val & 0x01, processor);
+
+            val >>= 1;
+
+            (*mem)[getAddr(instr, *mem, *processor)] = (uint8_t)val;
             break;
         // ---------- RTS ----------
         case 0x60:  // Implied
