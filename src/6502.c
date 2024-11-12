@@ -1465,6 +1465,17 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
 
             (*mem)[getAddr(instr, *mem, *processor)] = (uint8_t)val;
             break;
+        // ---------- RTI ----------
+        case 0x40:  // Implied
+            // Pull status flags
+            processor->P = stackPull(mem, processor);
+
+            // Pull program counter (lsb first, then msb)
+            val = stackPull(mem, processor);
+            val = concatenateBytes(stackPull(mem, processor), val);
+
+            processor->PC = val;
+            break;
         // ---------- RTS ----------
         case 0x60:  // Implied
             // Pull the least significant byte first, the the most significant
@@ -1496,6 +1507,8 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
             (*mem)[getAddr(instr, *mem, *processor)] = processor->A;
             break;
     }
+
+    processor->P |= 0x20;  // Making sure that the unused bit ALWAYS remains 1
 }
 
 /**
