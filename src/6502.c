@@ -1484,6 +1484,43 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
 
             processor->PC = val;
             break;
+        // ---------- SBC ----------
+        case 0xE9:  // Immediate
+        case 0xE5:  // Zero Page
+        case 0xF5:  // Zero Page X
+        case 0xED:  // Absolute
+        case 0xFD:  // Absolute X
+        case 0xF9:  // Absolute Y
+        case 0xE1:  // Indirect X
+        case 0xF1:  // Indirect Y
+            val = processor->A - getVal(instr, *mem, *processor) - (1 - getFlag('C', processor));
+
+            // Wrap val to 8 bits
+            uint8_t result = val & 0xFF;
+
+            // Set the "Carry" flag
+            if (val >= 0) {
+                setFlag('C', 1, processor);
+            } else {
+                setFlag('C', 0, processor);
+            }
+
+            // Set the "Overflow" flag
+            uint8_t operand = getVal(instr, *mem, *processor);
+            if (((processor->A ^ result) & 0x80) && ((processor->A ^ operand) & 0x80)) {
+                setFlag('V', 1, processor);
+            } else {
+                setFlag('V', 0, processor);
+            }
+
+            // Set the "Zero" flag
+            setFlag('Z', result == 0, processor);
+
+            // Set the "Negative" flag
+            setFlag('N', result & 0x80, processor);
+
+            processor->A = result;
+            break;
         // ---------- SEC ----------
         case 0x38:
             setFlag('C', 1, processor);
