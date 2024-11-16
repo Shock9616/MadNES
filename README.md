@@ -15,8 +15,12 @@ but these are my goals for this project in roughly the order I plan to achieve
 them in:
 
 - [x] Create a disassembler for 6502 assembly
-- [ ] Create C implementations for all 56 instructions to emulate a normal 6502
+- [x] Create C implementations for all 56 instructions to emulate a normal 6502
       program (i.e. no graphics/sound/etc. just a normal CLI application)
+- [ ] Write unit tests for all the instructions (probably should've done that
+      while implementing them lol)
+- [ ] Implement a parser for the iNES ROM format (Probably at/around the same
+      time as the next step)
 - [ ] Begin researching NES graphics and maybe try to get some simple homebrew
       applications running
 - [ ] Same thing for audio
@@ -40,33 +44,13 @@ to make this user-friendly or create releases or anything. There are _plenty_ of
 excellent NES emulators out there already that will work 1000000x better than
 this project ever will, and that's ok.
 
-As an example of what I mean by not being user friendly, the disassembler part
-of this program (all I've got working at the time of writing) requires every
-byte of the program to be on its own line and in hexadecimal like this:
-
-```
-A9
-01
-8D
-00
-02
-A9
-05
-8D
-01
-02
-A9
-08
-8D
-02
-02
-```
-
-I do not plan on changing this because it works, and figuring out how to read an
-NES rom file as it normally is just seems like too much work. I don't plan on
-using this regularly if/when it's finished, so I'm ok with having to convert any
-actual ROMs that I test into this format. At _most_ I'll make a python script to
-do it or something.
+Update: Due to a lack of understanding of how the NES actually works, I assumed
+that I could get away with just implementing the 6502 instructions and that
+would be all I need. After a bit of preliminary research though, I have found
+out that there's more to it than just the 6502, which I probably should've
+guessed. Because of this, I will have to implement a parser for the iNES ROM
+format, which will make this a lot more "user-friendly" than I originally
+planned :sweat_smile:
 
 I also don't plan on making this cross-platform at all. This is a purely "it
 works on my machine" project.
