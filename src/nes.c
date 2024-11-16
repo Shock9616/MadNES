@@ -17,6 +17,8 @@ uint8_t* memory;
 int loadFile(uint8_t* mem, int start_addr, const char* file_path);
 int intToBin(uint8_t n);
 
+#ifndef TEST
+
 int main(int argc, char** argv) {
     bool opt_disassemble = false, opt_run = false;
 
@@ -83,6 +85,8 @@ int main(int argc, char** argv) {
         printf("------------------------------\n");
     }
 }
+
+#endif
 
 /**
  * Load the contents of a file into emulated system memory

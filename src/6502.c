@@ -770,20 +770,12 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
             result = val & 0xFF;
 
             // Set the "Carry" flag
-            if (val >= 256) {
-                val -= 256;
-                setFlag('C', 1, processor);
-            } else {
-                setFlag('C', 0, processor);
-            }
+            setFlag('C', val >= 265, processor);
 
             // Set the "Overflow" flag
             operand = getVal(instr, *mem, *processor);
-            if (((processor->A ^ result) & 0x80) && ((processor->A ^ operand) & 0x80)) {
-                setFlag('V', 1, processor);
-            } else {
-                setFlag('V', 0, processor);
-            }
+            setFlag('V', ((processor->A ^ result) & 0x80) && ((processor->A ^ operand) & 0x80),
+                    processor);
 
             // Set the "Zero" flag
             setFlag('Z', result == 0, processor);
