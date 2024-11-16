@@ -770,11 +770,11 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
             result = val & 0xFF;
 
             // Set the "Carry" flag
-            setFlag('C', val >= 265, processor);
+            setFlag('C', val > 0xFF, processor);
 
             // Set the "Overflow" flag
             operand = getVal(instr, *mem, *processor);
-            setFlag('V', ((processor->A ^ result) & 0x80) && ((processor->A ^ operand) & 0x80),
+            setFlag('V', ((processor->A ^ result) & 0x80) && !((processor->A ^ operand) & 0x80),
                     processor);
 
             // Set the "Zero" flag
@@ -1504,56 +1504,28 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
 void setFlag(char flag, bool val, Processor* processor) {
     switch (flag) {
         case 'N':
-            if (val == 1) {
-                processor->P |= 0b10000000;
-            } else {
-                processor->P &= 0b01111111;
-            }
+            processor->P = (processor->P & ~0b10000000) | (val ? 0b10000000 : 0);
             break;
         case 'V':
-            if (val == 1) {
-                processor->P |= 0b01000000;
-            } else {
-                processor->P &= 0b10111111;
-            }
+            processor->P = (processor->P & ~0b01000000) | (val ? 0b01000000 : 0);
             break;
         case 'B':
-            if (val == 1) {
-                processor->P |= 0b00010000;
-            } else {
-                processor->P &= 0b11101111;
-            }
+            processor->P = (processor->P & ~0b00010000) | (val ? 0b00010000 : 0);
             break;
         case 'D':
-            if (val == 1) {
-                processor->P |= 0b00001000;
-            } else {
-                processor->P &= 0b11110111;
-            }
+            processor->P = (processor->P & ~0b00001000) | (val ? 0b00001000 : 0);
             break;
         case 'I':
-            if (val == 1) {
-                processor->P |= 0b00000100;
-            } else {
-                processor->P &= 0b11111011;
-            }
+            processor->P = (processor->P & ~0b00000100) | (val ? 0b00000100 : 0);
             break;
         case 'Z':
-            if (val == 1) {
-                processor->P |= 0b00000010;
-            } else {
-                processor->P &= 0b11111101;
-            }
+            processor->P = (processor->P & ~0b00000010) | (val ? 0b00000010 : 0);
             break;
         case 'C':
-            if (val == 1) {
-                processor->P |= 0b00000001;
-            } else {
-                processor->P &= 0b11111110;
-            }
+            processor->P = (processor->P & ~0b00000001) | (val ? 0b00000001 : 0);
             break;
         default:
-            fprintf(stderr, "ERROR: Invalid flag %c\n", flag);
+            fprintf(stderr, "ERROR: Invalid flag '%c'\n", flag);
             break;
     }
 }
@@ -1618,6 +1590,7 @@ uint8_t getVal(Instruction instr, uint8_t* mem, Processor processor) {
             break;
         case ACCUM:
             val = processor.A;
+            break;
         case IMM:
             val = instr.imm.imm;
             break;
@@ -1628,10 +1601,8 @@ uint8_t getVal(Instruction instr, uint8_t* mem, Processor processor) {
             val = mem[instr.zpx.addr + processor.X];
             break;
         case ZPY:
-            // TODO: Implement get_val for ZPY
+            val = mem[instr.zpy.addr + processor.Y];
             break;
-        case REL:
-            // TODO: Implement get_val for REL
         case ABS:
             val = mem[instr.abs.addr];
             break;
@@ -1640,9 +1611,6 @@ uint8_t getVal(Instruction instr, uint8_t* mem, Processor processor) {
             break;
         case ABSY:
             val = mem[instr.absy.addr + processor.Y];
-            break;
-        case IND:
-            // TODO: Implement get_val for IND
             break;
         case INDX:
             lsb_addr = mem[instr.indx.addr + processor.X];
@@ -1688,7 +1656,7 @@ uint16_t getAddr(Instruction instr, uint8_t* mem, Processor processor) {
             addr = instr.zpx.addr + processor.X;
             break;
         case ZPY:
-            // TODO: Implement get_addr for ZPY
+            addr = instr.zpy.addr + processor.Y;
             break;
         case REL:
             addr = (int8_t)instr.rel.offset + processor.PC;
@@ -1703,7 +1671,6 @@ uint16_t getAddr(Instruction instr, uint8_t* mem, Processor processor) {
             addr = instr.absy.addr + processor.Y;
             break;
         case IND:
-            printf("IND\n");
             lsb_addr = mem[instr.ind.addr];
             msb_addr = mem[instr.ind.addr + 1];
             addr = concatenateBytes(msb_addr, lsb_addr);

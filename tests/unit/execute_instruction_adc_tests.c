@@ -137,6 +137,55 @@ void test_instr_adc_indy() {
     CU_ASSERT_EQUAL(processor.P, 0x30);
 }
 
+void test_instr_adc_carry() {
+    memory[0x0600] = 0x69;
+    memory[0x0601] = 0xFF;
+    memory[0x0602] = 0x69;
+    memory[0x0603] = 0x02;
+
+    Instruction instr = parseInstruction(memory, 0x0600);
+    executeInstruction(instr, &memory, &processor);
+    instr = parseInstruction(memory, 0x0602);
+    executeInstruction(instr, &memory, &processor);
+
+    CU_ASSERT_EQUAL(processor.A, 0x01);
+    CU_ASSERT_EQUAL(processor.P, 0x31);
+}
+
+void test_instr_adc_zero() {
+    memory[0x0600] = 0x69;
+    memory[0x0601] = 0x00;
+
+    Instruction instr = parseInstruction(memory, 0x0600);
+    executeInstruction(instr, &memory, &processor);
+
+    CU_ASSERT_EQUAL(processor.A, 0x00);
+    CU_ASSERT_EQUAL(processor.P, 0x32);
+}
+
+void test_instr_adc_overflow() {
+    memory[0x0600] = 0x69;
+    memory[0x0601] = 0x50;
+
+    Instruction instr = parseInstruction(memory, 0x0600);
+    executeInstruction(instr, &memory, &processor);
+    executeInstruction(instr, &memory, &processor);
+
+    CU_ASSERT_EQUAL(processor.A, 0xA0);
+    CU_ASSERT_EQUAL(processor.P, 0xF0);
+}
+
+void test_instr_adc_neg() {
+    memory[0x0600] = 0x69;
+    memory[0x0601] = 0x80;
+
+    Instruction instr = parseInstruction(memory, 0x0600);
+    executeInstruction(instr, &memory, &processor);
+
+    CU_ASSERT_EQUAL(processor.A, 0x80);
+    CU_ASSERT_EQUAL(processor.P, 0xB0);
+}
+
 // ---------- Run Tests ----------
 
 void run_instr_suite() {
@@ -193,6 +242,26 @@ int main() {
     }
 
     if (CU_add_test(suite, "ADC (Indirect),Y", test_instr_adc_indy) == NULL) {
+        CU_cleanup_registry();
+        return CU_get_error();
+    }
+
+    if (CU_add_test(suite, "ADC Carry", test_instr_adc_carry) == NULL) {
+        CU_cleanup_registry();
+        return CU_get_error();
+    }
+
+    if (CU_add_test(suite, "ADC Zero", test_instr_adc_zero) == NULL) {
+        CU_cleanup_registry();
+        return CU_get_error();
+    }
+
+    if (CU_add_test(suite, "ADC Overflow", test_instr_adc_overflow) == NULL) {
+        CU_cleanup_registry();
+        return CU_get_error();
+    }
+
+    if (CU_add_test(suite, "ADC Negative", test_instr_adc_neg) == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
     }
