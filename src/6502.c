@@ -1444,6 +1444,26 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
         case 0x8C:  // Absolute
             (*mem)[getAddr(instr, *mem, *processor)] = processor->Y;
             break;
+        // ---------- TAX ----------
+        case 0xAA:  // Implied
+            // Set the "Zero" flag
+            setFlag('Z', processor->A == 0, processor);
+
+            // Set the "Negative" flag
+            setFlag('N', (processor->A & 0x80) >> 7, processor);
+
+            processor->X = processor->A;
+            break;
+        // ---------- TAY ----------
+        case 0xA8:  // Implied
+            // Set the "Zero" flag
+            setFlag('Z', processor->A == 0, processor);
+
+            // Set the "Negative" flag
+            setFlag('N', (processor->A & 0x80) >> 7, processor);
+
+            processor->Y = processor->A;
+            break;
     }
 
     processor->P |= 0x20;  // Making sure that the unused bit ALWAYS remains 1
