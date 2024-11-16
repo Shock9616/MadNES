@@ -70,7 +70,6 @@ int main(int argc, char** argv) {
         processor.halted = false;
 
         while (processor.PC != 0x0600 + prog_line_count && !processor.halted) {
-            printf("P: $%02x\n", processor.P);
             Instruction instr = parseInstruction(memory, processor.PC);
             executeInstruction(instr, &memory, &processor);
             processor.PC += instr.length;
