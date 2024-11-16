@@ -1239,21 +1239,16 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
         case 0x11:  // Indirect Y
             val = processor->A | getVal(instr, *mem, *processor);
 
+            // Wrap val to 8 bits
+            result = val & 0xFF;
+
             // Set the "Zero" flag
-            if (val == 0) {
-                setFlag('Z', 1, processor);
-            } else {
-                setFlag('Z', 0, processor);
-            }
+            setFlag('Z', result == 0, processor);
 
             // Set the "Negative" flag
-            if ((val & 0x80) >> 7 == 1) {
-                setFlag('N', 1, processor);
-            } else {
-                setFlag('N', 0, processor);
-            }
+            setFlag('Z', (result & 0x80) >> 7, processor);
 
-            processor->A = val;
+            processor->A = result;
             break;
         // ---------- PHA ----------
         case 0x48:  // Implied
@@ -1436,6 +1431,18 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
         case 0x81:  // Indirect X
         case 0x91:  // Indirect Y
             (*mem)[getAddr(instr, *mem, *processor)] = processor->A;
+            break;
+        // ---------- STX ----------
+        case 0x86:  // Zero Page
+        case 0x96:  // Zero Page Y
+        case 0x8E:  // Absolute
+            (*mem)[getAddr(instr, *mem, *processor)] = processor->X;
+            break;
+        // ---------- STY ----------
+        case 0x84:  // Zero Page
+        case 0x94:  // Zero Page X
+        case 0x8C:  // Absolute
+            (*mem)[getAddr(instr, *mem, *processor)] = processor->Y;
             break;
     }
 
