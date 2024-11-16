@@ -1446,23 +1446,57 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
             break;
         // ---------- TAX ----------
         case 0xAA:  // Implied
+            processor->X = processor->A;
+
             // Set the "Zero" flag
-            setFlag('Z', processor->A == 0, processor);
+            setFlag('Z', processor->X == 0, processor);
 
             // Set the "Negative" flag
-            setFlag('N', (processor->A & 0x80) >> 7, processor);
-
-            processor->X = processor->A;
+            setFlag('N', (processor->X & 0x80) >> 7, processor);
             break;
         // ---------- TAY ----------
         case 0xA8:  // Implied
+            processor->Y = processor->A;
+
+            // Set the "Zero" flag
+            setFlag('Z', processor->Y == 0, processor);
+
+            // Set the "Negative" flag
+            setFlag('N', (processor->Y & 0x80) >> 7, processor);
+            break;
+        // ---------- TSX ----------
+        case 0xBA:  // Implied
+            processor->X = processor->S;
+
+            // Set the "Zero" flag
+            setFlag('Z', processor->X == 0, processor);
+
+            // Set the "Negative" flag
+            setFlag('N', (processor->X & 0x80) >> 7, processor);
+            break;
+        // ---------- TXA ----------
+        case 0x8A:  // Implied
+            processor->A = processor->X;
+
             // Set the "Zero" flag
             setFlag('Z', processor->A == 0, processor);
 
             // Set the "Negative" flag
             setFlag('N', (processor->A & 0x80) >> 7, processor);
+            break;
+        // ---------- TXS ----------
+        case 0x9A:  // Implied
+            processor->S = processor->X;
+            break;
+        // ---------- TYA ----------
+        case 0x98:  // Implied
+            processor->A = processor->Y;
 
-            processor->Y = processor->A;
+            // Set the "Zero" flag
+            setFlag('Z', processor->A == 0, processor);
+
+            // Set the "Negative" flag
+            setFlag('N', (processor->A & 0x80) >> 7, processor);
             break;
     }
 
