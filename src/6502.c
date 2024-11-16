@@ -748,7 +748,10 @@ Instruction parseInstruction(uint8_t* mem, uint16_t pc) {
  * @param processor - The processor holding register values
  */
 void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) {
+    // Some variables that may or may not be used for some instructions
     int16_t val;
+    uint8_t result;
+    uint8_t operand;
     uint16_t irq_vector;
 
     switch (instr.opcode) {
@@ -763,6 +766,9 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
         case 0x71:  // Indirect Y (Indirect Indexed)
             val = processor->A + getVal(instr, *mem, *processor) + getFlag('C', processor);
 
+            // Wrap val to 8 bits
+            result = val & 0xFF;
+
             // Set the "Carry" flag
             if (val >= 256) {
                 val -= 256;
@@ -772,28 +778,20 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
             }
 
             // Set the "Overflow" flag
-            if (~((processor->A & 0x80) ^ (getVal(instr, *mem, *processor))) &
-                ((processor->A & 0x80) ^ (val & 0x80))) {
+            operand = getVal(instr, *mem, *processor);
+            if (((processor->A ^ result) & 0x80) && ((processor->A ^ operand) & 0x80)) {
                 setFlag('V', 1, processor);
             } else {
                 setFlag('V', 0, processor);
             }
 
             // Set the "Zero" flag
-            if (val == 0) {
-                setFlag('Z', 1, processor);
-            } else {
-                setFlag('Z', 0, processor);
-            }
+            setFlag('Z', result == 0, processor);
 
             // Set the "Negative" flag
-            if ((val & 0x80) >> 7 == 1) {
-                setFlag('N', 1, processor);
-            } else {
-                setFlag('N', 0, processor);
-            }
+            setFlag('N', (result & 0x80) >> 7, processor);
 
-            processor->A = (uint8_t)val;
+            processor->A = result;
             break;
         // ---------- AND ----------
         case 0x29:  // Immediate
@@ -806,21 +804,16 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
         case 0x31:  // Indirect Y
             val = processor->A & getVal(instr, *mem, *processor);
 
+            // Wrap val to 8 bits
+            uint8_t result = val & 0xFF;
+
             // Set the "Zero" flag
-            if (val == 0) {
-                setFlag('Z', 1, processor);
-            } else {
-                setFlag('Z', 0, processor);
-            }
+            setFlag('Z', result == 0, processor);
 
             // Set the "Negative" flag
-            if ((val & 0x80) >> 7 == 1) {
-                setFlag('N', 1, processor);
-            } else {
-                setFlag('N', 0, processor);
-            }
+            setFlag('N', (result & 0x80) >> 7, processor);
 
-            processor->A = (uint8_t)val;
+            processor->A = result;
             break;
         // ---------- ASL ----------
         case 0x0A:  // Accumulator
@@ -830,11 +823,8 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
             processor->A <<= 1;
 
             // Set the "Negative" flag
-            if ((processor->A & 0x80) >> 7 == 1) {
-                setFlag('N', 1, processor);
-            } else {
-                setFlag('N', 0, processor);
-            }
+            setFlag('N', (processor->A & 0x80) >> 7, processor);
+
             break;
         case 0x06:  // Zero Page
         case 0x16:  // Zero Page X
@@ -842,19 +832,18 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
         case 0x1E:  // Absolute X
             val = getVal(instr, *mem, *processor);
 
+            // Wrap val to 8 bits
+            result = val & 0xFF;
+
             // Set the "Carry" flag
             setFlag('C', (val & 0x80) >> 7, processor);
 
             val <<= 1;
 
             // Set the "Negative" flag
-            if ((val & 0x80) >> 7 == 1) {
-                setFlag('N', 1, processor);
-            } else {
-                setFlag('N', 0, processor);
-            }
+            setFlag('N', (result & 0x80) >> 7, processor);
 
-            (*mem)[getAddr(instr, *mem, *processor)] = (uint8_t)val;
+            (*mem)[getAddr(instr, *mem, *processor)] = result;
             break;
         // ---------- BCC ----------
         case 0x90:  // Relative
@@ -880,12 +869,7 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
             val = processor->A & getVal(instr, *mem, *processor);
 
             // Set the "Zero" flag
-            if (val == 0) {
-                setFlag('Z', 1, processor);
-            } else {
-                setFlag('Z', 0, processor);
-            }
-
+            setFlag('Z', val == 0, processor);
             setFlag('V', (val >> 6) & 1, processor);
             setFlag('N', (val >> 7) & 1, processor);
             break;
@@ -964,6 +948,9 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
         case 0xD1:  // Indirect Y
             val = processor->A - getVal(instr, *mem, *processor);
 
+            // Wrap val to 8 bits
+            result = val & 0xFF;
+
             // Set the "Carry" flag
             if (val >= 0) {
                 setFlag('C', 1, processor);
@@ -972,18 +959,10 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
             }
 
             // Set the "Zero" flag
-            if (val == 0) {
-                setFlag('Z', 1, processor);
-            } else {
-                setFlag('Z', 0, processor);
-            }
+            setFlag('Z', result == 0, processor);
 
             // Set the "Negative" flag
-            if ((val & 0x80) >> 7 == 1) {
-                setFlag('N', 1, processor);
-            } else {
-                setFlag('N', 0, processor);
-            }
+            setFlag('N', (result & 0x80) >> 7, processor);
 
             break;
         // ---------- CPX ----------
@@ -992,6 +971,9 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
         case 0xEC:  // Absolute
             val = processor->X - getVal(instr, *mem, *processor);
 
+            // Wrap val to 8 bits
+            result = val & 0xFF;
+
             // Set the "Carry" flag
             if (val >= 0) {
                 setFlag('C', 1, processor);
@@ -1000,18 +982,10 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
             }
 
             // Set the "Zero" flag
-            if (val == 0) {
-                setFlag('Z', 1, processor);
-            } else {
-                setFlag('Z', 0, processor);
-            }
+            setFlag('Z', result == 0, processor);
 
             // Set the "Negative" flag
-            if ((val & 0x80) >> 7 == 1) {
-                setFlag('N', 1, processor);
-            } else {
-                setFlag('N', 0, processor);
-            }
+            setFlag('N', (result & 0x80) >> 7, processor);
 
             break;
         // ---------- CPY ----------
@@ -1020,6 +994,9 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
         case 0xCC:  // Absolute
             val = processor->Y - getVal(instr, *mem, *processor);
 
+            // Wrap val to 8 bits
+            result = val & 0xFF;
+
             // Set the "Carry" flag
             if (val >= 0) {
                 setFlag('C', 1, processor);
@@ -1028,18 +1005,10 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
             }
 
             // Set the "Zero" flag
-            if (val == 0) {
-                setFlag('Z', 1, processor);
-            } else {
-                setFlag('Z', 0, processor);
-            }
+            setFlag('Z', result == 0, processor);
 
             // Set the "Negative" flag
-            if ((val & 0x80) >> 7 == 1) {
-                setFlag('N', 1, processor);
-            } else {
-                setFlag('N', 0, processor);
-            }
+            setFlag('N', (result & 0x80) >> 7, processor);
 
             break;
         // ---------- DEC ----------
@@ -1050,39 +1019,26 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
             val = getVal(instr, *mem, *processor);
             val--;
 
+            // Wrap val to 8 bits
+            result = val & 0xFF;
+
             // Set the "Zero" flag
-            if (val == 0) {
-                setFlag('Z', 1, processor);
-            } else {
-                setFlag('Z', 0, processor);
-            }
+            setFlag('N', result == 0, processor);
 
             // Set the "Negative" flag
-            if ((val & 0x80) >> 7 == 1) {
-                setFlag('N', 1, processor);
-            } else {
-                setFlag('N', 0, processor);
-            }
+            setFlag('N', (result & 0x80) >> 7, processor);
 
-            (*mem)[getAddr(instr, *mem, *processor)] = val;
+            (*mem)[getAddr(instr, *mem, *processor)] = result;
             break;
         // ---------- DEX ----------
         case 0xCA:  // Implied
             processor->X--;
 
             // Set the "Zero" flag
-            if (processor->X == 0) {
-                setFlag('Z', 1, processor);
-            } else {
-                setFlag('Z', 0, processor);
-            }
+            setFlag('N', processor->X == 0, processor);
 
             // Set the "Negative" flag
-            if ((processor->X & 0x80) >> 7 == 1) {
-                setFlag('N', 1, processor);
-            } else {
-                setFlag('N', 0, processor);
-            }
+            setFlag('N', (processor->X & 0x80) >> 7, processor);
 
             break;
         // ---------- DEY ----------
@@ -1090,18 +1046,10 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
             processor->Y--;
 
             // Set the "Zero" flag
-            if (processor->Y == 0) {
-                setFlag('Z', 1, processor);
-            } else {
-                setFlag('Z', 0, processor);
-            }
+            setFlag('N', processor->Y == 0, processor);
 
             // Set the "Negative" flag
-            if ((processor->Y & 0x80) >> 7 == 1) {
-                setFlag('N', 1, processor);
-            } else {
-                setFlag('N', 0, processor);
-            }
+            setFlag('N', (processor->Y & 0x80) >> 7, processor);
 
             break;
         // ---------- EOR ----------
@@ -1115,21 +1063,16 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
         case 0x51:  // Indirect Y
             val = processor->A ^ getVal(instr, *mem, *processor);
 
+            // Wrap val to 8 bits
+            result = val & 0xFF;
+
             // Set the "Zero" flag
-            if (val == 0) {
-                setFlag('Z', 1, processor);
-            } else {
-                setFlag('Z', 0, processor);
-            }
+            setFlag('N', result == 0, processor);
 
             // Set the "Negative" flag
-            if ((val & 0x80) >> 7 == 1) {
-                setFlag('N', 1, processor);
-            } else {
-                setFlag('N', 0, processor);
-            }
+            setFlag('N', (result & 0x80) >> 7, processor);
 
-            processor->A = val;
+            processor->A = result;
             break;
         // ---------- INC ----------
         case 0xE6:  // Zero Page
@@ -1139,39 +1082,26 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
             val = getVal(instr, *mem, *processor);
             val++;
 
+            // Wrap val to 8 bits
+            result = val & 0xFF;
+
             // Set the "Zero" flag
-            if (val == 0) {
-                setFlag('Z', 1, processor);
-            } else {
-                setFlag('Z', 0, processor);
-            }
+            setFlag('N', result == 0, processor);
 
             // Set the "Negative" flag
-            if ((val & 0x80) >> 7 == 1) {
-                setFlag('N', 1, processor);
-            } else {
-                setFlag('N', 0, processor);
-            }
+            setFlag('N', (result & 0x80) >> 7, processor);
 
-            (*mem)[getAddr(instr, *mem, *processor)] = val;
+            (*mem)[getAddr(instr, *mem, *processor)] = result;
             break;
         // ---------- INX ----------
         case 0xE8:  // Implied
             processor->X++;
 
             // Set the "Zero" flag
-            if (processor->X == 0) {
-                setFlag('Z', 1, processor);
-            } else {
-                setFlag('Z', 0, processor);
-            }
+            setFlag('N', processor->X == 0, processor);
 
             // Set the "Negative" flag
-            if ((processor->X & 0x80) >> 7 == 1) {
-                setFlag('N', 1, processor);
-            } else {
-                setFlag('N', 0, processor);
-            }
+            setFlag('N', (processor->X & 0x80) >> 7, processor);
 
             break;
         // ---------- INY ----------
@@ -1179,18 +1109,10 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
             processor->Y++;
 
             // Set the "Zero" flag
-            if (processor->Y == 0) {
-                setFlag('Z', 1, processor);
-            } else {
-                setFlag('Z', 0, processor);
-            }
+            setFlag('N', processor->Y == 0, processor);
 
             // Set the "Negative" flag
-            if ((processor->Y & 0x80) >> 7 == 1) {
-                setFlag('N', 1, processor);
-            } else {
-                setFlag('N', 0, processor);
-            }
+            setFlag('N', (processor->Y & 0x80) >> 7, processor);
 
             break;
         // ---------- JMP ----------
@@ -1219,21 +1141,16 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
         case 0xB1:  // Indirect Y (Indirect Indexed)
             val = getVal(instr, *mem, *processor);
 
+            // Wrap val to 8 bits
+            result = val & 0xFF;
+
             // Set the "Zero" flag
-            if (val == 0) {
-                setFlag('Z', 1, processor);
-            } else {
-                setFlag('Z', 0, processor);
-            }
+            setFlag('Z', result == 0, processor);
 
             // Set the "Negative flag"
-            if ((val & 0x80) >> 7 == 1) {
-                setFlag('N', 1, processor);
-            } else {
-                setFlag('N', 0, processor);
-            }
+            setFlag('N', (result & 0x80) >> 7, processor);
 
-            processor->A = (uint8_t)val;
+            processor->A = result;
             break;
         // ---------- LDX ----------
         case 0xA2:  // Immediate
@@ -1243,21 +1160,16 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
         case 0xBE:  // Absolute Y
             val = getVal(instr, *mem, *processor);
 
+            // Wrap val to 8 bits
+            result = val & 0xFF;
+
             // Set the "Zero" flag
-            if (val == 0) {
-                setFlag('Z', 1, processor);
-            } else {
-                setFlag('Z', 0, processor);
-            }
+            setFlag('Z', result == 0, processor);
 
             // Set the "Negative flag"
-            if ((val & 0x80) >> 7 == 1) {
-                setFlag('N', 1, processor);
-            } else {
-                setFlag('N', 0, processor);
-            }
+            setFlag('N', (result & 0x80) >> 7, processor);
 
-            processor->X = (uint8_t)val;
+            processor->X = result;
             break;
         // ---------- LDY ----------
         case 0xA0:  // Immediate
@@ -1267,21 +1179,16 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
         case 0xBC:  // Absolute X
             val = getVal(instr, *mem, *processor);
 
+            // Wrap val to 8 bits
+            result = val & 0xFF;
+
             // Set the "Zero" flag
-            if (val == 0) {
-                setFlag('Z', 1, processor);
-            } else {
-                setFlag('Z', 0, processor);
-            }
+            setFlag('Z', result == 0, processor);
 
             // Set the "Negative flag"
-            if ((val & 0x80) >> 7 == 1) {
-                setFlag('N', 1, processor);
-            } else {
-                setFlag('N', 0, processor);
-            }
+            setFlag('N', (result & 0x80) >> 7, processor);
 
-            processor->Y = (uint8_t)val;
+            processor->Y = result;
             break;
         // ---------- LSR ----------
         case 0x4A:  // Accumulator
@@ -1291,18 +1198,10 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
             processor->A >>= 1;
 
             // Set the "Zero" flag
-            if (processor->A == 0) {
-                setFlag('Z', 1, processor);
-            } else {
-                setFlag('Z', 0, processor);
-            }
+            setFlag('Z', processor->A == 0, processor);
 
-            // Set the "Negative" flag
-            if ((processor->A & 0x80) >> 7 == 1) {
-                setFlag('N', 1, processor);
-            } else {
-                setFlag('N', 0, processor);
-            }
+            // Set the "Negative flag"
+            setFlag('N', (processor->A & 0x80) >> 7, processor);
             break;
         case 0x46:  // Zero Page
         case 0x56:  // Zero Page X
@@ -1315,21 +1214,16 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
 
             val >>= 1;
 
+            // Wrap val to 8 bits
+            result = val & 0xFF;
+
             // Set the "Zero" flag
-            if (val == 0) {
-                setFlag('Z', 1, processor);
-            } else {
-                setFlag('Z', 0, processor);
-            }
+            setFlag('Z', result == 0, processor);
 
             // Set the "Negative" flag
-            if ((val & 0x80) >> 7 == 1) {
-                setFlag('N', 1, processor);
-            } else {
-                setFlag('N', 0, processor);
-            }
+            setFlag('Z', (result & 0x80) >> 7, processor);
 
-            (*mem)[getAddr(instr, *mem, *processor)] = (uint8_t)val;
+            (*mem)[getAddr(instr, *mem, *processor)] = result;
             break;
         // ---------- NOP ----------
         case 0xEA:  // Implied
@@ -1496,7 +1390,7 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
             val = processor->A - getVal(instr, *mem, *processor) - (1 - getFlag('C', processor));
 
             // Wrap val to 8 bits
-            uint8_t result = val & 0xFF;
+            result = val & 0xFF;
 
             // Set the "Carry" flag
             if (val >= 0) {
@@ -1506,7 +1400,7 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
             }
 
             // Set the "Overflow" flag
-            uint8_t operand = getVal(instr, *mem, *processor);
+            operand = getVal(instr, *mem, *processor);
             if (((processor->A ^ result) & 0x80) && ((processor->A ^ operand) & 0x80)) {
                 setFlag('V', 1, processor);
             } else {
@@ -1517,7 +1411,7 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
             setFlag('Z', result == 0, processor);
 
             // Set the "Negative" flag
-            setFlag('N', result & 0x80, processor);
+            setFlag('N', (result & 0x80) >> 7, processor);
 
             processor->A = result;
             break;
