@@ -814,6 +814,9 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
 
             processor->A <<= 1;
 
+            // Set the "Zero" flag
+            setFlag('Z', processor->A == 0, processor);
+
             // Set the "Negative" flag
             setFlag('N', (processor->A & 0x80) >> 7, processor);
 
@@ -824,13 +827,16 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
         case 0x1E:  // Absolute X
             val = getVal(instr, *mem, *processor);
 
-            // Wrap val to 8 bits
-            result = val & 0xFF;
-
             // Set the "Carry" flag
             setFlag('C', (val & 0x80) >> 7, processor);
 
             val <<= 1;
+
+            // Wrap val to 8 bits
+            result = val & 0xFF;
+
+            // Set the "Zero" flag
+            setFlag('Z', result == 0, processor);
 
             // Set the "Negative" flag
             setFlag('N', (result & 0x80) >> 7, processor);
