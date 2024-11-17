@@ -13,7 +13,7 @@
 Processor processor;
 uint8_t* memory;
 
-void init_adc_test() {
+void init_and_test() {
     // Set registers to default values
     processor.PC = 0x0600;
     processor.S = 0xFF;
@@ -26,14 +26,15 @@ void init_adc_test() {
     memory = calloc(MEMORY_SPACE, sizeof(uint8_t));
 }
 
-void clean_adc_test() {
+void clean_and_test() {
     free(memory);
 }
 
 // ---------- Tests ----------
 
-void test_instr_adc_imm() {
-    memory[0x0600] = 0x69;
+void test_instr_and_imm() {
+    processor.A = 0xFF;
+    memory[0x0600] = 0x29;
     memory[0x0601] = 0x42;
 
     Instruction instr = parseInstruction(memory, 0x0600);
@@ -43,9 +44,10 @@ void test_instr_adc_imm() {
     CU_ASSERT_EQUAL(processor.P, 0x30);
 }
 
-void test_instr_adc_zp() {
+void test_instr_and_zp() {
+    processor.A = 0xFF;
     memory[0x0010] = 0x42;
-    memory[0x0600] = 0x65;
+    memory[0x0600] = 0x25;
     memory[0x0601] = 0x10;
 
     Instruction instr = parseInstruction(memory, 0x0600);
@@ -55,10 +57,11 @@ void test_instr_adc_zp() {
     CU_ASSERT_EQUAL(processor.P, 0x30);
 }
 
-void test_instr_adc_zpx() {
+void test_instr_and_zpx() {
+    processor.A = 0xFF;
     processor.X = 0x05;
     memory[0x0015] = 0x42;
-    memory[0x0600] = 0x75;
+    memory[0x0600] = 0x35;
     memory[0x0601] = 0x10;
 
     Instruction instr = parseInstruction(memory, 0x0600);
@@ -67,9 +70,11 @@ void test_instr_adc_zpx() {
     CU_ASSERT_EQUAL(processor.A, 0x42);
     CU_ASSERT_EQUAL(processor.P, 0x30);
 }
-void test_instr_adc_abs() {
+
+void test_instr_and_abs() {
+    processor.A = 0xFF;
     memory[0x1020] = 0x42;
-    memory[0x0600] = 0x6D;
+    memory[0x0600] = 0x2D;
     memory[0x0601] = 0x20;
     memory[0x0602] = 0x10;
 
@@ -80,10 +85,11 @@ void test_instr_adc_abs() {
     CU_ASSERT_EQUAL(processor.P, 0x30);
 }
 
-void test_instr_adc_absx() {
+void test_instr_and_absx() {
+    processor.A = 0xFF;
     processor.X = 0x05;
     memory[0x1025] = 0x42;
-    memory[0x0600] = 0x7D;
+    memory[0x0600] = 0x3D;
     memory[0x0601] = 0x20;
     memory[0x0602] = 0x10;
 
@@ -94,10 +100,11 @@ void test_instr_adc_absx() {
     CU_ASSERT_EQUAL(processor.P, 0x30);
 }
 
-void test_instr_adc_absy() {
+void test_instr_and_absy() {
+    processor.A = 0xFF;
     processor.Y = 0x05;
     memory[0x1025] = 0x42;
-    memory[0x0600] = 0x79;
+    memory[0x0600] = 0x39;
     memory[0x0601] = 0x20;
     memory[0x0602] = 0x10;
 
@@ -108,12 +115,13 @@ void test_instr_adc_absy() {
     CU_ASSERT_EQUAL(processor.P, 0x30);
 }
 
-void test_instr_adc_indx() {
+void test_instr_and_indx() {
+    processor.A = 0xFF;
     processor.X = 0x05;
     memory[0x0025] = 0x25;
     memory[0x0026] = 0x10;
     memory[0x1025] = 0x42;
-    memory[0x0600] = 0x61;
+    memory[0x0600] = 0x21;
     memory[0x0601] = 0x20;
 
     Instruction instr = parseInstruction(memory, 0x0600);
@@ -123,12 +131,13 @@ void test_instr_adc_indx() {
     CU_ASSERT_EQUAL(processor.P, 0x30);
 }
 
-void test_instr_adc_indy() {
+void test_instr_and_indy() {
+    processor.A = 0xFF;
     processor.Y = 0x05;
     memory[0x0020] = 0x20;
     memory[0x0021] = 0x10;
     memory[0x1025] = 0x42;
-    memory[0x0600] = 0x71;
+    memory[0x0600] = 0x31;
     memory[0x0601] = 0x20;
 
     Instruction instr = parseInstruction(memory, 0x0600);
@@ -138,24 +147,10 @@ void test_instr_adc_indy() {
     CU_ASSERT_EQUAL(processor.P, 0x30);
 }
 
-void test_instr_adc_carry() {
-    memory[0x0600] = 0x69;
+void test_instr_and_zero() {
+    processor.A = 0x00;
+    memory[0x0600] = 0x29;
     memory[0x0601] = 0xFF;
-    memory[0x0602] = 0x69;
-    memory[0x0603] = 0x02;
-
-    Instruction instr = parseInstruction(memory, 0x0600);
-    executeInstruction(instr, &memory, &processor);
-    instr = parseInstruction(memory, 0x0602);
-    executeInstruction(instr, &memory, &processor);
-
-    CU_ASSERT_EQUAL(processor.A, 0x01);
-    CU_ASSERT_EQUAL(processor.P, 0x31);
-}
-
-void test_instr_adc_zero() {
-    memory[0x0600] = 0x69;
-    memory[0x0601] = 0x00;
 
     Instruction instr = parseInstruction(memory, 0x0600);
     executeInstruction(instr, &memory, &processor);
@@ -164,20 +159,9 @@ void test_instr_adc_zero() {
     CU_ASSERT_EQUAL(processor.P, 0x32);
 }
 
-void test_instr_adc_overflow() {
-    memory[0x0600] = 0x69;
-    memory[0x0601] = 0x50;
-
-    Instruction instr = parseInstruction(memory, 0x0600);
-    executeInstruction(instr, &memory, &processor);
-    executeInstruction(instr, &memory, &processor);
-
-    CU_ASSERT_EQUAL(processor.A, 0xA0);
-    CU_ASSERT_EQUAL(processor.P, 0xF0);
-}
-
-void test_instr_adc_neg() {
-    memory[0x0600] = 0x69;
+void test_instr_and_neg() {
+    processor.A = 0xFF;
+    memory[0x0600] = 0x29;
     memory[0x0601] = 0x80;
 
     Instruction instr = parseInstruction(memory, 0x0600);
@@ -189,70 +173,61 @@ void test_instr_adc_neg() {
 
 // ---------- Run Tests ----------
 
-CU_pSuite add_adc_suite_to_registry() {
-    CU_pSuite suite = CU_add_suite_with_setup_and_teardown("executeInstruction ADC Tests", NULL,
-                                                           NULL, init_adc_test, clean_adc_test);
+CU_pSuite add_and_suite_to_registry() {
+    CU_pSuite suite = CU_add_suite_with_setup_and_teardown("executeInstruction AND Tests", NULL,
+                                                           NULL, init_and_test, clean_and_test);
+
     if (suite == NULL) {
         CU_cleanup_registry();
         return NULL;
     }
 
-    if (CU_add_test(suite, "ADC Immediate", test_instr_adc_imm) == NULL) {
+    if (CU_add_test(suite, "AND Immediate", test_instr_and_imm) == NULL) {
         CU_cleanup_registry();
         return NULL;
     }
 
-    if (CU_add_test(suite, "ADC Zero Page", test_instr_adc_zp) == NULL) {
+    if (CU_add_test(suite, "AND Zero Page", test_instr_and_zp) == NULL) {
         CU_cleanup_registry();
         return NULL;
     }
 
-    if (CU_add_test(suite, "ADC Zero Page,X", test_instr_adc_zpx) == NULL) {
+    if (CU_add_test(suite, "AND Zero Page,X", test_instr_and_zpx) == NULL) {
         CU_cleanup_registry();
         return NULL;
     }
 
-    if (CU_add_test(suite, "ADC Absolute", test_instr_adc_abs) == NULL) {
+    if (CU_add_test(suite, "AND Absolute", test_instr_and_abs) == NULL) {
         CU_cleanup_registry();
         return NULL;
     }
 
-    if (CU_add_test(suite, "ADC Absolute,X", test_instr_adc_absx) == NULL) {
+    if (CU_add_test(suite, "AND Absolute,X", test_instr_and_absx) == NULL) {
         CU_cleanup_registry();
         return NULL;
     }
 
-    if (CU_add_test(suite, "ADC Absolute,Y", test_instr_adc_absy) == NULL) {
+    if (CU_add_test(suite, "AND Absolute,Y", test_instr_and_absy) == NULL) {
         CU_cleanup_registry();
         return NULL;
     }
 
-    if (CU_add_test(suite, "ADC (Indirect,X)", test_instr_adc_indx) == NULL) {
+    if (CU_add_test(suite, "AND (Indirect,X)", test_instr_and_indx) == NULL) {
         CU_cleanup_registry();
         return NULL;
     }
 
-    if (CU_add_test(suite, "ADC (Indirect),Y", test_instr_adc_indy) == NULL) {
+    if (CU_add_test(suite, "AND (Indirect),Y", test_instr_and_indy) == NULL) {
         CU_cleanup_registry();
         return NULL;
     }
 
-    if (CU_add_test(suite, "ADC Carry", test_instr_adc_carry) == NULL) {
+    if (CU_add_test(suite, "AND Zero", test_instr_and_zero) == NULL) {
         CU_cleanup_registry();
         return NULL;
     }
 
-    if (CU_add_test(suite, "ADC Zero", test_instr_adc_zero) == NULL) {
-        CU_cleanup_registry();
-        return NULL;
-    }
-
-    if (CU_add_test(suite, "ADC Overflow", test_instr_adc_overflow) == NULL) {
-        CU_cleanup_registry();
-        return NULL;
-    }
-
-    if (CU_add_test(suite, "ADC Negative", test_instr_adc_neg) == NULL) {
+    if (CU_add_test(suite, "AND Negative", test_instr_and_neg) == NULL) {
         CU_cleanup_registry();
         return NULL;
     }
