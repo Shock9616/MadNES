@@ -16,11 +16,10 @@ them in:
 
 - [x] Create a disassembler for 6502 assembly
 - [x] Create C implementations for all 56 instructions to emulate a normal 6502
-      program (i.e. no graphics/sound/etc. just a normal CLI application)
+      program (i.e. no graphics/sound/etc.)
 - [ ] Write unit tests for all the instructions (probably should've done that
-      while implementing them lol)
-- [ ] Implement a parser for the iNES ROM format (Probably at/around the same
-      time as the next step)
+      while implementing them :sweat_smile:)
+- [ ] Implement a parser for the iNES ROM format
 - [ ] Begin researching NES graphics and maybe try to get some simple homebrew
       applications running
 - [ ] Same thing for audio
@@ -82,5 +81,26 @@ LDA  $0405
 LDA  $0607,X
 LDA  $0809,Y
 LDA  ($0a,X)
-LDA  ($0b,Y)
+LDA  ($0b),Y
 ```
+
+Similarly, you can run any of the test input files like this:
+
+```
+./build/bin/nes -r ./input/snake.input
+```
+
+and you'll get and output like this:
+
+```
+-------- Debug Output --------
+     A=$1f  X=$ff  Y=$00
+      SP=$fb  PC=$0735
+          NV-BDIZC
+          00110011
+------------------------------
+```
+
+This output shows the contents of the A, X, and Y registers, the Stack Pointer
+(SP), the Program Counter (PC), and the processor status flags, allowing you to
+verify that the program at least did _something_.
