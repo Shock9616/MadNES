@@ -14,7 +14,7 @@ typedef struct {
     uint8_t A;    // Accumulator
     uint8_t X;    // Index register X
     uint8_t Y;    // Index register Y
-    bool halted;  // Whether the processor is halted (like when BRK is called)
+    bool halted;  // Only used for debugging purposes
 } Processor;
 
 // All possible addressing modes in 6502 assembly

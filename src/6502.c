@@ -897,7 +897,7 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
         case 0x00:  // Implied
             // Push the program counter onto the stack
             stackPush((processor->PC >> 8) & 0xFF, mem, processor);
-            stackPush(processor->PC & 0xFF, mem, processor);
+            stackPush((processor->PC + 2) & 0xFF, mem, processor);
 
             // Set the "Break" flag and push the processor status onto the stack
             setFlag('B', 1, processor);
@@ -907,9 +907,8 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
             irq_vector = (*mem)[0xFFFE] | ((*mem)[0xFFFF] << 8);
             if (irq_vector == 0x0000) {
                 processor->halted = true;
-            } else {
-                processor->PC = irq_vector;
             }
+            processor->PC = irq_vector;
             break;
         // ---------- BVC ----------
         case 0x50:  // Relative
