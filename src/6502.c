@@ -1665,7 +1665,7 @@ uint16_t getAddr(Instruction instr, uint8_t* mem, Processor processor) {
             addr = instr.zpy.addr + processor.Y;
             break;
         case REL:
-            addr = (int8_t)instr.rel.offset + processor.PC;
+            addr = instr.rel.offset + processor.PC;
             break;
         case ABS:
             addr = instr.abs.addr;
