@@ -868,7 +868,11 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
 
             // Set the "Zero" flag
             setFlag('Z', val == 0, processor);
+
+            // Set the "Overflow" flag
             setFlag('V', (val >> 6) & 1, processor);
+
+            // Set the "Negative" flag
             setFlag('N', (val >> 7) & 1, processor);
             break;
         // ---------- BMI ----------
