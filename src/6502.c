@@ -972,11 +972,7 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
             result = val & 0xFF;
 
             // Set the "Carry" flag
-            if (val >= 0) {
-                setFlag('C', 1, processor);
-            } else {
-                setFlag('C', 0, processor);
-            }
+            setFlag('C', val >= 0, processor);
 
             // Set the "Zero" flag
             setFlag('Z', result == 0, processor);
@@ -995,11 +991,7 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
             result = val & 0xFF;
 
             // Set the "Carry" flag
-            if (val >= 0) {
-                setFlag('C', 1, processor);
-            } else {
-                setFlag('C', 0, processor);
-            }
+            setFlag('C', val >= 0, processor);
 
             // Set the "Zero" flag
             setFlag('Z', result == 0, processor);
