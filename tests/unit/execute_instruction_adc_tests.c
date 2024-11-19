@@ -36,8 +36,9 @@ void test_instr_adc_imm() {
     memory[0x0600] = 0x69;
     memory[0x0601] = 0x42;
 
-    Instruction instr = parseInstruction(memory, 0x0600);
+    Instruction instr = parseInstruction(memory, processor.PC);
     executeInstruction(instr, &memory, &processor);
+    processor.PC += instr.length;
 
     CU_ASSERT_EQUAL(processor.A, 0x42);
     CU_ASSERT_EQUAL(processor.P, 0x30);
@@ -48,8 +49,9 @@ void test_instr_adc_zp() {
     memory[0x0600] = 0x65;
     memory[0x0601] = 0x10;
 
-    Instruction instr = parseInstruction(memory, 0x0600);
+    Instruction instr = parseInstruction(memory, processor.PC);
     executeInstruction(instr, &memory, &processor);
+    processor.PC += instr.length;
 
     CU_ASSERT_EQUAL(processor.A, 0x42);
     CU_ASSERT_EQUAL(processor.P, 0x30);
@@ -61,8 +63,9 @@ void test_instr_adc_zpx() {
     memory[0x0600] = 0x75;
     memory[0x0601] = 0x10;
 
-    Instruction instr = parseInstruction(memory, 0x0600);
+    Instruction instr = parseInstruction(memory, processor.PC);
     executeInstruction(instr, &memory, &processor);
+    processor.PC += instr.length;
 
     CU_ASSERT_EQUAL(processor.A, 0x42);
     CU_ASSERT_EQUAL(processor.P, 0x30);
@@ -73,8 +76,9 @@ void test_instr_adc_abs() {
     memory[0x0601] = 0x20;
     memory[0x0602] = 0x10;
 
-    Instruction instr = parseInstruction(memory, 0x0600);
+    Instruction instr = parseInstruction(memory, processor.PC);
     executeInstruction(instr, &memory, &processor);
+    processor.PC += instr.length;
 
     CU_ASSERT_EQUAL(processor.A, 0x42);
     CU_ASSERT_EQUAL(processor.P, 0x30);
@@ -87,8 +91,9 @@ void test_instr_adc_absx() {
     memory[0x0601] = 0x20;
     memory[0x0602] = 0x10;
 
-    Instruction instr = parseInstruction(memory, 0x0600);
+    Instruction instr = parseInstruction(memory, processor.PC);
     executeInstruction(instr, &memory, &processor);
+    processor.PC += instr.length;
 
     CU_ASSERT_EQUAL(processor.A, 0x42);
     CU_ASSERT_EQUAL(processor.P, 0x30);
@@ -101,8 +106,9 @@ void test_instr_adc_absy() {
     memory[0x0601] = 0x20;
     memory[0x0602] = 0x10;
 
-    Instruction instr = parseInstruction(memory, 0x0600);
+    Instruction instr = parseInstruction(memory, processor.PC);
     executeInstruction(instr, &memory, &processor);
+    processor.PC += instr.length;
 
     CU_ASSERT_EQUAL(processor.A, 0x42);
     CU_ASSERT_EQUAL(processor.P, 0x30);
@@ -116,8 +122,9 @@ void test_instr_adc_indx() {
     memory[0x0600] = 0x61;
     memory[0x0601] = 0x20;
 
-    Instruction instr = parseInstruction(memory, 0x0600);
+    Instruction instr = parseInstruction(memory, processor.PC);
     executeInstruction(instr, &memory, &processor);
+    processor.PC += instr.length;
 
     CU_ASSERT_EQUAL(processor.A, 0x42);
     CU_ASSERT_EQUAL(processor.P, 0x30);
@@ -131,8 +138,9 @@ void test_instr_adc_indy() {
     memory[0x0600] = 0x71;
     memory[0x0601] = 0x20;
 
-    Instruction instr = parseInstruction(memory, 0x0600);
+    Instruction instr = parseInstruction(memory, processor.PC);
     executeInstruction(instr, &memory, &processor);
+    processor.PC += instr.length;
 
     CU_ASSERT_EQUAL(processor.A, 0x42);
     CU_ASSERT_EQUAL(processor.P, 0x30);
@@ -144,10 +152,12 @@ void test_instr_adc_carry() {
     memory[0x0602] = 0x69;
     memory[0x0603] = 0x02;
 
-    Instruction instr = parseInstruction(memory, 0x0600);
+    Instruction instr = parseInstruction(memory, processor.PC);
     executeInstruction(instr, &memory, &processor);
-    instr = parseInstruction(memory, 0x0602);
+    processor.PC += instr.length;
+    instr = parseInstruction(memory, processor.PC);
     executeInstruction(instr, &memory, &processor);
+    processor.PC += instr.length;
 
     CU_ASSERT_EQUAL(processor.A, 0x01);
     CU_ASSERT_EQUAL(processor.P, 0x31);
@@ -157,8 +167,9 @@ void test_instr_adc_zero() {
     memory[0x0600] = 0x69;
     memory[0x0601] = 0x00;
 
-    Instruction instr = parseInstruction(memory, 0x0600);
+    Instruction instr = parseInstruction(memory, processor.PC);
     executeInstruction(instr, &memory, &processor);
+    processor.PC += instr.length;
 
     CU_ASSERT_EQUAL(processor.A, 0x00);
     CU_ASSERT_EQUAL(processor.P, 0x32);
@@ -168,9 +179,11 @@ void test_instr_adc_overflow() {
     memory[0x0600] = 0x69;
     memory[0x0601] = 0x50;
 
-    Instruction instr = parseInstruction(memory, 0x0600);
+    Instruction instr = parseInstruction(memory, processor.PC);
     executeInstruction(instr, &memory, &processor);
+    processor.PC += instr.length;
     executeInstruction(instr, &memory, &processor);
+    processor.PC += instr.length;
 
     CU_ASSERT_EQUAL(processor.A, 0xA0);
     CU_ASSERT_EQUAL(processor.P, 0xF0);
@@ -180,8 +193,9 @@ void test_instr_adc_neg() {
     memory[0x0600] = 0x69;
     memory[0x0601] = 0x80;
 
-    Instruction instr = parseInstruction(memory, 0x0600);
+    Instruction instr = parseInstruction(memory, processor.PC);
     executeInstruction(instr, &memory, &processor);
+    processor.PC += instr.length;
 
     CU_ASSERT_EQUAL(processor.A, 0x80);
     CU_ASSERT_EQUAL(processor.P, 0xB0);

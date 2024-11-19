@@ -39,6 +39,7 @@ void test_instr_bcc_clear() {
 
     Instruction instr = parseInstruction(memory, 0x0600);
     executeInstruction(instr, &memory, &processor);
+    processor.PC += instr.length;
 
     CU_ASSERT_EQUAL(processor.PC, 0x0600 + 0x42);
     CU_ASSERT_EQUAL(processor.P, 0x30);
@@ -51,8 +52,9 @@ void test_instr_bcc_set() {
 
     Instruction instr = parseInstruction(memory, 0x0600);
     executeInstruction(instr, &memory, &processor);
+    processor.PC += instr.length;
 
-    CU_ASSERT_EQUAL(processor.PC, 0x0600);
+    CU_ASSERT_EQUAL(processor.PC, 0x0602);
     CU_ASSERT_EQUAL(processor.P, 0x31);
 }
 
@@ -63,8 +65,9 @@ void test_instr_bcs_clear() {
 
     Instruction instr = parseInstruction(memory, 0x0600);
     executeInstruction(instr, &memory, &processor);
+    processor.PC += instr.length;
 
-    CU_ASSERT_EQUAL(processor.PC, 0x0600);
+    CU_ASSERT_EQUAL(processor.PC, 0x0602);
     CU_ASSERT_EQUAL(processor.P, 0x30);
 }
 
@@ -75,6 +78,7 @@ void test_instr_bcs_set() {
 
     Instruction instr = parseInstruction(memory, 0x0600);
     executeInstruction(instr, &memory, &processor);
+    processor.PC += instr.length;
 
     CU_ASSERT_EQUAL(processor.PC, 0x0600 + 0x42);
     CU_ASSERT_EQUAL(processor.P, 0x31);
@@ -87,6 +91,7 @@ void test_instr_beq_eq() {
 
     Instruction instr = parseInstruction(memory, 0x0600);
     executeInstruction(instr, &memory, &processor);
+    processor.PC += instr.length;
 
     CU_ASSERT_EQUAL(processor.PC, 0x0600 + 0x42);
     CU_ASSERT_EQUAL(processor.P, 0x32);
@@ -99,8 +104,9 @@ void test_instr_beq_neq() {
 
     Instruction instr = parseInstruction(memory, 0x0600);
     executeInstruction(instr, &memory, &processor);
+    processor.PC += instr.length;
 
-    CU_ASSERT_EQUAL(processor.PC, 0x0600);
+    CU_ASSERT_EQUAL(processor.PC, 0x0602);
     CU_ASSERT_EQUAL(processor.P, 0x30);
 }
 
@@ -111,6 +117,7 @@ void test_instr_bmi_neg() {
 
     Instruction instr = parseInstruction(memory, 0x0600);
     executeInstruction(instr, &memory, &processor);
+    processor.PC += instr.length;
 
     CU_ASSERT_EQUAL(processor.PC, 0x0600 + 0x42);
     CU_ASSERT_EQUAL(processor.P, 0xB0);
@@ -123,8 +130,9 @@ void test_instr_bmi_pos() {
 
     Instruction instr = parseInstruction(memory, 0x0600);
     executeInstruction(instr, &memory, &processor);
+    processor.PC += instr.length;
 
-    CU_ASSERT_EQUAL(processor.PC, 0x0600);
+    CU_ASSERT_EQUAL(processor.PC, 0x0602);
     CU_ASSERT_EQUAL(processor.P, 0x30);
 }
 
@@ -135,8 +143,9 @@ void test_instr_bne_eq() {
 
     Instruction instr = parseInstruction(memory, 0x0600);
     executeInstruction(instr, &memory, &processor);
+    processor.PC += instr.length;
 
-    CU_ASSERT_EQUAL(processor.PC, 0x0600);
+    CU_ASSERT_EQUAL(processor.PC, 0x0602);
     CU_ASSERT_EQUAL(processor.P, 0x32);
 }
 
@@ -147,6 +156,7 @@ void test_instr_bne_neq() {
 
     Instruction instr = parseInstruction(memory, 0x0600);
     executeInstruction(instr, &memory, &processor);
+    processor.PC += instr.length;
 
     CU_ASSERT_EQUAL(processor.PC, 0x0600 + 0x42);
     CU_ASSERT_EQUAL(processor.P, 0x30);
@@ -159,6 +169,7 @@ void test_instr_bpl_pos() {
 
     Instruction instr = parseInstruction(memory, 0x0600);
     executeInstruction(instr, &memory, &processor);
+    processor.PC += instr.length;
 
     CU_ASSERT_EQUAL(processor.PC, 0x0600 + 0x42);
     CU_ASSERT_EQUAL(processor.P, 0x30);
@@ -171,8 +182,9 @@ void test_instr_bpl_neg() {
 
     Instruction instr = parseInstruction(memory, 0x0600);
     executeInstruction(instr, &memory, &processor);
+    processor.PC += instr.length;
 
-    CU_ASSERT_EQUAL(processor.PC, 0x0600);
+    CU_ASSERT_EQUAL(processor.PC, 0x0602);
     CU_ASSERT_EQUAL(processor.P, 0xB0);
 }
 
@@ -183,6 +195,7 @@ void test_instr_bvc_vclr() {
 
     Instruction instr = parseInstruction(memory, 0x0600);
     executeInstruction(instr, &memory, &processor);
+    processor.PC += instr.length;
 
     CU_ASSERT_EQUAL(processor.PC, 0x0600 + 0x42);
     CU_ASSERT_EQUAL(processor.P, 0x30);
@@ -195,8 +208,9 @@ void test_instr_bvc_vset() {
 
     Instruction instr = parseInstruction(memory, 0x0600);
     executeInstruction(instr, &memory, &processor);
+    processor.PC += instr.length;
 
-    CU_ASSERT_EQUAL(processor.PC, 0x0600);
+    CU_ASSERT_EQUAL(processor.PC, 0x0602);
     CU_ASSERT_EQUAL(processor.P, 0x70);
 }
 
@@ -207,8 +221,9 @@ void test_instr_bvs_vclr() {
 
     Instruction instr = parseInstruction(memory, 0x0600);
     executeInstruction(instr, &memory, &processor);
+    processor.PC += instr.length;
 
-    CU_ASSERT_EQUAL(processor.PC, 0x0600);
+    CU_ASSERT_EQUAL(processor.PC, 0x0602);
     CU_ASSERT_EQUAL(processor.P, 0x30);
 }
 
@@ -219,6 +234,7 @@ void test_instr_bvs_vset() {
 
     Instruction instr = parseInstruction(memory, 0x0600);
     executeInstruction(instr, &memory, &processor);
+    processor.PC += instr.length;
 
     CU_ASSERT_EQUAL(processor.PC, 0x0600 + 0x42);
     CU_ASSERT_EQUAL(processor.P, 0x70);

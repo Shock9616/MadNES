@@ -36,8 +36,9 @@ void test_instr_clc_set() {
     processor.P = 0x31;
     memory[0x0600] = 0x18;
 
-    Instruction instr = parseInstruction(memory, 0x0600);
+    Instruction instr = parseInstruction(memory, processor.PC);
     executeInstruction(instr, &memory, &processor);
+    processor.PC += instr.length;
 
     CU_ASSERT_EQUAL(processor.P, 0x30);
 }
@@ -46,8 +47,9 @@ void test_instr_clc_clear() {
     processor.P = 0x30;
     memory[0x0600] = 0x18;
 
-    Instruction instr = parseInstruction(memory, 0x0600);
+    Instruction instr = parseInstruction(memory, processor.PC);
     executeInstruction(instr, &memory, &processor);
+    processor.PC += instr.length;
 
     CU_ASSERT_EQUAL(processor.P, 0x30);
 }
@@ -56,8 +58,9 @@ void test_instr_cld_set() {
     processor.P = 0x38;
     memory[0x0600] = 0xD8;
 
-    Instruction instr = parseInstruction(memory, 0x0600);
+    Instruction instr = parseInstruction(memory, processor.PC);
     executeInstruction(instr, &memory, &processor);
+    processor.PC += instr.length;
 
     CU_ASSERT_EQUAL(processor.P, 0x30);
 }
@@ -66,8 +69,9 @@ void test_instr_cld_clear() {
     processor.P = 0x30;
     memory[0x0600] = 0xD8;
 
-    Instruction instr = parseInstruction(memory, 0x0600);
+    Instruction instr = parseInstruction(memory, processor.PC);
     executeInstruction(instr, &memory, &processor);
+    processor.PC += instr.length;
 
     CU_ASSERT_EQUAL(processor.P, 0x30);
 }
@@ -76,8 +80,9 @@ void test_instr_cli_set() {
     processor.P = 0x34;
     memory[0x0600] = 0x58;
 
-    Instruction instr = parseInstruction(memory, 0x0600);
+    Instruction instr = parseInstruction(memory, processor.PC);
     executeInstruction(instr, &memory, &processor);
+    processor.PC += instr.length;
 
     CU_ASSERT_EQUAL(processor.P, 0x30);
 }
@@ -86,8 +91,9 @@ void test_instr_cli_clear() {
     processor.P = 0x30;
     memory[0x0600] = 0x58;
 
-    Instruction instr = parseInstruction(memory, 0x0600);
+    Instruction instr = parseInstruction(memory, processor.PC);
     executeInstruction(instr, &memory, &processor);
+    processor.PC += instr.length;
 
     CU_ASSERT_EQUAL(processor.P, 0x30);
 }
@@ -96,8 +102,9 @@ void test_instr_clv_set() {
     processor.P = 0x70;
     memory[0x0600] = 0xB8;
 
-    Instruction instr = parseInstruction(memory, 0x0600);
+    Instruction instr = parseInstruction(memory, processor.PC);
     executeInstruction(instr, &memory, &processor);
+    processor.PC += instr.length;
 
     CU_ASSERT_EQUAL(processor.P, 0x30);
 }
@@ -106,8 +113,9 @@ void test_instr_clv_clear() {
     processor.P = 0x30;
     memory[0x0600] = 0xB8;
 
-    Instruction instr = parseInstruction(memory, 0x0600);
+    Instruction instr = parseInstruction(memory, processor.PC);
     executeInstruction(instr, &memory, &processor);
+    processor.PC += instr.length;
 
     CU_ASSERT_EQUAL(processor.P, 0x30);
 }
@@ -116,8 +124,9 @@ void test_instr_sec_set() {
     processor.P = 0x31;
     memory[0x0600] = 0x38;
 
-    Instruction instr = parseInstruction(memory, 0x0600);
+    Instruction instr = parseInstruction(memory, processor.PC);
     executeInstruction(instr, &memory, &processor);
+    processor.PC += instr.length;
 
     CU_ASSERT_EQUAL(processor.P, 0x31);
 }
@@ -126,8 +135,9 @@ void test_instr_sec_clear() {
     processor.P = 0x30;
     memory[0x0600] = 0x38;
 
-    Instruction instr = parseInstruction(memory, 0x0600);
+    Instruction instr = parseInstruction(memory, processor.PC);
     executeInstruction(instr, &memory, &processor);
+    processor.PC += instr.length;
 
     CU_ASSERT_EQUAL(processor.P, 0x31);
 }
@@ -136,8 +146,9 @@ void test_instr_sed_set() {
     processor.P = 0x38;
     memory[0x0600] = 0xF8;
 
-    Instruction instr = parseInstruction(memory, 0x0600);
+    Instruction instr = parseInstruction(memory, processor.PC);
     executeInstruction(instr, &memory, &processor);
+    processor.PC += instr.length;
 
     CU_ASSERT_EQUAL(processor.P, 0x38);
 }
@@ -146,8 +157,9 @@ void test_instr_sed_clear() {
     processor.P = 0x30;
     memory[0x0600] = 0xF8;
 
-    Instruction instr = parseInstruction(memory, 0x0600);
+    Instruction instr = parseInstruction(memory, processor.PC);
     executeInstruction(instr, &memory, &processor);
+    processor.PC += instr.length;
 
     CU_ASSERT_EQUAL(processor.P, 0x38);
 }
@@ -156,8 +168,9 @@ void test_instr_sei_set() {
     processor.P = 0x34;
     memory[0x0600] = 0x78;
 
-    Instruction instr = parseInstruction(memory, 0x0600);
+    Instruction instr = parseInstruction(memory, processor.PC);
     executeInstruction(instr, &memory, &processor);
+    processor.PC += instr.length;
 
     CU_ASSERT_EQUAL(processor.P, 0x34);
 }
@@ -166,8 +179,9 @@ void test_instr_sei_clear() {
     processor.P = 0x30;
     memory[0x0600] = 0x78;
 
-    Instruction instr = parseInstruction(memory, 0x0600);
+    Instruction instr = parseInstruction(memory, processor.PC);
     executeInstruction(instr, &memory, &processor);
+    processor.PC += instr.length;
 
     CU_ASSERT_EQUAL(processor.P, 0x34);
 }

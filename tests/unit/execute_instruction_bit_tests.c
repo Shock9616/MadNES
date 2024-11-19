@@ -38,8 +38,9 @@ void test_instr_bit_zp() {
     memory[0x0600] = 0x24;
     memory[0x0601] = 0x10;
 
-    Instruction instr = parseInstruction(memory, 0x0600);
+    Instruction instr = parseInstruction(memory, processor.PC);
     executeInstruction(instr, &memory, &processor);
+    processor.PC += instr.length;
 
     CU_ASSERT_EQUAL(processor.A, 0x22);
     CU_ASSERT_EQUAL(processor.P, 0x30);
@@ -52,8 +53,9 @@ void test_instr_bit_abs() {
     memory[0x0601] = 0x20;
     memory[0x0602] = 0x10;
 
-    Instruction instr = parseInstruction(memory, 0x0600);
+    Instruction instr = parseInstruction(memory, processor.PC);
     executeInstruction(instr, &memory, &processor);
+    processor.PC += instr.length;
 
     CU_ASSERT_EQUAL(processor.A, 0x22);
     CU_ASSERT_EQUAL(processor.P, 0x30);
@@ -65,8 +67,9 @@ void test_instr_bit_zero() {
     memory[0x0600] = 0x24;
     memory[0x0601] = 0x10;
 
-    Instruction instr = parseInstruction(memory, 0x0600);
+    Instruction instr = parseInstruction(memory, processor.PC);
     executeInstruction(instr, &memory, &processor);
+    processor.PC += instr.length;
 
     CU_ASSERT_EQUAL(processor.A, 0x42);
     CU_ASSERT_EQUAL(processor.P, 0x32);
@@ -78,8 +81,9 @@ void test_instr_bit_v() {
     memory[0x0600] = 0x24;
     memory[0x0601] = 0x10;
 
-    Instruction instr = parseInstruction(memory, 0x0600);
+    Instruction instr = parseInstruction(memory, processor.PC);
     executeInstruction(instr, &memory, &processor);
+    processor.PC += instr.length;
 
     CU_ASSERT_EQUAL(processor.A, 0x42);
     CU_ASSERT_EQUAL(processor.P, 0x70);
@@ -91,8 +95,9 @@ void test_instr_bit_neg() {
     memory[0x0600] = 0x24;
     memory[0x0601] = 0x10;
 
-    Instruction instr = parseInstruction(memory, 0x0600);
+    Instruction instr = parseInstruction(memory, processor.PC);
     executeInstruction(instr, &memory, &processor);
+    processor.PC += instr.length;
 
     CU_ASSERT_EQUAL(processor.A, 0x96);
     CU_ASSERT_EQUAL(processor.P, 0xB0);

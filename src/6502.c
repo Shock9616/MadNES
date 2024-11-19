@@ -846,19 +846,19 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
         // ---------- BCC ----------
         case 0x90:  // Relative
             if (getFlag('C', processor) == 0) {
-                processor->PC = getAddr(instr, *mem, *processor);
+                processor->PC = getAddr(instr, *mem, *processor) - instr.length;
             }
             break;
         // ---------- BCS ----------
         case 0xB0:  // Relative
             if (getFlag('C', processor) == 1) {
-                processor->PC = getAddr(instr, *mem, *processor);
+                processor->PC = getAddr(instr, *mem, *processor) - instr.length;
             }
             break;
         // ---------- BEQ ----------
         case 0xF0:  // Relative
             if (getFlag('Z', processor) == 1) {
-                processor->PC = getAddr(instr, *mem, *processor);
+                processor->PC = getAddr(instr, *mem, *processor) - instr.length;
             }
             break;
         // ---------- BIT ----------
@@ -878,19 +878,19 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
         // ---------- BMI ----------
         case 0x30:  // Relative
             if (getFlag('N', processor) == 1) {
-                processor->PC = getAddr(instr, *mem, *processor);
+                processor->PC = getAddr(instr, *mem, *processor) - instr.length;
             }
             break;
         // ---------- BNE ----------
         case 0xD0:
             if (getFlag('Z', processor) == 0) {
-                processor->PC = getAddr(instr, *mem, *processor);
+                processor->PC = getAddr(instr, *mem, *processor) - instr.length;
             }
             break;
         // ---------- BPL ----------
         case 0x10:
             if (getFlag('N', processor) == 0) {
-                processor->PC = getAddr(instr, *mem, *processor);
+                processor->PC = getAddr(instr, *mem, *processor) - instr.length;
             }
             break;
         // ---------- BRK ----------
@@ -908,18 +908,18 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
             if (irq_vector == 0x0000) {
                 processor->halted = true;
             }
-            processor->PC = irq_vector;
+            processor->PC = irq_vector - instr.length;
             break;
         // ---------- BVC ----------
         case 0x50:  // Relative
             if (getFlag('V', processor) == 0) {
-                processor->PC = getAddr(instr, *mem, *processor);
+                processor->PC = getAddr(instr, *mem, *processor) - instr.length;
             }
             break;
         // ---------- BVS ----------
         case 0x70:  // Relative
             if (getFlag('V', processor) == 1) {
-                processor->PC = getAddr(instr, *mem, *processor);
+                processor->PC = getAddr(instr, *mem, *processor) - instr.length;
             }
             break;
         // ---------- CLC ----------

@@ -38,8 +38,9 @@ void test_instr_brk() {
     memory[0xFFFE] = 0x20;
     memory[0xFFFF] = 0x10;
 
-    Instruction instr = parseInstruction(memory, 0x0600);
+    Instruction instr = parseInstruction(memory, processor.PC);
     executeInstruction(instr, &memory, &processor);
+    processor.PC += instr.length;
 
     CU_ASSERT_EQUAL(processor.P, 0x32);
     CU_ASSERT_EQUAL(processor.PC, 0x1020);
