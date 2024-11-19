@@ -1188,9 +1188,6 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
 
             // Set the "Zero" flag
             setFlag('Z', processor->A == 0, processor);
-
-            // Set the "Negative flag"
-            setFlag('N', (processor->A & 0x80) >> 7, processor);
             break;
         case 0x46:  // Zero Page
         case 0x56:  // Zero Page X
