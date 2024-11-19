@@ -8,6 +8,7 @@ extern CU_pSuite add_asl_suite_to_registry();
 extern CU_pSuite add_branch_suite_to_registry();
 extern CU_pSuite add_bit_suite_to_registry();
 extern CU_pSuite add_brk_suite_to_registry();
+extern CU_pSuite add_flagops_suite_to_registry();
 
 int main() {
     if (CU_initialize_registry() != CUE_SUCCESS) {
@@ -16,7 +17,8 @@ int main() {
 
     if (add_adc_suite_to_registry() == NULL || add_and_suite_to_registry() == NULL ||
         add_asl_suite_to_registry() == NULL || add_branch_suite_to_registry() == NULL ||
-        add_bit_suite_to_registry() == NULL || add_brk_suite_to_registry() == NULL) {
+        add_bit_suite_to_registry() == NULL || add_brk_suite_to_registry() == NULL ||
+        add_flagops_suite_to_registry() == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
     }
