@@ -13,7 +13,7 @@
 Processor processor;
 uint8_t* memory;
 
-void init_decxy_test() {
+void init_incxy_test() {
     // Set registers to default values
     processor.PC = 0x0600;
     processor.S = 0xFF;
@@ -26,15 +26,15 @@ void init_decxy_test() {
     memory = calloc(MEMORY_SPACE, sizeof(uint8_t));
 }
 
-void clean_decxy_test() {
+void clean_incxy_test() {
     free(memory);
 }
 
 // ---------- Tests ----------
 
-void test_instr_dec_zp() {
-    memory[0x0010] = 0x6A;
-    memory[0x0600] = 0xC6;
+void test_instr_inc_zp() {
+    memory[0x0010] = 0x68;
+    memory[0x0600] = 0xE6;
     memory[0x0601] = 0x10;
 
     Instruction instr = parseInstruction(memory, 0x0600);
@@ -44,10 +44,10 @@ void test_instr_dec_zp() {
     CU_ASSERT_EQUAL(memory[0x0010], 0x69);
 }
 
-void test_instr_dec_zpx() {
+void test_instr_inc_zpx() {
     processor.X = 0x05;
-    memory[0x0015] = 0x6A;
-    memory[0x0600] = 0xD6;
+    memory[0x0015] = 0x68;
+    memory[0x0600] = 0xF6;
     memory[0x0601] = 0x10;
 
     Instruction instr = parseInstruction(memory, 0x0600);
@@ -57,9 +57,9 @@ void test_instr_dec_zpx() {
     CU_ASSERT_EQUAL(memory[0x0015], 0x69);
 }
 
-void test_instr_dec_abs() {
-    memory[0x1020] = 0x6A;
-    memory[0x0600] = 0xCE;
+void test_instr_inc_abs() {
+    memory[0x1020] = 0x68;
+    memory[0x0600] = 0xEE;
     memory[0x0601] = 0x20;
     memory[0x0602] = 0x10;
 
@@ -70,10 +70,10 @@ void test_instr_dec_abs() {
     CU_ASSERT_EQUAL(memory[0x1020], 0x69);
 }
 
-void test_instr_dec_absx() {
+void test_instr_inc_absx() {
     processor.X = 0x05;
-    memory[0x1025] = 0x6A;
-    memory[0x0600] = 0xDE;
+    memory[0x1025] = 0x68;
+    memory[0x0600] = 0xFE;
     memory[0x0601] = 0x20;
     memory[0x0602] = 0x10;
 
@@ -84,9 +84,9 @@ void test_instr_dec_absx() {
     CU_ASSERT_EQUAL(memory[0x1025], 0x69);
 }
 
-void test_instr_dec_zero() {
-    memory[0x0010] = 0x01;
-    memory[0x0600] = 0xC6;
+void test_instr_inc_zero() {
+    memory[0x0010] = 0xFF;
+    memory[0x0600] = 0xE6;
     memory[0x0601] = 0x10;
 
     Instruction instr = parseInstruction(memory, 0x0600);
@@ -96,21 +96,21 @@ void test_instr_dec_zero() {
     CU_ASSERT_EQUAL(memory[0x0010], 0x00);
 }
 
-void test_instr_dec_neg() {
-    memory[0x0010] = 0x00;
-    memory[0x0600] = 0xC6;
+void test_instr_inc_neg() {
+    memory[0x0010] = 0x7F;
+    memory[0x0600] = 0xE6;
     memory[0x0601] = 0x10;
 
     Instruction instr = parseInstruction(memory, 0x0600);
     executeInstruction(instr, &memory, &processor);
 
     CU_ASSERT_EQUAL(processor.P, 0xB0);
-    CU_ASSERT_EQUAL(memory[0x0010], 0xFF);
+    CU_ASSERT_EQUAL(memory[0x0010], 0x80);
 }
 
-void test_instr_dex() {
-    processor.X = 0x6A;
-    memory[0x0600] = 0xCA;
+void test_instr_inx() {
+    processor.X = 0x68;
+    memory[0x0600] = 0xE8;
 
     Instruction instr = parseInstruction(memory, 0x0600);
     executeInstruction(instr, &memory, &processor);
@@ -119,9 +119,9 @@ void test_instr_dex() {
     CU_ASSERT_EQUAL(processor.P, 0x30);
 }
 
-void test_instr_dex_zero() {
-    processor.X = 0x01;
-    memory[0x0600] = 0xCA;
+void test_instr_inx_zero() {
+    processor.X = 0xFF;
+    memory[0x0600] = 0xE8;
 
     Instruction instr = parseInstruction(memory, 0x0600);
     executeInstruction(instr, &memory, &processor);
@@ -130,20 +130,19 @@ void test_instr_dex_zero() {
     CU_ASSERT_EQUAL(processor.P, 0x32);
 }
 
-void test_instr_dex_neg() {
-    processor.X = 0x00;
-    memory[0x0600] = 0xCA;
+void test_instr_inx_neg() {
+    processor.X = 0x7F;
+    memory[0x0600] = 0xE8;
 
     Instruction instr = parseInstruction(memory, 0x0600);
     executeInstruction(instr, &memory, &processor);
 
-    CU_ASSERT_EQUAL(processor.X, 0xFF);
+    CU_ASSERT_EQUAL(processor.X, 0x80);
     CU_ASSERT_EQUAL(processor.P, 0xB0);
 }
-
-void test_instr_dey() {
-    processor.Y = 0x6A;
-    memory[0x0600] = 0x88;
+void test_instr_iny() {
+    processor.Y = 0x68;
+    memory[0x0600] = 0xC8;
 
     Instruction instr = parseInstruction(memory, 0x0600);
     executeInstruction(instr, &memory, &processor);
@@ -152,9 +151,9 @@ void test_instr_dey() {
     CU_ASSERT_EQUAL(processor.P, 0x30);
 }
 
-void test_instr_dey_zero() {
-    processor.Y = 0x01;
-    memory[0x0600] = 0x88;
+void test_instr_iny_zero() {
+    processor.Y = 0xFF;
+    memory[0x0600] = 0xC8;
 
     Instruction instr = parseInstruction(memory, 0x0600);
     executeInstruction(instr, &memory, &processor);
@@ -163,84 +162,84 @@ void test_instr_dey_zero() {
     CU_ASSERT_EQUAL(processor.P, 0x32);
 }
 
-void test_instr_dey_neg() {
-    processor.X = 0x00;
-    memory[0x0600] = 0x88;
+void test_instr_iny_neg() {
+    processor.Y = 0x7F;
+    memory[0x0600] = 0xC8;
 
     Instruction instr = parseInstruction(memory, 0x0600);
     executeInstruction(instr, &memory, &processor);
 
-    CU_ASSERT_EQUAL(processor.Y, 0xFF);
+    CU_ASSERT_EQUAL(processor.Y, 0x80);
     CU_ASSERT_EQUAL(processor.P, 0xB0);
 }
 
 // ---------- Run Tests ----------
 
-CU_pSuite add_decxy_suite_to_registry() {
+CU_pSuite add_incxy_suite_to_registry() {
     CU_pSuite suite = CU_add_suite_with_setup_and_teardown(
-        "executeInstruction DEC/DEX/DEY Tests", NULL, NULL, init_decxy_test, clean_decxy_test);
+        "executeInstruction INC/INX/INY Tests", NULL, NULL, init_incxy_test, clean_incxy_test);
 
     if (suite == NULL) {
         CU_cleanup_registry();
         return NULL;
     }
 
-    if (CU_add_test(suite, "DEC Zero Page", test_instr_dec_zp) == NULL) {
+    if (CU_add_test(suite, "INC Zero Page", test_instr_inc_zp) == NULL) {
         CU_cleanup_registry();
         return NULL;
     }
 
-    if (CU_add_test(suite, "DEC Zero Page,X", test_instr_dec_zpx) == NULL) {
+    if (CU_add_test(suite, "INC Zero Page,X", test_instr_inc_zpx) == NULL) {
         CU_cleanup_registry();
         return NULL;
     }
 
-    if (CU_add_test(suite, "DEC Absolute", test_instr_dec_abs) == NULL) {
+    if (CU_add_test(suite, "INC Absolute", test_instr_inc_abs) == NULL) {
         CU_cleanup_registry();
         return NULL;
     }
 
-    if (CU_add_test(suite, "DEC Absolute,X", test_instr_dec_absx) == NULL) {
+    if (CU_add_test(suite, "INC Absolute,X", test_instr_inc_absx) == NULL) {
         CU_cleanup_registry();
         return NULL;
     }
 
-    if (CU_add_test(suite, "DEC Zero", test_instr_dec_zero) == NULL) {
+    if (CU_add_test(suite, "INC Zero", test_instr_inc_zero) == NULL) {
         CU_cleanup_registry();
         return NULL;
     }
 
-    if (CU_add_test(suite, "DEC Negative", test_instr_dec_neg) == NULL) {
+    if (CU_add_test(suite, "INC Negative", test_instr_inc_neg) == NULL) {
         CU_cleanup_registry();
         return NULL;
     }
 
-    if (CU_add_test(suite, "DEX", test_instr_dex) == NULL) {
+    if (CU_add_test(suite, "INX", test_instr_inx) == NULL) {
         CU_cleanup_registry();
         return NULL;
     }
 
-    if (CU_add_test(suite, "DEX Zero", test_instr_dex_zero) == NULL) {
+    if (CU_add_test(suite, "INX Zero", test_instr_inx_zero) == NULL) {
         CU_cleanup_registry();
         return NULL;
     }
 
-    if (CU_add_test(suite, "DEX Negative", test_instr_dex_neg) == NULL) {
+    if (CU_add_test(suite, "INX Negative", test_instr_inx_neg) == NULL) {
         CU_cleanup_registry();
         return NULL;
     }
 
-    if (CU_add_test(suite, "DEY", test_instr_dey) == NULL) {
+    if (CU_add_test(suite, "INY", test_instr_iny) == NULL) {
         CU_cleanup_registry();
         return NULL;
     }
 
-    if (CU_add_test(suite, "DEY Zero", test_instr_dey_zero) == NULL) {
+    if (CU_add_test(suite, "INY Zero", test_instr_iny_zero) == NULL) {
         CU_cleanup_registry();
         return NULL;
     }
 
-    if (CU_add_test(suite, "DEY Negative", test_instr_dey_neg) == NULL) {
+    if (CU_add_test(suite, "INY Negative", test_instr_iny_neg) == NULL) {
         CU_cleanup_registry();
         return NULL;
     }
