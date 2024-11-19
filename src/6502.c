@@ -1012,7 +1012,7 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
             result = val & 0xFF;
 
             // Set the "Zero" flag
-            setFlag('N', result == 0, processor);
+            setFlag('Z', result == 0, processor);
 
             // Set the "Negative" flag
             setFlag('N', (result & 0x80) >> 7, processor);
@@ -1024,7 +1024,7 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
             processor->X--;
 
             // Set the "Zero" flag
-            setFlag('N', processor->X == 0, processor);
+            setFlag('Z', processor->X == 0, processor);
 
             // Set the "Negative" flag
             setFlag('N', (processor->X & 0x80) >> 7, processor);
@@ -1035,7 +1035,7 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
             processor->Y--;
 
             // Set the "Zero" flag
-            setFlag('N', processor->Y == 0, processor);
+            setFlag('Z', processor->Y == 0, processor);
 
             // Set the "Negative" flag
             setFlag('N', (processor->Y & 0x80) >> 7, processor);
