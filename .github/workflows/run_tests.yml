@@ -1,0 +1,27 @@
+name: CI - Unit Tests
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  run_tests:
+    name: Build/Run Unit Tests
+    runs-on: macOS-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        
+      - name: Install Dependencies
+        env:
+          HOMEBREW_NO_AUTO_UPDATE: 1
+        run: |
+          brew install cunit || true
+      
+      - name: Build Project
+        run: make
+      
+      - name: Run Tests
+        run: make test
