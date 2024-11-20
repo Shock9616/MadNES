@@ -1370,7 +1370,7 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
             val = stackPull(mem, processor);
             val = concatenateBytes(stackPull(mem, processor), val);
 
-            processor->PC = val;
+            processor->PC = val - instr.length;
             break;
         // ---------- RTS ----------
         case 0x60:  // Implied
