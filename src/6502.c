@@ -1312,38 +1312,54 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
         case 0x6A:  // Accumulator
             val = processor->A;
 
-            // Set new bit 7 to the current value of the carry flag
+            // Set new bit 7 to the current value of the "Carry" flag
             if (getFlag('C', processor) == 1) {
                 val |= 0b100000000;
-            } else {
-                val &= 0b011111111;
             }
 
-            // Set the carry flag to the old bit 0
+            // Set the "Carry" flag to the old bit 0
             setFlag('C', val & 0x01, processor);
 
             val >>= 1;
 
-            processor->A = (uint8_t)val;
+            // Wrap val to 8 bits
+            result = val & 0xFF;
+
+            // Set the "Zero" flag
+            setFlag('Z', result == 0, processor);
+
+            // Set the "Negative" flag
+            setFlag('N', (result >> 7) & 0x01, processor);
+
+            processor->A = result;
+            break;
         case 0x66:  // Zero Page
         case 0x76:  // Zero Page X
         case 0x6E:  // Absolute
         case 0x7E:  // Absolute X
             val = getVal(instr, *mem, *processor);
 
-            // Set new bit 7 to the current value of the carry flag
+            // Set new bit 7 to the current value of the "Carry" flag
             if (getFlag('C', processor) == 1) {
-                val |= 0b00000001;
-            } else {
-                val &= 0b11111110;
+                val |= 0b100000000;
             }
 
-            // Set the carry flag to the old bit 0
+            // Set the "Carry" flag to the old bit 0
             setFlag('C', val & 0x01, processor);
 
             val >>= 1;
 
-            (*mem)[getAddr(instr, *mem, *processor)] = (uint8_t)val;
+            // Wrap val to 8 bits
+            result = val & 0xFF;
+
+            // Set the "Zero" flag
+            setFlag('Z', result == 0, processor);
+
+            // Set the "Negative" flag
+            setFlag('N', (result >> 7) & 0x01, processor);
+
+            processor->A = result;
+            (*mem)[getAddr(instr, *mem, *processor)] = result;
             break;
         // ---------- RTI ----------
         case 0x40:  // Implied
