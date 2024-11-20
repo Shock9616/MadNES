@@ -1249,18 +1249,10 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
             processor->A = stackPull(mem, processor);
 
             // Set the "Zero" flag
-            if (processor->A == 0) {
-                setFlag('Z', 1, processor);
-            } else {
-                setFlag('Z', 0, processor);
-            }
+            setFlag('Z', processor->A == 0, processor);
 
             // Set the "Negative" flag
-            if ((processor->A & 0x80) >> 7 == 1) {
-                setFlag('N', 1, processor);
-            } else {
-                setFlag('N', 0, processor);
-            }
+            setFlag('N', (processor->A & 0x80) >> 7, processor);
             break;
         // ---------- PLP ----------
         case 0x28:  // Implied
