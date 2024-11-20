@@ -1232,7 +1232,7 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
             setFlag('Z', result == 0, processor);
 
             // Set the "Negative" flag
-            setFlag('Z', (result & 0x80) >> 7, processor);
+            setFlag('N', (result & 0x80) >> 7, processor);
 
             processor->A = result;
             break;
