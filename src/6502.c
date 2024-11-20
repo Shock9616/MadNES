@@ -1261,39 +1261,52 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
         // ---------- ROL ----------
         case 0x2A:  // Accumulator
             val = processor->A;
-
             val <<= 1;
 
-            // Set bit 0 to the current value of the carry flag
+            // Wrap val to 8 bits
+            result = val & 0xFF;
+
+            // Set bit 0 to the current value of the "Carry" flag
             if (getFlag('C', processor) == 1) {
-                val |= 0b00000001;
-            } else {
-                val &= 0b11111110;
+                result |= 0b00000001;
             }
 
-            // Set the carry flag to the old bit 7
+            // Set the "Carry" flag to the old bit 7
             setFlag('C', (val >> 8) & 0x01, processor);
 
-            processor->A = (uint8_t)val;
+            // Set the "Zero" flag
+            setFlag('Z', result == 0, processor);
+
+            // Set the "Negative" flag
+            setFlag('N', (result >> 7) & 0x01, processor);
+
+            processor->A = result;
+            break;
         case 0x26:  // Zero Page
         case 0x36:  // Zero Page X
         case 0x2E:  // Absolute
         case 0x3E:  // Absolute X
             val = getVal(instr, *mem, *processor);
-
             val <<= 1;
 
-            // Set bit 0 to the current value of the carry flag
+            // Wrap val to 8 bits
+            result = val & 0xFF;
+
+            // Set bit 0 to the current value of the "Carry" flag
             if (getFlag('C', processor) == 1) {
-                val |= 0b00000001;
-            } else {
-                val &= 0b11111110;
+                result |= 0b00000001;
             }
 
-            // Set the carry flag to the old bit 7
+            // Set the "Carry" flag to the old bit 7
             setFlag('C', (val >> 8) & 0x01, processor);
 
-            (*mem)[getAddr(instr, *mem, *processor)] = (uint8_t)val;
+            // Set the "Zero" flag
+            setFlag('Z', result == 0, processor);
+
+            // Set the "Negative" flag
+            setFlag('N', (result >> 7) & 0x01, processor);
+
+            (*mem)[getAddr(instr, *mem, *processor)] = result;
             break;
         // ---------- ROR ----------
         case 0x6A:  // Accumulator
