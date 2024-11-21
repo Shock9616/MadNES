@@ -27,6 +27,7 @@ extern CU_pSuite add_ror_suite_to_registry();
 extern CU_pSuite add_rti_suite_to_registry();
 extern CU_pSuite add_rts_suite_to_registry();
 extern CU_pSuite add_sbc_suite_to_registry();
+extern CU_pSuite add_sta_suite_to_registry();
 
 int main() {
     if (CU_initialize_registry() != CUE_SUCCESS) {
@@ -45,7 +46,7 @@ int main() {
         add_ora_suite_to_registry() == NULL || add_stackops_suite_to_registry() == NULL ||
         add_rol_suite_to_registry() == NULL || add_ror_suite_to_registry() == NULL ||
         add_rti_suite_to_registry() == NULL || add_rts_suite_to_registry() == NULL ||
-        add_sbc_suite_to_registry() == NULL) {
+        add_sbc_suite_to_registry() == NULL || add_sta_suite_to_registry() == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
     }
