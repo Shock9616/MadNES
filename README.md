@@ -17,7 +17,7 @@ them in:
 - [x] Create a disassembler for 6502 assembly
 - [x] Create C implementations for all 56 instructions to emulate a normal 6502
       program (i.e. no graphics/sound/etc.)
-- [ ] Write unit tests for all the instructions (probably should've done that
+- [x] Write unit tests for all the instructions (probably should've done that
       while implementing them :sweat_smile:)
 - [ ] Implement a parser for the iNES ROM format
 - [ ] Begin researching NES graphics and maybe try to get some simple homebrew
