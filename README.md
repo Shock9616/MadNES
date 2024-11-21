@@ -19,7 +19,7 @@ them in:
       program (i.e. no graphics/sound/etc.)
 - [x] Write unit tests for all the instructions (probably should've done that
       while implementing them :sweat_smile:)
-- [ ] Implement a parser for the iNES ROM format
+- [x] Implement a parser for the iNES ROM format
 - [ ] Begin researching NES graphics and maybe try to get some simple homebrew
       applications running
 - [ ] Same thing for audio
