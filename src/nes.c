@@ -100,6 +100,16 @@ int main(int argc, char** argv) {
         }
 
         printCartMetadata(&cartridge);
+
+        // Print preview of instructions in PRG-ROM
+        printf("\n------------ PRG-ROM Preview -----------\n");
+        uint16_t fake_PC = 0;
+        while (fake_PC < 10) {
+            Instruction instr = parseInstruction(cartridge.prg_rom, fake_PC);
+            printInstruction(instr);
+            fake_PC += instr.length;
+        }
+        printf("----------------------------------------\n");
     }
 
     // Free dynamic memory after run

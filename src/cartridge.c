@@ -169,9 +169,33 @@ int loadRom(Cartridge* cart, const char* rom_path) {
  * @param cart - The struct representing the cartridge data
  */
 void printCartMetadata(const Cartridge* cart) {
+    int mapper_num =
+        ((cart->flags8 & 0x0F) << 8) | ((cart->flags7 & 0xF0) << 4) | (cart->flags6 & 0xF0);
+    char* console_type;
+    switch (cart->flags7 & 0x03) {
+        case 0:
+            console_type = "NES/Famicom";
+            break;
+        case 1:
+            console_type = "Nintendo Vs. System";
+            break;
+        case 2:
+            console_type = "Nintendo Playchoice 10";
+            break;
+        case 3:
+            console_type = "Extended";
+            break;
+    }
+
     printf("---------- Cartridge Metadata ----------\n");
-    printf("           PRG-ROM Size: %d KB\n", cart->prg_rom_size * 16);
-    printf("           CHR-ROM Size: %d KB\n", cart->chr_rom_size * 8);
-    printf("             Trainer: %s\n", (cart->trainer != NULL) ? "true" : "false");
+    printf("       PRG-ROM Size: %d KB\n", cart->prg_rom_size * 16);
+    printf("       CHR-ROM Size: %d KB\n", cart->chr_rom_size * 8);
+    printf("             Mapper: %d\n", mapper_num);
+    printf("          Submapper: %d\n", cart->flags8 & 0xF0);
+    printf("          Mirroring: %s\n", (cart->flags6 & 0x01) ? "Vertical" : "Horizontal");
+    printf("            Battery: %s\n", (cart->flags6 & 0x02) ? "Present" : "Not Present");
+    printf("            Trainer: %s\n", (cart->trainer != NULL) ? "Present" : "Not Present");
+    printf("     Alt Nametables: %s\n", (cart->flags6 & 0x08) ? "Yes" : "No");
+    printf("       Console Type: %s\n", console_type);
     printf("----------------------------------------\n");
 }
