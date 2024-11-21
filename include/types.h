@@ -97,4 +97,19 @@ typedef struct {
 
 } Instruction;
 
+typedef struct {
+    uint8_t magic_num[4];  // value of 0x4E45531A indicates a valid NES rom
+    uint8_t prg_rom_size;  // 16 KB units
+    uint8_t chr_rom_size;  // 8 KB units
+    uint8_t flags6;
+    uint8_t flags7;
+    uint8_t flags8;
+    uint8_t flags9;
+    uint8_t flags10;
+    uint8_t reserved[5];
+    uint8_t* trainer;
+    uint8_t* prg_rom;
+    uint8_t* chr_rom;
+} Cartridge;
+
 #endif

@@ -1,4 +1,5 @@
 #include "6502.h"
+#include "cartridge.h"
 #include "types.h"
 #include "utils.h"
 
@@ -20,7 +21,7 @@ int intToBin(uint8_t n);
 #ifndef TEST
 
 int main(int argc, char** argv) {
-    bool opt_disassemble = false, opt_run = false;
+    bool opt_disassemble = false, opt_run = false, opt_cart = false;
 
     Processor processor;
     // Set registers to default values
@@ -31,10 +32,13 @@ int main(int argc, char** argv) {
     processor.X = 0x0;
     processor.Y = 0x0;
 
+    Cartridge cartridge;
+
     char* data_file = NULL;
+    char* rom_file = NULL;
 
     int arg;
-    while ((arg = getopt(argc, argv, "d:r:")) != -1) {
+    while ((arg = getopt(argc, argv, "d:r:c:")) != -1) {
         switch (arg) {
             case 'd':
                 opt_disassemble = true;
@@ -43,6 +47,10 @@ int main(int argc, char** argv) {
             case 'r':
                 opt_run = true;
                 data_file = optarg;
+                break;
+            case 'c':
+                opt_cart = true;
+                rom_file = optarg;
                 break;
             default:
                 fprintf(stderr, "ERROR: Invalid argument: %c\n", optopt);
@@ -84,6 +92,31 @@ int main(int argc, char** argv) {
         printf("          %08d\n", intToBin(processor.P));
         printf("------------------------------\n");
     }
+    if (opt_cart) {
+        int result = loadRom(&cartridge, rom_file);
+        if (result != 0) {
+            fprintf(stderr, "ERROR: Failed to load rom (error code %d)\n", result);
+            return EXIT_FAILURE;
+        }
+
+        printCartMetadata(&cartridge);
+    }
+
+    // Free dynamic memory after run
+    if (memory) {
+        free(memory);
+    }
+    if (cartridge.trainer) {
+        free(cartridge.trainer);
+    }
+    if (cartridge.prg_rom) {
+        free(cartridge.prg_rom);
+    }
+    if (cartridge.chr_rom) {
+        free(cartridge.chr_rom);
+    }
+
+    return EXIT_SUCCESS;
 }
 
 #endif
