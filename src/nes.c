@@ -33,6 +33,9 @@ int main(int argc, char** argv) {
     processor.Y = 0x0;
 
     Cartridge cartridge;
+    cartridge.trainer = NULL;
+    cartridge.prg_rom = NULL;
+    cartridge.chr_rom = NULL;
 
     char* data_file = NULL;
     char* rom_file = NULL;
