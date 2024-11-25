@@ -40,6 +40,7 @@ typedef struct {
     AddrMode addr_mode;
     char* name;  // The 3 letter mnemonic of the instruction
     int length;  // Length of the instruction (in bytes)
+    int cycles;  // The number of cycles the instruction takes to execute
 
     struct {
         uint8_t imm;

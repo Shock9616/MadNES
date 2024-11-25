@@ -23,661 +23,812 @@ Instruction parseInstruction(uint8_t* mem, uint16_t pc) {
         case 0x69:  // nice
             instruction.name = "ADC";
             instruction.addr_mode = IMM;
+            instruction.cycles = 2;
             break;
         case 0x65:
             instruction.name = "ADC";
             instruction.addr_mode = ZP;
+            instruction.cycles = 3;
             break;
         case 0x75:
             instruction.name = "ADC";
             instruction.addr_mode = ZPX;
+            instruction.cycles = 4;
             break;
         case 0x6D:
             instruction.name = "ADC";
             instruction.addr_mode = ABS;
+            instruction.cycles = 4;
             break;
         case 0x7D:
             instruction.name = "ADC";
             instruction.addr_mode = ABSX;
+            instruction.cycles = 4;
             break;
         case 0x79:
             instruction.name = "ADC";
             instruction.addr_mode = ABSY;
+            instruction.cycles = 4;
             break;
         case 0x61:
             instruction.name = "ADC";
             instruction.addr_mode = INDX;
+            instruction.cycles = 6;
             break;
         case 0x71:
             instruction.name = "ADC";
             instruction.addr_mode = INDY;
+            instruction.cycles = 5;
             break;
         // ---------- AND ----------
         case 0x29:
             instruction.name = "AND";
             instruction.addr_mode = IMM;
+            instruction.cycles = 2;
             break;
         case 0x25:
             instruction.name = "AND";
             instruction.addr_mode = ZP;
+            instruction.cycles = 3;
             break;
         case 0x35:
             instruction.name = "AND";
             instruction.addr_mode = ZPX;
+            instruction.cycles = 4;
             break;
         case 0x2D:
             instruction.name = "AND";
             instruction.addr_mode = ABS;
+            instruction.cycles = 4;
             break;
         case 0x3D:
             instruction.name = "AND";
             instruction.addr_mode = ABSX;
+            instruction.cycles = 4;
             break;
         case 0x39:
             instruction.name = "AND";
             instruction.addr_mode = ABSY;
+            instruction.cycles = 4;
             break;
         case 0x21:
             instruction.name = "AND";
             instruction.addr_mode = INDX;
+            instruction.cycles = 6;
             break;
         case 0x31:
             instruction.name = "AND";
             instruction.addr_mode = INDY;
+            instruction.cycles = 5;
             break;
         // ---------- ASL ----------
         case 0x0A:
             instruction.name = "ASL";
             instruction.addr_mode = ACCUM;
+            instruction.cycles = 2;
             break;
         case 0x06:
             instruction.name = "ASL";
             instruction.addr_mode = ZP;
+            instruction.cycles = 5;
             break;
         case 0x16:
             instruction.name = "ASL";
             instruction.addr_mode = ZPX;
+            instruction.cycles = 6;
             break;
         case 0x0E:
             instruction.name = "ASL";
             instruction.addr_mode = ABS;
+            instruction.cycles = 6;
             break;
         case 0x1E:
             instruction.name = "ASL";
             instruction.addr_mode = ABSX;
+            instruction.cycles = 7;
             break;
         // ---------- BCC ----------
         case 0x90:
             instruction.name = "BCC";
             instruction.addr_mode = REL;
+            instruction.cycles = 2;
             break;
         // ---------- BCS ----------
         case 0xB0:
             instruction.name = "BCS";
             instruction.addr_mode = REL;
+            instruction.cycles = 2;
             break;
         // ---------- BEQ ----------
         case 0xF0:
             instruction.name = "BEQ";
             instruction.addr_mode = REL;
+            instruction.cycles = 2;
             break;
         // ---------- BIT ----------
         case 0x24:
             instruction.name = "BIT";
             instruction.addr_mode = ZP;
+            instruction.cycles = 2;
             break;
         case 0x2C:
             instruction.name = "BIT";
             instruction.addr_mode = ABS;
+            instruction.cycles = 3;
             break;
         // ---------- BMI ----------
         case 0x30:
             instruction.name = "BMI";
             instruction.addr_mode = REL;
+            instruction.cycles = 2;
             break;
         // ---------- BNE ----------
         case 0xD0:
             instruction.name = "BNE";
             instruction.addr_mode = REL;
+            instruction.cycles = 2;
             break;
         // ---------- BPL ----------
         case 0x10:
             instruction.name = "BPL";
             instruction.addr_mode = REL;
+            instruction.cycles = 2;
             break;
         // ---------- BRK ----------
         case 0x00:
             instruction.name = "BRK";
             instruction.addr_mode = IMPL;
+            instruction.cycles = 7;
             break;
         // ---------- BVC ----------
         case 0x50:
             instruction.name = "BVC";
             instruction.addr_mode = REL;
+            instruction.cycles = 2;
             break;
         // ---------- BVS ----------
         case 0x70:
             instruction.name = "BVS";
             instruction.addr_mode = REL;
+            instruction.cycles = 2;
             break;
         // ---------- CLC ----------
         case 0x18:
             instruction.name = "CLC";
             instruction.addr_mode = IMPL;
+            instruction.cycles = 2;
             break;
         // ---------- CLD ----------
         case 0xD8:
             instruction.name = "CLD";
             instruction.addr_mode = IMPL;
+            instruction.cycles = 2;
             break;
         // ---------- CLI ----------
         case 0x58:
             instruction.name = "CLI";
             instruction.addr_mode = IMPL;
+            instruction.cycles = 2;
             break;
         // ---------- CLV ----------
         case 0xB8:
             instruction.name = "CLV";
             instruction.addr_mode = IMPL;
+            instruction.cycles = 2;
             break;
         // ---------- CMP ----------
         case 0xC9:
             instruction.name = "CMP";
             instruction.addr_mode = IMM;
+            instruction.cycles = 2;
             break;
         case 0xC5:
             instruction.name = "CMP";
             instruction.addr_mode = ZP;
+            instruction.cycles = 3;
             break;
         case 0xD5:
             instruction.name = "CMP";
             instruction.addr_mode = ZPX;
+            instruction.cycles = 4;
             break;
         case 0xCD:
             instruction.name = "CMP";
             instruction.addr_mode = ABS;
+            instruction.cycles = 4;
             break;
         case 0xDD:
             instruction.name = "CMP";
             instruction.addr_mode = ABSX;
+            instruction.cycles = 4;
             break;
         case 0xD9:
             instruction.name = "CMP";
             instruction.addr_mode = ABSY;
+            instruction.cycles = 4;
             break;
         case 0xC1:
             instruction.name = "CMP";
             instruction.addr_mode = INDX;
+            instruction.cycles = 6;
             break;
         case 0xD1:
             instruction.name = "CMP";
             instruction.addr_mode = INDY;
+            instruction.cycles = 5;
             break;
         // ---------- CPX ----------
         case 0xE0:
             instruction.name = "CPX";
             instruction.addr_mode = IMM;
+            instruction.cycles = 2;
             break;
         case 0xE4:
             instruction.name = "CPX";
             instruction.addr_mode = ZP;
+            instruction.cycles = 3;
             break;
         case 0xEC:
             instruction.name = "CPX";
             instruction.addr_mode = ABS;
+            instruction.cycles = 4;
             break;
         // ---------- CPY ----------
         case 0xC0:
             instruction.name = "CPY";
             instruction.addr_mode = IMM;
+            instruction.cycles = 2;
             break;
         case 0xC4:
             instruction.name = "CPY";
             instruction.addr_mode = ZP;
+            instruction.cycles = 3;
             break;
         case 0xCC:
             instruction.name = "CPY";
             instruction.addr_mode = ABS;
+            instruction.cycles = 4;
             break;
         // ---------- DEC ----------
         case 0xC6:
             instruction.name = "DEC";
             instruction.addr_mode = ZP;
+            instruction.cycles = 5;
             break;
         case 0xD6:
             instruction.name = "DEC";
             instruction.addr_mode = ZPX;
+            instruction.cycles = 6;
             break;
         case 0xCE:
             instruction.name = "DEC";
             instruction.addr_mode = ABS;
+            instruction.cycles = 6;
             break;
         case 0xDE:
             instruction.name = "DEC";
             instruction.addr_mode = ABSX;
+            instruction.cycles = 7;
             break;
         // ---------- DEX ----------
         case 0xCA:
             instruction.name = "DEX";
             instruction.addr_mode = IMPL;
+            instruction.cycles = 2;
             break;
         // ---------- DEY ----------
         case 0x88:
             instruction.name = "DEY";
             instruction.addr_mode = IMPL;
+            instruction.cycles = 2;
             break;
         // ---------- EOR ----------
         case 0x49:
             instruction.name = "EOR";
             instruction.addr_mode = IMM;
+            instruction.cycles = 2;
             break;
         case 0x45:
             instruction.name = "EOR";
             instruction.addr_mode = ZP;
+            instruction.cycles = 3;
             break;
         case 0x55:
             instruction.name = "EOR";
             instruction.addr_mode = ZPX;
+            instruction.cycles = 4;
             break;
         case 0x4D:
             instruction.name = "EOR";
             instruction.addr_mode = ABS;
+            instruction.cycles = 4;
             break;
         case 0x5D:
             instruction.name = "EOR";
             instruction.addr_mode = ABSX;
+            instruction.cycles = 4;
             break;
         case 0x59:
             instruction.name = "EOR";
             instruction.addr_mode = ABSY;
+            instruction.cycles = 4;
             break;
         case 0x41:
             instruction.name = "EOR";
             instruction.addr_mode = INDX;
+            instruction.cycles = 6;
             break;
         case 0x51:
             instruction.name = "EOR";
             instruction.addr_mode = INDY;
+            instruction.cycles = 5;
             break;
         // ---------- INC ----------
         case 0xE6:
             instruction.name = "INC";
             instruction.addr_mode = ZP;
+            instruction.cycles = 5;
             break;
         case 0xF6:
             instruction.name = "INC";
             instruction.addr_mode = ZPX;
+            instruction.cycles = 6;
             break;
         case 0xEE:
             instruction.name = "INC";
             instruction.addr_mode = ABS;
+            instruction.cycles = 6;
             break;
         case 0xFE:
             instruction.name = "INC";
             instruction.addr_mode = ABSX;
+            instruction.cycles = 7;
             break;
         // ---------- INX ----------
         case 0xE8:
             instruction.name = "INX";
             instruction.addr_mode = IMPL;
+            instruction.cycles = 2;
             break;
         // ---------- INY ----------
         case 0xC8:
             instruction.name = "INY";
             instruction.addr_mode = IMPL;
+            instruction.cycles = 2;
             break;
         // ---------- JMP ----------
         case 0x4C:
             instruction.name = "JMP";
             instruction.addr_mode = ABS;
+            instruction.cycles = 3;
             break;
         case 0x6C:
             instruction.name = "JMP";
             instruction.addr_mode = IND;
+            instruction.cycles = 5;
             break;
         // ---------- JSR ----------
         case 0x20:
             instruction.name = "JSR";
             instruction.addr_mode = ABS;
+            instruction.cycles = 6;
             break;
         // ---------- LDA ----------
         case 0xA9:
             instruction.name = "LDA";
             instruction.addr_mode = IMM;
+            instruction.cycles = 2;
             break;
         case 0xA5:
             instruction.name = "LDA";
             instruction.addr_mode = ZP;
+            instruction.cycles = 3;
             break;
         case 0xB5:
             instruction.name = "LDA";
             instruction.addr_mode = ZPX;
+            instruction.cycles = 4;
             break;
         case 0xAD:
             instruction.name = "LDA";
             instruction.addr_mode = ABS;
+            instruction.cycles = 4;
             break;
         case 0xBD:
             instruction.name = "LDA";
             instruction.addr_mode = ABSX;
+            instruction.cycles = 4;
             break;
         case 0xB9:
             instruction.name = "LDA";
             instruction.addr_mode = ABSY;
+            instruction.cycles = 4;
             break;
         case 0xA1:
             instruction.name = "LDA";
             instruction.addr_mode = INDX;
+            instruction.cycles = 6;
             break;
         case 0xB1:
             instruction.name = "LDA";
             instruction.addr_mode = INDY;
+            instruction.cycles = 5;
             break;
         // ---------- LDX ----------
         case 0xA2:
             instruction.name = "LDX";
             instruction.addr_mode = IMM;
+            instruction.cycles = 2;
             break;
         case 0xA6:
             instruction.name = "LDX";
             instruction.addr_mode = ZP;
+            instruction.cycles = 3;
             break;
         case 0xB6:
             instruction.name = "LDX";
             instruction.addr_mode = ZPY;
+            instruction.cycles = 4;
             break;
         case 0xAE:
             instruction.name = "LDX";
             instruction.addr_mode = ABS;
+            instruction.cycles = 4;
             break;
         case 0xBE:
             instruction.name = "LDX";
             instruction.addr_mode = ABSY;
+            instruction.cycles = 4;
             break;
         // ---------- LDY ----------
         case 0xA0:
             instruction.name = "LDY";
             instruction.addr_mode = IMM;
+            instruction.cycles = 2;
             break;
         case 0xA4:
             instruction.name = "LDY";
             instruction.addr_mode = ZP;
+            instruction.cycles = 3;
             break;
         case 0xB4:
             instruction.name = "LDY";
             instruction.addr_mode = ZPX;
+            instruction.cycles = 4;
             break;
         case 0xAC:
             instruction.name = "LDY";
             instruction.addr_mode = ABS;
+            instruction.cycles = 4;
             break;
         case 0xBC:
             instruction.name = "LDY";
             instruction.addr_mode = ABSX;
+            instruction.cycles = 4;
             break;
         // ---------- LSR ----------
         case 0x4A:
             instruction.name = "LSR";
             instruction.addr_mode = ACCUM;
+            instruction.cycles = 2;
             break;
         case 0x46:
             instruction.name = "LSR";
             instruction.addr_mode = ZP;
+            instruction.cycles = 5;
             break;
         case 0x56:
             instruction.name = "LSR";
             instruction.addr_mode = ZPX;
+            instruction.cycles = 6;
             break;
         case 0x4E:
             instruction.name = "LSR";
             instruction.addr_mode = ABS;
+            instruction.cycles = 6;
             break;
         case 0x5E:
             instruction.name = "LSR";
             instruction.addr_mode = ABSX;
+            instruction.cycles = 7;
             break;
         // ---------- NOP ----------
         case 0xEA:
             instruction.name = "NOP";
             instruction.addr_mode = IMPL;
+            instruction.cycles = 2;
             break;
         // ---------- ORA ----------
         case 0x09:
             instruction.name = "ORA";
             instruction.addr_mode = IMM;
+            instruction.cycles = 2;
             break;
         case 0x05:
             instruction.name = "ORA";
             instruction.addr_mode = ZP;
+            instruction.cycles = 3;
             break;
         case 0x15:
             instruction.name = "ORA";
             instruction.addr_mode = ZPX;
+            instruction.cycles = 4;
             break;
         case 0x0D:
             instruction.name = "ORA";
             instruction.addr_mode = ABS;
+            instruction.cycles = 4;
             break;
         case 0x1D:
             instruction.name = "ORA";
             instruction.addr_mode = ABSX;
+            instruction.cycles = 4;
             break;
         case 0x19:
             instruction.name = "ORA";
             instruction.addr_mode = ABSY;
+            instruction.cycles = 4;
             break;
         case 0x01:
             instruction.name = "ORA";
             instruction.addr_mode = INDX;
+            instruction.cycles = 6;
             break;
         case 0x11:
             instruction.name = "ORA";
             instruction.addr_mode = INDY;
+            instruction.cycles = 5;
             break;
         // ---------- PHA ----------
         case 0x48:
             instruction.name = "PHA";
             instruction.addr_mode = IMPL;
+            instruction.cycles = 3;
             break;
         // ---------- PHP ----------
         case 0x08:
             instruction.name = "PHP";
             instruction.addr_mode = IMPL;
+            instruction.cycles = 3;
             break;
         // ---------- PLA ----------
         case 0x68:
             instruction.name = "PLA";
             instruction.addr_mode = IMPL;
+            instruction.cycles = 4;
             break;
         // ---------- PLP ----------
         case 0x28:
             instruction.name = "PLP";
             instruction.addr_mode = IMPL;
+            instruction.cycles = 4;
             break;
         // ---------- ROL ----------
         case 0x2A:
             instruction.name = "ROL";
             instruction.addr_mode = ACCUM;
+            instruction.cycles = 2;
             break;
         case 0x26:
             instruction.name = "ROL";
             instruction.addr_mode = ZP;
+            instruction.cycles = 5;
             break;
         case 0x36:
             instruction.name = "ROL";
             instruction.addr_mode = ZPX;
+            instruction.cycles = 6;
             break;
         case 0x2E:
             instruction.name = "ROL";
             instruction.addr_mode = ABS;
+            instruction.cycles = 6;
             break;
         case 0x3E:
             instruction.name = "ROL";
             instruction.addr_mode = ABSX;
+            instruction.cycles = 7;
             break;
         // ---------- ROR ----------
         case 0x6A:
             instruction.name = "ROR";
             instruction.addr_mode = ACCUM;
+            instruction.cycles = 2;
             break;
         case 0x66:
             instruction.name = "ROR";
             instruction.addr_mode = ZP;
+            instruction.cycles = 5;
             break;
         case 0x76:
             instruction.name = "ROR";
             instruction.addr_mode = ZPX;
+            instruction.cycles = 6;
             break;
         case 0x6E:
             instruction.name = "ROR";
             instruction.addr_mode = ABS;
+            instruction.cycles = 6;
             break;
         case 0x7E:
             instruction.name = "ROR";
             instruction.addr_mode = ABSX;
+            instruction.cycles = 7;
             break;
         // ---------- RTI ----------
         case 0x40:
             instruction.name = "RTI";
             instruction.addr_mode = IMPL;
+            instruction.cycles = 6;
             break;
         // ---------- RTS ----------
         case 0x60:
             instruction.name = "RTS";
             instruction.addr_mode = IMPL;
+            instruction.cycles = 6;
             break;
         // ---------- SBC ----------
         case 0xE9:
             instruction.name = "SBC";
             instruction.addr_mode = IMM;
+            instruction.cycles = 2;
             break;
         case 0xE5:
             instruction.name = "SBC";
             instruction.addr_mode = ZP;
+            instruction.cycles = 3;
             break;
         case 0xF5:
             instruction.name = "SBC";
             instruction.addr_mode = ZPX;
+            instruction.cycles = 4;
             break;
         case 0xED:
             instruction.name = "SBC";
             instruction.addr_mode = ABS;
+            instruction.cycles = 4;
             break;
         case 0xFD:
             instruction.name = "SBC";
             instruction.addr_mode = ABSX;
+            instruction.cycles = 4;
             break;
         case 0xF9:
             instruction.name = "SBC";
             instruction.addr_mode = ABSY;
+            instruction.cycles = 4;
             break;
         case 0xE1:
             instruction.name = "SBC";
             instruction.addr_mode = INDX;
+            instruction.cycles = 6;
             break;
         case 0xF1:
             instruction.name = "SBC";
             instruction.addr_mode = INDY;
+            instruction.cycles = 5;
             break;
         // ---------- SEC ----------
         case 0x38:
             instruction.name = "SEC";
             instruction.addr_mode = IMPL;
+            instruction.cycles = 2;
             break;
         // ---------- SED ----------
         case 0xF8:
             instruction.name = "SED";
             instruction.addr_mode = IMPL;
+            instruction.cycles = 2;
             break;
         // ---------- SEI ----------
         case 0x78:
             instruction.name = "SEI";
             instruction.addr_mode = IMPL;
+            instruction.cycles = 2;
             break;
         // ---------- STA ----------
         case 0x85:
             instruction.name = "STA";
             instruction.addr_mode = ZP;
+            instruction.cycles = 3;
             break;
         case 0x95:
             instruction.name = "STA";
             instruction.addr_mode = ZPX;
+            instruction.cycles = 4;
             break;
         case 0x8D:
             instruction.name = "STA";
             instruction.addr_mode = ABS;
+            instruction.cycles = 4;
             break;
         case 0x9D:
             instruction.name = "STA";
             instruction.addr_mode = ABSX;
+            instruction.cycles = 5;
             break;
         case 0x99:
             instruction.name = "STA";
             instruction.addr_mode = ABSY;
+            instruction.cycles = 5;
             break;
         case 0x81:
             instruction.name = "STA";
             instruction.addr_mode = INDX;
+            instruction.cycles = 6;
             break;
         case 0x91:
             instruction.name = "STA";
             instruction.addr_mode = INDY;
+            instruction.cycles = 6;
             break;
         // ---------- STX ----------
         case 0x86:
             instruction.name = "STX";
             instruction.addr_mode = ZP;
+            instruction.cycles = 3;
             break;
         case 0x96:
             instruction.name = "STX";
             instruction.addr_mode = ZPY;
+            instruction.cycles = 4;
             break;
         case 0x8E:
             instruction.name = "STX";
             instruction.addr_mode = ABS;
+            instruction.cycles = 4;
             break;
         // ---------- STY ----------
         case 0x84:
             instruction.name = "STY";
             instruction.addr_mode = ZP;
+            instruction.cycles = 3;
             break;
         case 0x94:
             instruction.name = "STY";
             instruction.addr_mode = ZPX;
+            instruction.cycles = 4;
             break;
         case 0x8C:
             instruction.name = "STY";
             instruction.addr_mode = ABS;
+            instruction.cycles = 4;
             break;
         // ---------- TAX ----------
         case 0xAA:
             instruction.name = "TAX";
             instruction.addr_mode = IMPL;
+            instruction.cycles = 2;
             break;
         // ---------- TAY ----------
         case 0xA8:
             instruction.name = "TAY";
             instruction.addr_mode = IMPL;
+            instruction.cycles = 2;
             break;
         // ---------- TSX ----------
         case 0xBA:
             instruction.name = "TSX";
             instruction.addr_mode = IMPL;
+            instruction.cycles = 2;
             break;
         // ---------- TXA ----------
         case 0x8A:
             instruction.name = "TXA";
             instruction.addr_mode = IMPL;
+            instruction.cycles = 2;
             break;
         // ---------- TXS ----------
         case 0x9A:
             instruction.name = "TXS";
             instruction.addr_mode = IMPL;
+            instruction.cycles = 2;
             break;
         // ---------- TYA ----------
         case 0x98:
             instruction.name = "TYA";
             instruction.addr_mode = IMPL;
+            instruction.cycles = 2;
             break;
         default:
             fprintf(stderr, "ERROR: Invalid opcode 0x%02x\n", instruction.opcode);

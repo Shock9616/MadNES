@@ -15,6 +15,9 @@
 uint8_t* memory;
 #define MAX_SIZE 50
 
+// Global cycle count variable for synchronizing the CPU, PPU, and APU
+uint64_t cycles = 0;
+
 int loadFile(uint8_t* mem, int start_addr, const char* file_path);
 int intToBin(uint8_t n);
 
@@ -86,6 +89,7 @@ int main(int argc, char** argv) {
             Instruction instr = parseInstruction(memory, processor.PC);
             executeInstruction(instr, &memory, &processor);
             processor.PC += instr.length;
+            cycles += instr.cycles;
         }
 
         printf("-------- Debug Output --------\n");
