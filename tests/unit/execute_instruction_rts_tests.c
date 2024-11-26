@@ -34,12 +34,14 @@ static void clean_test() {
 }
 
 static void simulateMainloop(uint8_t** memory, Processor* processor) {
+    uint16_t old_PC = processor->PC;
+
     Instruction instr = parseInstruction(*memory, processor->PC);
     executeInstruction(instr, memory, processor);
     processor->PC += instr.length;
 
-    // If the address mode is Absolute X, Absolute Y, or Indirect Indexed, check
-    // if a page was crossed and add an extra cycle
+    // If the address mode is Absolute X, Absolute Y, Indirect Indexed, or
+    // Relative, check if a page was crossed and add an extra cycle
     switch (instr.addr_mode) {
         uint16_t addr;
         case ABSX:
@@ -60,6 +62,16 @@ static void simulateMainloop(uint8_t** memory, Processor* processor) {
                 instr.cycles++;
             }
             break;
+        case REL:
+            if (processor->PC != old_PC + instr.length) {
+                // Branch succeeded
+                instr.cycles++;
+
+                if ((processor->PC & 0xFF00) != (old_PC & 0xFF00)) {
+                    // Page crossed
+                    instr.cycles++;
+                }
+            }
         default:
             break;
     }
