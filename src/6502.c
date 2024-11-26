@@ -149,12 +149,12 @@ Instruction parseInstruction(uint8_t* mem, uint16_t pc) {
         case 0x24:
             instruction.name = "BIT";
             instruction.addr_mode = ZP;
-            instruction.cycles = 2;
+            instruction.cycles = 3;
             break;
         case 0x2C:
             instruction.name = "BIT";
             instruction.addr_mode = ABS;
-            instruction.cycles = 3;
+            instruction.cycles = 4;
             break;
         // ---------- BMI ----------
         case 0x30:

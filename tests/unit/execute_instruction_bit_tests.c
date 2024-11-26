@@ -91,6 +91,7 @@ void test_instr_bit_zp() {
 
     CU_ASSERT_EQUAL(processor.A, 0x22);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 3);
 }
 
 void test_instr_bit_abs() {
@@ -104,6 +105,7 @@ void test_instr_bit_abs() {
 
     CU_ASSERT_EQUAL(processor.A, 0x22);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 4);
 }
 
 void test_instr_bit_zero() {
@@ -116,6 +118,7 @@ void test_instr_bit_zero() {
 
     CU_ASSERT_EQUAL(processor.A, 0x42);
     CU_ASSERT_EQUAL(processor.P, 0x32);
+    CU_ASSERT_EQUAL(cycles, 3);
 }
 
 void test_instr_bit_v() {
@@ -128,6 +131,7 @@ void test_instr_bit_v() {
 
     CU_ASSERT_EQUAL(processor.A, 0x42);
     CU_ASSERT_EQUAL(processor.P, 0x70);
+    CU_ASSERT_EQUAL(cycles, 3);
 }
 
 void test_instr_bit_neg() {
@@ -140,6 +144,7 @@ void test_instr_bit_neg() {
 
     CU_ASSERT_EQUAL(processor.A, 0x96);
     CU_ASSERT_EQUAL(processor.P, 0xB0);
+    CU_ASSERT_EQUAL(cycles, 3);
 }
 
 // ---------- Run Tests ----------
