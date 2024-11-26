@@ -88,6 +88,7 @@ void test_instr_clc_set() {
     simulateMainloop(&memory, &processor);
 
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_clc_clear() {
@@ -97,6 +98,7 @@ void test_instr_clc_clear() {
     simulateMainloop(&memory, &processor);
 
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_cld_set() {
@@ -106,6 +108,7 @@ void test_instr_cld_set() {
     simulateMainloop(&memory, &processor);
 
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_cld_clear() {
@@ -115,6 +118,7 @@ void test_instr_cld_clear() {
     simulateMainloop(&memory, &processor);
 
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_cli_set() {
@@ -124,6 +128,7 @@ void test_instr_cli_set() {
     simulateMainloop(&memory, &processor);
 
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_cli_clear() {
@@ -133,6 +138,7 @@ void test_instr_cli_clear() {
     simulateMainloop(&memory, &processor);
 
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_clv_set() {
@@ -142,6 +148,7 @@ void test_instr_clv_set() {
     simulateMainloop(&memory, &processor);
 
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_clv_clear() {
@@ -151,6 +158,7 @@ void test_instr_clv_clear() {
     simulateMainloop(&memory, &processor);
 
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_sec_set() {
@@ -160,6 +168,7 @@ void test_instr_sec_set() {
     simulateMainloop(&memory, &processor);
 
     CU_ASSERT_EQUAL(processor.P, 0x31);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_sec_clear() {
@@ -169,6 +178,7 @@ void test_instr_sec_clear() {
     simulateMainloop(&memory, &processor);
 
     CU_ASSERT_EQUAL(processor.P, 0x31);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_sed_set() {
@@ -178,6 +188,7 @@ void test_instr_sed_set() {
     simulateMainloop(&memory, &processor);
 
     CU_ASSERT_EQUAL(processor.P, 0x38);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_sed_clear() {
@@ -187,6 +198,7 @@ void test_instr_sed_clear() {
     simulateMainloop(&memory, &processor);
 
     CU_ASSERT_EQUAL(processor.P, 0x38);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_sei_set() {
@@ -196,6 +208,7 @@ void test_instr_sei_set() {
     simulateMainloop(&memory, &processor);
 
     CU_ASSERT_EQUAL(processor.P, 0x34);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_sei_clear() {
@@ -205,6 +218,7 @@ void test_instr_sei_clear() {
     simulateMainloop(&memory, &processor);
 
     CU_ASSERT_EQUAL(processor.P, 0x34);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 // ---------- Run Tests ----------
