@@ -337,7 +337,7 @@ CU_pSuite add_and_suite_to_registry() {
         return NULL;
     }
 
-    if (CU_add_test(suite, "AND Indirect,Y Page Crossed", test_instr_and_indy_page) == NULL) {
+    if (CU_add_test(suite, "AND (Indirect),Y Page Crossed", test_instr_and_indy_page) == NULL) {
         CU_cleanup_registry();
         return NULL;
     }

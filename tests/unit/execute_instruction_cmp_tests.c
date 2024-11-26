@@ -90,6 +90,7 @@ void test_instr_cmp_imm() {
 
     CU_ASSERT_EQUAL(processor.A, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x31);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_cmp_zp() {
@@ -102,6 +103,7 @@ void test_instr_cmp_zp() {
 
     CU_ASSERT_EQUAL(processor.A, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x31);
+    CU_ASSERT_EQUAL(cycles, 3);
 }
 
 void test_instr_cmp_zpx() {
@@ -115,6 +117,7 @@ void test_instr_cmp_zpx() {
 
     CU_ASSERT_EQUAL(processor.A, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x31);
+    CU_ASSERT_EQUAL(cycles, 4);
 }
 
 void test_instr_cmp_abs() {
@@ -128,6 +131,7 @@ void test_instr_cmp_abs() {
 
     CU_ASSERT_EQUAL(processor.A, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x31);
+    CU_ASSERT_EQUAL(cycles, 4);
 }
 
 void test_instr_cmp_absx() {
@@ -142,6 +146,7 @@ void test_instr_cmp_absx() {
 
     CU_ASSERT_EQUAL(processor.A, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x31);
+    CU_ASSERT_EQUAL(cycles, 4);
 }
 
 void test_instr_cmp_absy() {
@@ -156,6 +161,7 @@ void test_instr_cmp_absy() {
 
     CU_ASSERT_EQUAL(processor.A, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x31);
+    CU_ASSERT_EQUAL(cycles, 4);
 }
 
 void test_instr_cmp_indx() {
@@ -171,6 +177,7 @@ void test_instr_cmp_indx() {
 
     CU_ASSERT_EQUAL(processor.A, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x31);
+    CU_ASSERT_EQUAL(cycles, 6);
 }
 
 void test_instr_cmp_indy() {
@@ -186,6 +193,7 @@ void test_instr_cmp_indy() {
 
     CU_ASSERT_EQUAL(processor.A, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x31);
+    CU_ASSERT_EQUAL(cycles, 5);
 }
 
 void test_instr_cmp_eq() {
@@ -197,6 +205,7 @@ void test_instr_cmp_eq() {
 
     CU_ASSERT_EQUAL(processor.A, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x33);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_cmp_gt() {
@@ -208,6 +217,7 @@ void test_instr_cmp_gt() {
 
     CU_ASSERT_EQUAL(processor.A, 0x42);
     CU_ASSERT_EQUAL(processor.P, 0xB0);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_cmp_lt() {
@@ -219,6 +229,53 @@ void test_instr_cmp_lt() {
 
     CU_ASSERT_EQUAL(processor.A, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x31);
+    CU_ASSERT_EQUAL(cycles, 2);
+}
+
+void test_instr_cmp_absx_page() {
+    processor.A = 0x69;
+    processor.X = 0xFF;
+    memory[0x111F] = 0x42;
+    memory[0x0600] = 0xDD;
+    memory[0x0601] = 0x20;
+    memory[0x0602] = 0x10;
+
+    simulateMainloop(&memory, &processor);
+
+    CU_ASSERT_EQUAL(processor.A, 0x69);
+    CU_ASSERT_EQUAL(processor.P, 0x31);
+    CU_ASSERT_EQUAL(cycles, 5);
+}
+
+void test_instr_cmp_absy_page() {
+    processor.A = 0x69;
+    processor.Y = 0xFF;
+    memory[0x111F] = 0x42;
+    memory[0x0600] = 0xD9;
+    memory[0x0601] = 0x20;
+    memory[0x0602] = 0x10;
+
+    simulateMainloop(&memory, &processor);
+
+    CU_ASSERT_EQUAL(processor.A, 0x69);
+    CU_ASSERT_EQUAL(processor.P, 0x31);
+    CU_ASSERT_EQUAL(cycles, 5);
+}
+
+void test_instr_cmp_indy_page() {
+    processor.A = 0x69;
+    processor.Y = 0xFF;
+    memory[0x0020] = 0x20;
+    memory[0x0021] = 0x10;
+    memory[0x111F] = 0x42;
+    memory[0x0600] = 0xD9;
+    memory[0x0601] = 0x20;
+
+    simulateMainloop(&memory, &processor);
+
+    CU_ASSERT_EQUAL(processor.A, 0x42);
+    CU_ASSERT_EQUAL(processor.P, 0x31);
+    CU_ASSERT_EQUAL(cycles, 6);
 }
 
 // ---------- Run Tests ----------
@@ -283,6 +340,21 @@ CU_pSuite add_cmp_suite_to_registry() {
     }
 
     if (CU_add_test(suite, "CMP Less Than", test_instr_cmp_lt) == NULL) {
+        CU_cleanup_registry();
+        return NULL;
+    }
+
+    if (CU_add_test(suite, "CMP Absolute,X Page Crossed", test_instr_cmp_absx_page) == NULL) {
+        CU_cleanup_registry();
+        return NULL;
+    }
+
+    if (CU_add_test(suite, "CMP Absolute,Y Page Crossed", test_instr_cmp_absy_page) == NULL) {
+        CU_cleanup_registry();
+        return NULL;
+    }
+
+    if (CU_add_test(suite, "CMP (Indirect),Y Page Crossed", test_instr_cmp_absy_page) == NULL) {
         CU_cleanup_registry();
         return NULL;
     }

@@ -356,7 +356,7 @@ CU_pSuite add_adc_suite_to_registry() {
         return NULL;
     }
 
-    if (CU_add_test(suite, "ADC Indirect,Y Page Crossed", test_instr_adc_indy_page) == NULL) {
+    if (CU_add_test(suite, "ADC (Indirect),Y Page Crossed", test_instr_adc_indy_page) == NULL) {
         CU_cleanup_registry();
         return NULL;
     }
