@@ -90,6 +90,7 @@ void test_instr_dec_zp() {
 
     CU_ASSERT_EQUAL(processor.P, 0x30);
     CU_ASSERT_EQUAL(memory[0x0010], 0x69);
+    CU_ASSERT_EQUAL(cycles, 5);
 }
 
 void test_instr_dec_zpx() {
@@ -98,12 +99,11 @@ void test_instr_dec_zpx() {
     memory[0x0600] = 0xD6;
     memory[0x0601] = 0x10;
 
-    Instruction instr = parseInstruction(memory, processor.PC);
-    executeInstruction(instr, &memory, &processor);
-    processor.PC += instr.length;
+    simulateMainloop(&memory, &processor);
 
     CU_ASSERT_EQUAL(processor.P, 0x30);
     CU_ASSERT_EQUAL(memory[0x0015], 0x69);
+    CU_ASSERT_EQUAL(cycles, 6);
 }
 
 void test_instr_dec_abs() {
@@ -116,6 +116,7 @@ void test_instr_dec_abs() {
 
     CU_ASSERT_EQUAL(processor.P, 0x30);
     CU_ASSERT_EQUAL(memory[0x1020], 0x69);
+    CU_ASSERT_EQUAL(cycles, 6);
 }
 
 void test_instr_dec_absx() {
@@ -129,6 +130,7 @@ void test_instr_dec_absx() {
 
     CU_ASSERT_EQUAL(processor.P, 0x30);
     CU_ASSERT_EQUAL(memory[0x1025], 0x69);
+    CU_ASSERT_EQUAL(cycles, 7);
 }
 
 void test_instr_dec_zero() {
@@ -140,6 +142,7 @@ void test_instr_dec_zero() {
 
     CU_ASSERT_EQUAL(processor.P, 0x32);
     CU_ASSERT_EQUAL(memory[0x0010], 0x00);
+    CU_ASSERT_EQUAL(cycles, 5);
 }
 
 void test_instr_dec_neg() {
@@ -151,6 +154,7 @@ void test_instr_dec_neg() {
 
     CU_ASSERT_EQUAL(processor.P, 0xB0);
     CU_ASSERT_EQUAL(memory[0x0010], 0xFF);
+    CU_ASSERT_EQUAL(cycles, 5);
 }
 
 void test_instr_dex() {
@@ -161,6 +165,7 @@ void test_instr_dex() {
 
     CU_ASSERT_EQUAL(processor.X, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_dex_zero() {
@@ -171,6 +176,7 @@ void test_instr_dex_zero() {
 
     CU_ASSERT_EQUAL(processor.X, 0x00);
     CU_ASSERT_EQUAL(processor.P, 0x32);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_dex_neg() {
@@ -181,6 +187,7 @@ void test_instr_dex_neg() {
 
     CU_ASSERT_EQUAL(processor.X, 0xFF);
     CU_ASSERT_EQUAL(processor.P, 0xB0);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_dey() {
@@ -191,6 +198,7 @@ void test_instr_dey() {
 
     CU_ASSERT_EQUAL(processor.Y, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_dey_zero() {
@@ -201,6 +209,7 @@ void test_instr_dey_zero() {
 
     CU_ASSERT_EQUAL(processor.Y, 0x00);
     CU_ASSERT_EQUAL(processor.P, 0x32);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_dey_neg() {
@@ -211,6 +220,7 @@ void test_instr_dey_neg() {
 
     CU_ASSERT_EQUAL(processor.Y, 0xFF);
     CU_ASSERT_EQUAL(processor.P, 0xB0);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 // ---------- Run Tests ----------
