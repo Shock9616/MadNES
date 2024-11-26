@@ -1,5 +1,6 @@
 #include "6502.h"
 #include "types.h"
+#include "utils.h"
 
 #include <CUnit/Basic.h>
 #include <CUnit/CUnit.h>
@@ -12,8 +13,9 @@
 
 Processor processor;
 uint8_t* memory;
+uint64_t cycles;
 
-void init_and_test() {
+static void init_test() {
     // Set registers to default values
     processor.PC = 0x0600;
     processor.S = 0xFF;
@@ -24,10 +26,45 @@ void init_and_test() {
 
     // Allocate system memory
     memory = calloc(MEMORY_SPACE, sizeof(uint8_t));
+    cycles = 0;
 }
 
-void clean_and_test() {
+static void clean_test() {
     free(memory);
+}
+
+static void simulateMainloop(uint8_t** memory, Processor* processor) {
+    Instruction instr = parseInstruction(*memory, processor->PC);
+    executeInstruction(instr, memory, processor);
+    processor->PC += instr.length;
+
+    // If the address mode is Absolute X, Absolute Y, or Indirect Indexed, check
+    // if a page was crossed and add an extra cycle
+    switch (instr.addr_mode) {
+        uint16_t addr;
+        case ABSX:
+            addr = instr.addr;
+            if (((addr + processor->X) & 0xFF00) != (addr & 0xFF00)) {
+                instr.cycles++;
+            }
+            break;
+        case ABSY:
+            addr = instr.addr;
+            if (((addr + processor->Y) & 0xFF00) != (addr & 0xFF00)) {
+                instr.cycles++;
+            }
+            break;
+        case INDY:
+            addr = concatenateBytes((*memory)[instr.addr + 1], (*memory)[instr.addr]);
+            if (((addr + processor->Y) & 0xFF00) != (addr & 0xFF00)) {
+                instr.cycles++;
+            }
+            break;
+        default:
+            break;
+    }
+
+    cycles += instr.cycles;
 }
 
 // ---------- Tests ----------
@@ -37,12 +74,11 @@ void test_instr_and_imm() {
     memory[0x0600] = 0x29;
     memory[0x0601] = 0x42;
 
-    Instruction instr = parseInstruction(memory, processor.PC);
-    executeInstruction(instr, &memory, &processor);
-    processor.PC += instr.length;
+    simulateMainloop(&memory, &processor);
 
     CU_ASSERT_EQUAL(processor.A, 0x42);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_and_zp() {
@@ -51,12 +87,11 @@ void test_instr_and_zp() {
     memory[0x0600] = 0x25;
     memory[0x0601] = 0x10;
 
-    Instruction instr = parseInstruction(memory, processor.PC);
-    executeInstruction(instr, &memory, &processor);
-    processor.PC += instr.length;
+    simulateMainloop(&memory, &processor);
 
     CU_ASSERT_EQUAL(processor.A, 0x42);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 3);
 }
 
 void test_instr_and_zpx() {
@@ -66,12 +101,11 @@ void test_instr_and_zpx() {
     memory[0x0600] = 0x35;
     memory[0x0601] = 0x10;
 
-    Instruction instr = parseInstruction(memory, processor.PC);
-    executeInstruction(instr, &memory, &processor);
-    processor.PC += instr.length;
+    simulateMainloop(&memory, &processor);
 
     CU_ASSERT_EQUAL(processor.A, 0x42);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 4);
 }
 
 void test_instr_and_abs() {
@@ -81,12 +115,11 @@ void test_instr_and_abs() {
     memory[0x0601] = 0x20;
     memory[0x0602] = 0x10;
 
-    Instruction instr = parseInstruction(memory, processor.PC);
-    executeInstruction(instr, &memory, &processor);
-    processor.PC += instr.length;
+    simulateMainloop(&memory, &processor);
 
     CU_ASSERT_EQUAL(processor.A, 0x42);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 4);
 }
 
 void test_instr_and_absx() {
@@ -97,12 +130,11 @@ void test_instr_and_absx() {
     memory[0x0601] = 0x20;
     memory[0x0602] = 0x10;
 
-    Instruction instr = parseInstruction(memory, processor.PC);
-    executeInstruction(instr, &memory, &processor);
-    processor.PC += instr.length;
+    simulateMainloop(&memory, &processor);
 
     CU_ASSERT_EQUAL(processor.A, 0x42);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 4);
 }
 
 void test_instr_and_absy() {
@@ -113,12 +145,11 @@ void test_instr_and_absy() {
     memory[0x0601] = 0x20;
     memory[0x0602] = 0x10;
 
-    Instruction instr = parseInstruction(memory, processor.PC);
-    executeInstruction(instr, &memory, &processor);
-    processor.PC += instr.length;
+    simulateMainloop(&memory, &processor);
 
     CU_ASSERT_EQUAL(processor.A, 0x42);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 4);
 }
 
 void test_instr_and_indx() {
@@ -130,12 +161,11 @@ void test_instr_and_indx() {
     memory[0x0600] = 0x21;
     memory[0x0601] = 0x20;
 
-    Instruction instr = parseInstruction(memory, processor.PC);
-    executeInstruction(instr, &memory, &processor);
-    processor.PC += instr.length;
+    simulateMainloop(&memory, &processor);
 
     CU_ASSERT_EQUAL(processor.A, 0x42);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 6);
 }
 
 void test_instr_and_indy() {
@@ -147,12 +177,11 @@ void test_instr_and_indy() {
     memory[0x0600] = 0x31;
     memory[0x0601] = 0x20;
 
-    Instruction instr = parseInstruction(memory, processor.PC);
-    executeInstruction(instr, &memory, &processor);
-    processor.PC += instr.length;
+    simulateMainloop(&memory, &processor);
 
     CU_ASSERT_EQUAL(processor.A, 0x42);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 5);
 }
 
 void test_instr_and_zero() {
@@ -160,12 +189,11 @@ void test_instr_and_zero() {
     memory[0x0600] = 0x29;
     memory[0x0601] = 0xFF;
 
-    Instruction instr = parseInstruction(memory, processor.PC);
-    executeInstruction(instr, &memory, &processor);
-    processor.PC += instr.length;
+    simulateMainloop(&memory, &processor);
 
     CU_ASSERT_EQUAL(processor.A, 0x00);
     CU_ASSERT_EQUAL(processor.P, 0x32);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_and_neg() {
@@ -173,19 +201,64 @@ void test_instr_and_neg() {
     memory[0x0600] = 0x29;
     memory[0x0601] = 0x80;
 
-    Instruction instr = parseInstruction(memory, processor.PC);
-    executeInstruction(instr, &memory, &processor);
-    processor.PC += instr.length;
+    simulateMainloop(&memory, &processor);
 
     CU_ASSERT_EQUAL(processor.A, 0x80);
     CU_ASSERT_EQUAL(processor.P, 0xB0);
+    CU_ASSERT_EQUAL(cycles, 2);
+}
+
+void test_instr_and_absx_page() {
+    processor.X = 0xFF;
+    processor.A = 0xFF;
+    memory[0x111F] = 0x69;
+    memory[0x0600] = 0x3D;
+    memory[0x0601] = 0x20;
+    memory[0x0602] = 0x10;
+
+    simulateMainloop(&memory, &processor);
+
+    CU_ASSERT_EQUAL(processor.A, 0x69);
+    CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 5);
+}
+
+void test_instr_and_absy_page() {
+    processor.Y = 0xFF;
+    processor.A = 0xFF;
+    memory[0x111F] = 0x69;
+    memory[0x0600] = 0x39;
+    memory[0x0601] = 0x20;
+    memory[0x0602] = 0x10;
+
+    simulateMainloop(&memory, &processor);
+
+    CU_ASSERT_EQUAL(processor.A, 0x69);
+    CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 5);
+}
+
+void test_instr_and_indy_page() {
+    processor.A = 0xFF;
+    processor.Y = 0xFF;
+    memory[0x0020] = 0x20;
+    memory[0x0021] = 0x10;
+    memory[0x111F] = 0x69;
+    memory[0x0600] = 0x31;
+    memory[0x0601] = 0x20;
+
+    simulateMainloop(&memory, &processor);
+
+    CU_ASSERT_EQUAL(processor.A, 0x69);
+    CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 6);
 }
 
 // ---------- Run Tests ----------
 
 CU_pSuite add_and_suite_to_registry() {
     CU_pSuite suite = CU_add_suite_with_setup_and_teardown("executeInstruction AND Tests", NULL,
-                                                           NULL, init_and_test, clean_and_test);
+                                                           NULL, init_test, clean_test);
 
     if (suite == NULL) {
         CU_cleanup_registry();
@@ -238,6 +311,21 @@ CU_pSuite add_and_suite_to_registry() {
     }
 
     if (CU_add_test(suite, "AND Negative", test_instr_and_neg) == NULL) {
+        CU_cleanup_registry();
+        return NULL;
+    }
+
+    if (CU_add_test(suite, "AND Absolute,X Page Crossed", test_instr_and_absx_page) == NULL) {
+        CU_cleanup_registry();
+        return NULL;
+    }
+
+    if (CU_add_test(suite, "AND Absolute,Y Page Crossed", test_instr_and_absy_page) == NULL) {
+        CU_cleanup_registry();
+        return NULL;
+    }
+
+    if (CU_add_test(suite, "AND Indirect,Y Page Crossed", test_instr_and_indy_page) == NULL) {
         CU_cleanup_registry();
         return NULL;
     }

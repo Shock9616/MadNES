@@ -15,7 +15,7 @@ Processor processor;
 uint8_t* memory;
 uint64_t cycles;
 
-void init_adc_test() {
+static void init_test() {
     // Set registers to default values
     processor.PC = 0x0600;
     processor.S = 0xFF;
@@ -29,11 +29,11 @@ void init_adc_test() {
     cycles = 0;
 }
 
-void clean_adc_test() {
+static void clean_test() {
     free(memory);
 }
 
-void simulateMainloop(uint8_t** memory, Processor* processor) {
+static void simulateMainloop(uint8_t** memory, Processor* processor) {
     Instruction instr = parseInstruction(*memory, processor->PC);
     executeInstruction(instr, memory, processor);
     processor->PC += instr.length;
@@ -268,7 +268,7 @@ void test_instr_adc_indy_page() {
 
 CU_pSuite add_adc_suite_to_registry() {
     CU_pSuite suite = CU_add_suite_with_setup_and_teardown("executeInstruction ADC Tests", NULL,
-                                                           NULL, init_adc_test, clean_adc_test);
+                                                           NULL, init_test, clean_test);
     if (suite == NULL) {
         CU_cleanup_registry();
         return NULL;
@@ -334,17 +334,17 @@ CU_pSuite add_adc_suite_to_registry() {
         return NULL;
     }
 
-    if (CU_add_test(suite, "ADC ABSX Page Crossed", test_instr_adc_absx_page) == NULL) {
+    if (CU_add_test(suite, "ADC Absolute,X Page Crossed", test_instr_adc_absx_page) == NULL) {
         CU_cleanup_registry();
         return NULL;
     }
 
-    if (CU_add_test(suite, "ADC ABSY Page Crossed", test_instr_adc_absy_page) == NULL) {
+    if (CU_add_test(suite, "ADC Absolute,Y Page Crossed", test_instr_adc_absy_page) == NULL) {
         CU_cleanup_registry();
         return NULL;
     }
 
-    if (CU_add_test(suite, "ADC INDY Page Crossed", test_instr_adc_indy_page) == NULL) {
+    if (CU_add_test(suite, "ADC Indirect,Y Page Crossed", test_instr_adc_indy_page) == NULL) {
         CU_cleanup_registry();
         return NULL;
     }
