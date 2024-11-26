@@ -1,5 +1,6 @@
 #include "6502.h"
 #include "types.h"
+#include "utils.h"
 
 #include <CUnit/Basic.h>
 #include <CUnit/CUnit.h>
@@ -12,6 +13,7 @@
 
 Processor processor;
 uint8_t* memory;
+uint64_t cycles;
 
 void init_adc_test() {
     // Set registers to default values
@@ -24,10 +26,45 @@ void init_adc_test() {
 
     // Allocate system memory
     memory = calloc(MEMORY_SPACE, sizeof(uint8_t));
+    cycles = 0;
 }
 
 void clean_adc_test() {
     free(memory);
+}
+
+void simulateMainloop(uint8_t** memory, Processor* processor) {
+    Instruction instr = parseInstruction(*memory, processor->PC);
+    executeInstruction(instr, memory, processor);
+    processor->PC += instr.length;
+
+    // If the address mode is Absolute X, Absolute Y, or Indirect Indexed, check
+    // if a page was crossed and add an extra cycle
+    switch (instr.addr_mode) {
+        uint16_t addr;
+        case ABSX:
+            addr = instr.addr;
+            if (((addr + processor->X) & 0xFF00) != (addr & 0xFF00)) {
+                instr.cycles++;
+            }
+            break;
+        case ABSY:
+            addr = instr.addr;
+            if (((addr + processor->Y) & 0xFF00) != (addr & 0xFF00)) {
+                instr.cycles++;
+            }
+            break;
+        case INDY:
+            addr = concatenateBytes((*memory)[instr.addr + 1], (*memory)[instr.addr]);
+            if (((addr + processor->Y) & 0xFF00) != (addr & 0xFF00)) {
+                instr.cycles++;
+            }
+            break;
+        default:
+            break;
+    }
+
+    cycles += instr.cycles;
 }
 
 // ---------- Tests ----------
@@ -36,12 +73,11 @@ void test_instr_adc_imm() {
     memory[0x0600] = 0x69;
     memory[0x0601] = 0x42;
 
-    Instruction instr = parseInstruction(memory, processor.PC);
-    executeInstruction(instr, &memory, &processor);
-    processor.PC += instr.length;
+    simulateMainloop(&memory, &processor);
 
     CU_ASSERT_EQUAL(processor.A, 0x42);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_adc_zp() {
@@ -49,12 +85,11 @@ void test_instr_adc_zp() {
     memory[0x0600] = 0x65;
     memory[0x0601] = 0x10;
 
-    Instruction instr = parseInstruction(memory, processor.PC);
-    executeInstruction(instr, &memory, &processor);
-    processor.PC += instr.length;
+    simulateMainloop(&memory, &processor);
 
     CU_ASSERT_EQUAL(processor.A, 0x42);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 3);
 }
 
 void test_instr_adc_zpx() {
@@ -63,12 +98,11 @@ void test_instr_adc_zpx() {
     memory[0x0600] = 0x75;
     memory[0x0601] = 0x10;
 
-    Instruction instr = parseInstruction(memory, processor.PC);
-    executeInstruction(instr, &memory, &processor);
-    processor.PC += instr.length;
+    simulateMainloop(&memory, &processor);
 
     CU_ASSERT_EQUAL(processor.A, 0x42);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 4);
 }
 void test_instr_adc_abs() {
     memory[0x1020] = 0x42;
@@ -76,12 +110,11 @@ void test_instr_adc_abs() {
     memory[0x0601] = 0x20;
     memory[0x0602] = 0x10;
 
-    Instruction instr = parseInstruction(memory, processor.PC);
-    executeInstruction(instr, &memory, &processor);
-    processor.PC += instr.length;
+    simulateMainloop(&memory, &processor);
 
     CU_ASSERT_EQUAL(processor.A, 0x42);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 4);
 }
 
 void test_instr_adc_absx() {
@@ -91,12 +124,11 @@ void test_instr_adc_absx() {
     memory[0x0601] = 0x20;
     memory[0x0602] = 0x10;
 
-    Instruction instr = parseInstruction(memory, processor.PC);
-    executeInstruction(instr, &memory, &processor);
-    processor.PC += instr.length;
+    simulateMainloop(&memory, &processor);
 
     CU_ASSERT_EQUAL(processor.A, 0x42);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 4);
 }
 
 void test_instr_adc_absy() {
@@ -106,12 +138,11 @@ void test_instr_adc_absy() {
     memory[0x0601] = 0x20;
     memory[0x0602] = 0x10;
 
-    Instruction instr = parseInstruction(memory, processor.PC);
-    executeInstruction(instr, &memory, &processor);
-    processor.PC += instr.length;
+    simulateMainloop(&memory, &processor);
 
     CU_ASSERT_EQUAL(processor.A, 0x42);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 4);
 }
 
 void test_instr_adc_indx() {
@@ -122,12 +153,11 @@ void test_instr_adc_indx() {
     memory[0x0600] = 0x61;
     memory[0x0601] = 0x20;
 
-    Instruction instr = parseInstruction(memory, processor.PC);
-    executeInstruction(instr, &memory, &processor);
-    processor.PC += instr.length;
+    simulateMainloop(&memory, &processor);
 
     CU_ASSERT_EQUAL(processor.A, 0x42);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 6);
 }
 
 void test_instr_adc_indy() {
@@ -138,67 +168,100 @@ void test_instr_adc_indy() {
     memory[0x0600] = 0x71;
     memory[0x0601] = 0x20;
 
-    Instruction instr = parseInstruction(memory, processor.PC);
-    executeInstruction(instr, &memory, &processor);
-    processor.PC += instr.length;
+    simulateMainloop(&memory, &processor);
 
     CU_ASSERT_EQUAL(processor.A, 0x42);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 5);
 }
 
 void test_instr_adc_carry() {
+    processor.A = 0xFF;
     memory[0x0600] = 0x69;
-    memory[0x0601] = 0xFF;
-    memory[0x0602] = 0x69;
-    memory[0x0603] = 0x02;
+    memory[0x0601] = 0x02;
 
-    Instruction instr = parseInstruction(memory, processor.PC);
-    executeInstruction(instr, &memory, &processor);
-    processor.PC += instr.length;
-    instr = parseInstruction(memory, processor.PC);
-    executeInstruction(instr, &memory, &processor);
-    processor.PC += instr.length;
+    simulateMainloop(&memory, &processor);
 
     CU_ASSERT_EQUAL(processor.A, 0x01);
     CU_ASSERT_EQUAL(processor.P, 0x31);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_adc_zero() {
     memory[0x0600] = 0x69;
     memory[0x0601] = 0x00;
 
-    Instruction instr = parseInstruction(memory, processor.PC);
-    executeInstruction(instr, &memory, &processor);
-    processor.PC += instr.length;
+    simulateMainloop(&memory, &processor);
 
     CU_ASSERT_EQUAL(processor.A, 0x00);
     CU_ASSERT_EQUAL(processor.P, 0x32);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_adc_overflow() {
+    processor.A = 0x50;
     memory[0x0600] = 0x69;
     memory[0x0601] = 0x50;
 
-    Instruction instr = parseInstruction(memory, processor.PC);
-    executeInstruction(instr, &memory, &processor);
-    processor.PC += instr.length;
-    executeInstruction(instr, &memory, &processor);
-    processor.PC += instr.length;
+    simulateMainloop(&memory, &processor);
 
     CU_ASSERT_EQUAL(processor.A, 0xA0);
     CU_ASSERT_EQUAL(processor.P, 0xF0);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_adc_neg() {
     memory[0x0600] = 0x69;
     memory[0x0601] = 0x80;
 
-    Instruction instr = parseInstruction(memory, processor.PC);
-    executeInstruction(instr, &memory, &processor);
-    processor.PC += instr.length;
+    simulateMainloop(&memory, &processor);
 
     CU_ASSERT_EQUAL(processor.A, 0x80);
     CU_ASSERT_EQUAL(processor.P, 0xB0);
+    CU_ASSERT_EQUAL(cycles, 2);
+}
+
+void test_instr_adc_absx_page() {
+    processor.X = 0xFF;
+    memory[0x111F] = 0x69;
+    memory[0x0600] = 0x7D;
+    memory[0x0601] = 0x20;
+    memory[0x0602] = 0x10;
+
+    simulateMainloop(&memory, &processor);
+
+    CU_ASSERT_EQUAL(processor.A, 0x69);
+    CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 5);
+}
+
+void test_instr_adc_absy_page() {
+    processor.Y = 0xFF;
+    memory[0x111F] = 0x69;
+    memory[0x0600] = 0x79;
+    memory[0x0601] = 0x20;
+    memory[0x0602] = 0x10;
+
+    simulateMainloop(&memory, &processor);
+
+    CU_ASSERT_EQUAL(processor.A, 0x69);
+    CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 5);
+}
+
+void test_instr_adc_indy_page() {
+    processor.Y = 0xFF;
+    memory[0x0020] = 0x20;
+    memory[0x0021] = 0x10;
+    memory[0x111F] = 0x42;
+    memory[0x0600] = 0x71;
+    memory[0x0601] = 0x20;
+
+    simulateMainloop(&memory, &processor);
+
+    CU_ASSERT_EQUAL(processor.A, 0x42);
+    CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 6);
 }
 
 // ---------- Run Tests ----------
@@ -267,6 +330,21 @@ CU_pSuite add_adc_suite_to_registry() {
     }
 
     if (CU_add_test(suite, "ADC Negative", test_instr_adc_neg) == NULL) {
+        CU_cleanup_registry();
+        return NULL;
+    }
+
+    if (CU_add_test(suite, "ADC ABSX Page Crossed", test_instr_adc_absx_page) == NULL) {
+        CU_cleanup_registry();
+        return NULL;
+    }
+
+    if (CU_add_test(suite, "ADC ABSY Page Crossed", test_instr_adc_absy_page) == NULL) {
+        CU_cleanup_registry();
+        return NULL;
+    }
+
+    if (CU_add_test(suite, "ADC INDY Page Crossed", test_instr_adc_indy_page) == NULL) {
         CU_cleanup_registry();
         return NULL;
     }
