@@ -95,6 +95,7 @@ void test_instr_brk() {
     CU_ASSERT_EQUAL(memory[0x01FF], 0x06);
     CU_ASSERT_EQUAL(memory[0x01FE], 0x02);
     CU_ASSERT_EQUAL(memory[0x01FD], 0x32);
+    CU_ASSERT_EQUAL(cycles, 7);
 }
 
 // ---------- Run Tests ----------
