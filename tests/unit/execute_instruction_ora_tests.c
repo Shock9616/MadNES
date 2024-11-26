@@ -26,6 +26,7 @@ static void init_test() {
 
     // Allocate system memory
     memory = calloc(MEMORY_SPACE, sizeof(uint8_t));
+    cycles = 0;
 }
 
 static void clean_test() {
