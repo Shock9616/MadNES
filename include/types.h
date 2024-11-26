@@ -39,63 +39,15 @@ typedef struct {
     uint8_t opcode;
     AddrMode addr_mode;
     char* name;  // The 3 letter mnemonic of the instruction
+
+    // Possible types of arguments to an instruction
+    uint8_t imm;
+    uint16_t addr;
+    uint8_t offset;
+
+    // Instruction metadata
     int length;  // Length of the instruction (in bytes)
     int cycles;  // The number of cycles the instruction takes to execute
-
-    struct {
-        uint8_t imm;
-    } imm;
-
-    // Zero Page addressing mode
-    struct {
-        uint8_t addr;
-    } zp;
-
-    // Zero Pagee X addressing mode
-    struct {
-        uint8_t addr;
-    } zpx;
-
-    // Zero Page Y addressing mode
-    struct {
-        uint8_t addr;
-    } zpy;
-
-    // Relative addressing mode
-    struct {
-        uint8_t offset;
-    } rel;
-
-    // Absolute addressing mode
-    struct {
-        uint16_t addr;
-    } abs;
-
-    // Absolute X addressing mode
-    struct {
-        uint16_t addr;
-    } absx;
-
-    // Absolute Y addressing mode
-    struct {
-        uint16_t addr;
-    } absy;
-
-    // Indirect addressing mode
-    struct {
-        uint16_t addr;
-    } ind;
-
-    // Indirect X addressing mode
-    struct {
-        uint8_t addr;
-    } indx;
-
-    // Indirect Y addressing mode
-    struct {
-        uint8_t addr;
-    } indy;
-
 } Instruction;
 
 typedef struct {

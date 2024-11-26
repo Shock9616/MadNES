@@ -844,47 +844,47 @@ Instruction parseInstruction(uint8_t* mem, uint16_t pc) {
             break;
         case IMM:
             instruction.length = 2;
-            instruction.imm.imm = mem[pc + 1];
+            instruction.imm = mem[pc + 1];
             break;
         case ZP:
             instruction.length = 2;
-            instruction.zp.addr = mem[pc + 1];
+            instruction.addr = mem[pc + 1];
             break;
         case ZPX:
             instruction.length = 2;
-            instruction.zpx.addr = mem[pc + 1];
+            instruction.addr = mem[pc + 1];
             break;
         case ZPY:
             instruction.length = 2;
-            instruction.zpy.addr = mem[pc + 1];
+            instruction.addr = mem[pc + 1];
             break;
         case REL:
             instruction.length = 2;
-            instruction.rel.offset = mem[pc + 1];
+            instruction.offset = mem[pc + 1];
             break;
         case ABS:
             instruction.length = 3;
-            instruction.abs.addr = concatenateBytes(mem[pc + 2], mem[pc + 1]);
+            instruction.addr = concatenateBytes(mem[pc + 2], mem[pc + 1]);
             break;
         case ABSX:
             instruction.length = 3;
-            instruction.absx.addr = concatenateBytes(mem[pc + 2], mem[pc + 1]);
+            instruction.addr = concatenateBytes(mem[pc + 2], mem[pc + 1]);
             break;
         case ABSY:
             instruction.length = 3;
-            instruction.absy.addr = concatenateBytes(mem[pc + 2], mem[pc + 1]);
+            instruction.addr = concatenateBytes(mem[pc + 2], mem[pc + 1]);
             break;
         case IND:
             instruction.length = 3;
-            instruction.ind.addr = concatenateBytes(mem[pc + 2], mem[pc + 1]);
+            instruction.addr = concatenateBytes(mem[pc + 2], mem[pc + 1]);
             break;
         case INDX:
             instruction.length = 2;
-            instruction.indx.addr = mem[pc + 1];
+            instruction.addr = mem[pc + 1];
             break;
         case INDY:
             instruction.length = 2;
-            instruction.indy.addr = mem[pc + 1];
+            instruction.addr = mem[pc + 1];
             break;
     }
 
@@ -1751,34 +1751,35 @@ uint8_t getVal(Instruction instr, uint8_t* mem, Processor processor) {
             val = processor.A;
             break;
         case IMM:
-            val = instr.imm.imm;
+            val = instr.imm;
             break;
         case ZP:
-            val = mem[instr.zp.addr];
+            val = mem[instr.addr];
             break;
         case ZPX:
-            val = mem[instr.zpx.addr + processor.X];
+            val = mem[instr.addr + processor.X];
             break;
         case ZPY:
-            val = mem[instr.zpy.addr + processor.Y];
+            val = mem[instr.addr + processor.Y];
             break;
         case ABS:
-            val = mem[instr.abs.addr];
+            val = mem[instr.addr];
             break;
         case ABSX:
-            val = mem[instr.absx.addr + processor.X];
+            val = mem[instr.addr + processor.X];
             break;
         case ABSY:
-            val = mem[instr.absy.addr + processor.Y];
+
+            val = mem[instr.addr + processor.Y];
             break;
         case INDX:
-            lsb_addr = mem[instr.indx.addr + processor.X];
-            msb_addr = mem[instr.indx.addr + processor.X + 1];
+            lsb_addr = mem[instr.addr + processor.X];
+            msb_addr = mem[instr.addr + processor.X + 1];
             val = mem[concatenateBytes(msb_addr, lsb_addr)];
             break;
         case INDY:
-            lsb_addr = mem[instr.indy.addr];
-            msb_addr = mem[instr.indy.addr + 1];
+            lsb_addr = mem[instr.addr];
+            msb_addr = mem[instr.addr + 1];
             val = mem[concatenateBytes(msb_addr, lsb_addr) + processor.Y];
             break;
         default:
@@ -1809,39 +1810,39 @@ uint16_t getAddr(Instruction instr, uint8_t* mem, Processor processor) {
         case ACCUM:
             break;
         case ZP:
-            addr = instr.zp.addr;
+            addr = instr.addr;
             break;
         case ZPX:
-            addr = instr.zpx.addr + processor.X;
+            addr = instr.addr + processor.X;
             break;
         case ZPY:
-            addr = instr.zpy.addr + processor.Y;
+            addr = instr.addr + processor.Y;
             break;
         case REL:
-            addr = instr.rel.offset + processor.PC;
+            addr = instr.offset + processor.PC;
             break;
         case ABS:
-            addr = instr.abs.addr;
+            addr = instr.addr;
             break;
         case ABSX:
-            addr = instr.absx.addr + processor.X;
+            addr = instr.addr + processor.X;
             break;
         case ABSY:
-            addr = instr.absy.addr + processor.Y;
+            addr = instr.addr + processor.Y;
             break;
         case IND:
-            lsb_addr = mem[instr.ind.addr];
-            msb_addr = mem[instr.ind.addr + 1];
+            lsb_addr = mem[instr.addr];
+            msb_addr = mem[instr.addr + 1];
             addr = concatenateBytes(msb_addr, lsb_addr);
             break;
         case INDX:
-            lsb_addr = mem[instr.indx.addr + processor.X];
-            msb_addr = mem[instr.indx.addr + processor.X + 1];
+            lsb_addr = mem[instr.addr + processor.X];
+            msb_addr = mem[instr.addr + processor.X + 1];
             addr = concatenateBytes(msb_addr, lsb_addr);
             break;
         case INDY:
-            lsb_addr = mem[instr.indy.addr];
-            msb_addr = mem[instr.indy.addr + 1];
+            lsb_addr = mem[instr.addr];
+            msb_addr = mem[instr.addr + 1];
             addr = concatenateBytes(msb_addr, lsb_addr) + processor.Y;
             break;
         default:

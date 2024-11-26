@@ -20,37 +20,37 @@ void printInstruction(Instruction instr) {
             printf(ACCUM_FORMAT, instr.name);
             break;
         case IMM:
-            printf(IMM_FORMAT, instr.name, instr.imm.imm);
+            printf(IMM_FORMAT, instr.name, instr.imm);
             break;
         case ZP:
-            printf(ZP_FORMAT, instr.name, instr.zp.addr);
+            printf(ZP_FORMAT, instr.name, instr.addr);
             break;
         case ZPX:
-            printf(ZPX_FORMAT, instr.name, instr.zpx.addr);
+            printf(ZPX_FORMAT, instr.name, instr.addr);
             break;
         case ZPY:
-            printf(ZPY_FORMAT, instr.name, instr.zpy.addr);
+            printf(ZPY_FORMAT, instr.name, instr.addr);
             break;
         case REL:
-            printf(REL_FORMAT, instr.name, instr.rel.offset);
+            printf(REL_FORMAT, instr.name, instr.offset);
             break;
         case ABS:
-            printf(ABS_FORMAT, instr.name, instr.abs.addr);
+            printf(ABS_FORMAT, instr.name, instr.addr);
             break;
         case ABSX:
-            printf(ABSX_FORMAT, instr.name, instr.absx.addr);
+            printf(ABSX_FORMAT, instr.name, instr.addr);
             break;
         case ABSY:
-            printf(ABSY_FORMAT, instr.name, instr.absy.addr);
+            printf(ABSY_FORMAT, instr.name, instr.addr);
             break;
         case IND:
-            printf(IND_FORMAT, instr.name, instr.ind.addr);
+            printf(IND_FORMAT, instr.name, instr.addr);
             break;
         case INDX:
-            printf(INDX_FORMAT, instr.name, instr.indx.addr);
+            printf(INDX_FORMAT, instr.name, instr.addr);
             break;
         case INDY:
-            printf(INDY_FORMAT, instr.name, instr.indy.addr);
+            printf(INDY_FORMAT, instr.name, instr.addr);
             break;
     }
 }
