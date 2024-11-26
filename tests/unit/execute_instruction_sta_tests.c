@@ -1,5 +1,6 @@
 #include "6502.h"
 #include "types.h"
+#include "utils.h"
 
 #include <CUnit/Basic.h>
 #include <CUnit/CUnit.h>
@@ -12,8 +13,9 @@
 
 Processor processor;
 uint8_t* memory;
+uint64_t cycles;
 
-void init_sta_test() {
+static void init_test() {
     // Set registers to default values
     processor.PC = 0x0600;
     processor.S = 0xFF;
@@ -26,8 +28,42 @@ void init_sta_test() {
     memory = calloc(MEMORY_SPACE, sizeof(uint8_t));
 }
 
-void clean_sta_test() {
+static void clean_test() {
     free(memory);
+}
+
+static void simulateMainloop(uint8_t** memory, Processor* processor) {
+    Instruction instr = parseInstruction(*memory, processor->PC);
+    executeInstruction(instr, memory, processor);
+    processor->PC += instr.length;
+
+    // If the address mode is Absolute X, Absolute Y, or Indirect Indexed, check
+    // if a page was crossed and add an extra cycle
+    switch (instr.addr_mode) {
+        uint16_t addr;
+        case ABSX:
+            addr = instr.addr;
+            if (((addr + processor->X) & 0xFF00) != (addr & 0xFF00)) {
+                instr.cycles++;
+            }
+            break;
+        case ABSY:
+            addr = instr.addr;
+            if (((addr + processor->Y) & 0xFF00) != (addr & 0xFF00)) {
+                instr.cycles++;
+            }
+            break;
+        case INDY:
+            addr = concatenateBytes((*memory)[instr.addr + 1], (*memory)[instr.addr]);
+            if (((addr + processor->Y) & 0xFF00) != (addr & 0xFF00)) {
+                instr.cycles++;
+            }
+            break;
+        default:
+            break;
+    }
+
+    cycles += instr.cycles;
 }
 
 // ---------- Tests ----------
@@ -37,9 +73,7 @@ void test_instr_sta_zp() {
     memory[0x0600] = 0x85;
     memory[0x0601] = 0x10;
 
-    Instruction instr = parseInstruction(memory, processor.PC);
-    executeInstruction(instr, &memory, &processor);
-    processor.PC += instr.length;
+    simulateMainloop(&memory, &processor);
 
     CU_ASSERT_EQUAL(memory[0x0010], 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x30);
@@ -51,9 +85,7 @@ void test_instr_sta_zpx() {
     memory[0x0600] = 0x95;
     memory[0x0601] = 0x10;
 
-    Instruction instr = parseInstruction(memory, processor.PC);
-    executeInstruction(instr, &memory, &processor);
-    processor.PC += instr.length;
+    simulateMainloop(&memory, &processor);
 
     CU_ASSERT_EQUAL(memory[0x0015], 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x30);
@@ -65,9 +97,7 @@ void test_instr_sta_abs() {
     memory[0x0601] = 0x20;
     memory[0x0602] = 0x10;
 
-    Instruction instr = parseInstruction(memory, processor.PC);
-    executeInstruction(instr, &memory, &processor);
-    processor.PC += instr.length;
+    simulateMainloop(&memory, &processor);
 
     CU_ASSERT_EQUAL(memory[0x1020], 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x30);
@@ -80,9 +110,7 @@ void test_instr_sta_absx() {
     memory[0x0601] = 0x20;
     memory[0x0602] = 0x10;
 
-    Instruction instr = parseInstruction(memory, processor.PC);
-    executeInstruction(instr, &memory, &processor);
-    processor.PC += instr.length;
+    simulateMainloop(&memory, &processor);
 
     CU_ASSERT_EQUAL(memory[0x1025], 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x30);
@@ -95,9 +123,7 @@ void test_instr_sta_absy() {
     memory[0x0601] = 0x20;
     memory[0x0602] = 0x10;
 
-    Instruction instr = parseInstruction(memory, processor.PC);
-    executeInstruction(instr, &memory, &processor);
-    processor.PC += instr.length;
+    simulateMainloop(&memory, &processor);
 
     CU_ASSERT_EQUAL(memory[0x1025], 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x30);
@@ -111,9 +137,7 @@ void test_instr_sta_indx() {
     memory[0x0600] = 0x81;
     memory[0x0601] = 0x10;
 
-    Instruction instr = parseInstruction(memory, processor.PC);
-    executeInstruction(instr, &memory, &processor);
-    processor.PC += instr.length;
+    simulateMainloop(&memory, &processor);
 
     CU_ASSERT_EQUAL(memory[0x1020], 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x30);
@@ -127,9 +151,7 @@ void test_instr_sta_indy() {
     memory[0x0600] = 0x81;
     memory[0x0601] = 0x10;
 
-    Instruction instr = parseInstruction(memory, processor.PC);
-    executeInstruction(instr, &memory, &processor);
-    processor.PC += instr.length;
+    simulateMainloop(&memory, &processor);
 
     CU_ASSERT_EQUAL(memory[0x1025], 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x30);
@@ -139,7 +161,7 @@ void test_instr_sta_indy() {
 
 CU_pSuite add_sta_suite_to_registry() {
     CU_pSuite suite = CU_add_suite_with_setup_and_teardown("executeInstruction STA Tests", NULL,
-                                                           NULL, init_sta_test, clean_sta_test);
+                                                           NULL, init_test, clean_test);
 
     if (suite == NULL) {
         CU_cleanup_registry();
