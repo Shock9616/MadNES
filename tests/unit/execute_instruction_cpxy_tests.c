@@ -90,6 +90,7 @@ void test_instr_cpx_imm() {
 
     CU_ASSERT_EQUAL(processor.X, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x31);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_cpx_zp() {
@@ -102,6 +103,7 @@ void test_instr_cpx_zp() {
 
     CU_ASSERT_EQUAL(processor.X, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x31);
+    CU_ASSERT_EQUAL(cycles, 3);
 }
 
 void test_instr_cpx_abs() {
@@ -115,6 +117,7 @@ void test_instr_cpx_abs() {
 
     CU_ASSERT_EQUAL(processor.X, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x31);
+    CU_ASSERT_EQUAL(cycles, 4);
 }
 
 void test_instr_cpx_eq() {
@@ -126,6 +129,7 @@ void test_instr_cpx_eq() {
 
     CU_ASSERT_EQUAL(processor.X, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x33);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_cpx_gt() {
@@ -137,6 +141,7 @@ void test_instr_cpx_gt() {
 
     CU_ASSERT_EQUAL(processor.X, 0x42);
     CU_ASSERT_EQUAL(processor.P, 0xB0);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_cpx_lt() {
@@ -148,6 +153,7 @@ void test_instr_cpx_lt() {
 
     CU_ASSERT_EQUAL(processor.X, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x31);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_cpy_imm() {
@@ -159,6 +165,7 @@ void test_instr_cpy_imm() {
 
     CU_ASSERT_EQUAL(processor.Y, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x31);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_cpy_zp() {
@@ -171,6 +178,7 @@ void test_instr_cpy_zp() {
 
     CU_ASSERT_EQUAL(processor.Y, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x31);
+    CU_ASSERT_EQUAL(cycles, 3);
 }
 
 void test_instr_cpy_abs() {
@@ -184,6 +192,7 @@ void test_instr_cpy_abs() {
 
     CU_ASSERT_EQUAL(processor.Y, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x31);
+    CU_ASSERT_EQUAL(cycles, 4);
 }
 
 void test_instr_cpy_eq() {
@@ -195,6 +204,7 @@ void test_instr_cpy_eq() {
 
     CU_ASSERT_EQUAL(processor.Y, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x33);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_cpy_gt() {
@@ -206,6 +216,7 @@ void test_instr_cpy_gt() {
 
     CU_ASSERT_EQUAL(processor.Y, 0x42);
     CU_ASSERT_EQUAL(processor.P, 0xB0);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_cpy_lt() {
@@ -217,6 +228,7 @@ void test_instr_cpy_lt() {
 
     CU_ASSERT_EQUAL(processor.Y, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x31);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 // ---------- Run Tests ----------
