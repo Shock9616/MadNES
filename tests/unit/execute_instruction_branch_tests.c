@@ -34,12 +34,14 @@ static void clean_test() {
 }
 
 static void simulateMainloop(uint8_t** memory, Processor* processor) {
+    uint16_t old_PC = processor->PC;
+
     Instruction instr = parseInstruction(*memory, processor->PC);
     executeInstruction(instr, memory, processor);
     processor->PC += instr.length;
 
-    // If the address mode is Absolute X, Absolute Y, or Indirect Indexed, check
-    // if a page was crossed and add an extra cycle
+    // If the address mode is Absolute X, Absolute Y, Indirect Indexed, or
+    // Relative, check if a page was crossed and add an extra cycle
     switch (instr.addr_mode) {
         uint16_t addr;
         case ABSX:
@@ -60,6 +62,16 @@ static void simulateMainloop(uint8_t** memory, Processor* processor) {
                 instr.cycles++;
             }
             break;
+        case REL:
+            if (processor->PC != old_PC + instr.length) {
+                // Branch succeeded
+                instr.cycles++;
+
+                if ((processor->PC & 0xFF00) != (old_PC & 0xFF00)) {
+                    // Page crossed
+                    instr.cycles++;
+                }
+            }
         default:
             break;
     }
@@ -78,6 +90,7 @@ void test_instr_bcc_clear() {
 
     CU_ASSERT_EQUAL(processor.PC, 0x0600 + 0x42);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 3);
 }
 
 void test_instr_bcc_set() {
@@ -89,6 +102,21 @@ void test_instr_bcc_set() {
 
     CU_ASSERT_EQUAL(processor.PC, 0x0602);
     CU_ASSERT_EQUAL(processor.P, 0x31);
+    CU_ASSERT_EQUAL(cycles, 2);
+}
+
+void test_instr_bcc_page() {
+    processor.P = 0x30;
+    memory[0x0600] = 0xEA;
+    memory[0x0601] = 0x90;
+    memory[0x0602] = 0xFF;
+
+    simulateMainloop(&memory, &processor);
+    simulateMainloop(&memory, &processor);
+
+    CU_ASSERT_EQUAL(processor.PC, 0x0601 + 0xFF);
+    CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 6);
 }
 
 void test_instr_bcs_clear() {
@@ -100,6 +128,7 @@ void test_instr_bcs_clear() {
 
     CU_ASSERT_EQUAL(processor.PC, 0x0602);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_bcs_set() {
@@ -111,6 +140,21 @@ void test_instr_bcs_set() {
 
     CU_ASSERT_EQUAL(processor.PC, 0x0600 + 0x42);
     CU_ASSERT_EQUAL(processor.P, 0x31);
+    CU_ASSERT_EQUAL(cycles, 3);
+}
+
+void test_instr_bcs_page() {
+    processor.P = 0x31;
+    memory[0x0600] = 0xEA;
+    memory[0x0601] = 0xB0;
+    memory[0x0602] = 0xFF;
+
+    simulateMainloop(&memory, &processor);
+    simulateMainloop(&memory, &processor);
+
+    CU_ASSERT_EQUAL(processor.PC, 0x0601 + 0xFF);
+    CU_ASSERT_EQUAL(processor.P, 0x31);
+    CU_ASSERT_EQUAL(cycles, 6);
 }
 
 void test_instr_beq_eq() {
@@ -122,6 +166,7 @@ void test_instr_beq_eq() {
 
     CU_ASSERT_EQUAL(processor.PC, 0x0600 + 0x42);
     CU_ASSERT_EQUAL(processor.P, 0x32);
+    CU_ASSERT_EQUAL(cycles, 3);
 }
 
 void test_instr_beq_neq() {
@@ -133,6 +178,21 @@ void test_instr_beq_neq() {
 
     CU_ASSERT_EQUAL(processor.PC, 0x0602);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 2);
+}
+
+void test_instr_beq_page() {
+    processor.P = 0x32;
+    memory[0x0600] = 0xEA;
+    memory[0x0601] = 0xF0;
+    memory[0x0602] = 0xFF;
+
+    simulateMainloop(&memory, &processor);
+    simulateMainloop(&memory, &processor);
+
+    CU_ASSERT_EQUAL(processor.PC, 0x0601 + 0xFF);
+    CU_ASSERT_EQUAL(processor.P, 0x32);
+    CU_ASSERT_EQUAL(cycles, 6);
 }
 
 void test_instr_bmi_neg() {
@@ -144,6 +204,7 @@ void test_instr_bmi_neg() {
 
     CU_ASSERT_EQUAL(processor.PC, 0x0600 + 0x42);
     CU_ASSERT_EQUAL(processor.P, 0xB0);
+    CU_ASSERT_EQUAL(cycles, 3);
 }
 
 void test_instr_bmi_pos() {
@@ -155,6 +216,21 @@ void test_instr_bmi_pos() {
 
     CU_ASSERT_EQUAL(processor.PC, 0x0602);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 2);
+}
+
+void test_instr_bmi_page() {
+    processor.P = 0xB0;
+    memory[0x0600] = 0xEA;
+    memory[0x0601] = 0x30;
+    memory[0x0602] = 0xFF;
+
+    simulateMainloop(&memory, &processor);
+    simulateMainloop(&memory, &processor);
+
+    CU_ASSERT_EQUAL(processor.PC, 0x0601 + 0xFF);
+    CU_ASSERT_EQUAL(processor.P, 0xB0);
+    CU_ASSERT_EQUAL(cycles, 6);
 }
 
 void test_instr_bne_eq() {
@@ -166,6 +242,7 @@ void test_instr_bne_eq() {
 
     CU_ASSERT_EQUAL(processor.PC, 0x0602);
     CU_ASSERT_EQUAL(processor.P, 0x32);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_bne_neq() {
@@ -177,6 +254,21 @@ void test_instr_bne_neq() {
 
     CU_ASSERT_EQUAL(processor.PC, 0x0600 + 0x42);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 3);
+}
+
+void test_instr_bne_page() {
+    processor.P = 0x30;
+    memory[0x0600] = 0xEA;
+    memory[0x0601] = 0xD0;
+    memory[0x0602] = 0xFF;
+
+    simulateMainloop(&memory, &processor);
+    simulateMainloop(&memory, &processor);
+
+    CU_ASSERT_EQUAL(processor.PC, 0x0601 + 0xFF);
+    CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 6);
 }
 
 void test_instr_bpl_pos() {
@@ -188,6 +280,7 @@ void test_instr_bpl_pos() {
 
     CU_ASSERT_EQUAL(processor.PC, 0x0600 + 0x42);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 3);
 }
 
 void test_instr_bpl_neg() {
@@ -199,6 +292,21 @@ void test_instr_bpl_neg() {
 
     CU_ASSERT_EQUAL(processor.PC, 0x0602);
     CU_ASSERT_EQUAL(processor.P, 0xB0);
+    CU_ASSERT_EQUAL(cycles, 2);
+}
+
+void test_instr_bpl_page() {
+    processor.P = 0x30;
+    memory[0x0600] = 0xEA;
+    memory[0x0601] = 0x10;
+    memory[0x0602] = 0xFF;
+
+    simulateMainloop(&memory, &processor);
+    simulateMainloop(&memory, &processor);
+
+    CU_ASSERT_EQUAL(processor.PC, 0x0601 + 0xFF);
+    CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 6);
 }
 
 void test_instr_bvc_vclr() {
@@ -210,6 +318,7 @@ void test_instr_bvc_vclr() {
 
     CU_ASSERT_EQUAL(processor.PC, 0x0600 + 0x42);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 3);
 }
 
 void test_instr_bvc_vset() {
@@ -221,6 +330,21 @@ void test_instr_bvc_vset() {
 
     CU_ASSERT_EQUAL(processor.PC, 0x0602);
     CU_ASSERT_EQUAL(processor.P, 0x70);
+    CU_ASSERT_EQUAL(cycles, 2);
+}
+
+void test_instr_bvc_page() {
+    processor.P = 0x30;
+    memory[0x0600] = 0xEA;
+    memory[0x0601] = 0x50;
+    memory[0x0602] = 0xFF;
+
+    simulateMainloop(&memory, &processor);
+    simulateMainloop(&memory, &processor);
+
+    CU_ASSERT_EQUAL(processor.PC, 0x0601 + 0xFF);
+    CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 6);
 }
 
 void test_instr_bvs_vclr() {
@@ -232,6 +356,7 @@ void test_instr_bvs_vclr() {
 
     CU_ASSERT_EQUAL(processor.PC, 0x0602);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_bvs_vset() {
@@ -243,6 +368,21 @@ void test_instr_bvs_vset() {
 
     CU_ASSERT_EQUAL(processor.PC, 0x0600 + 0x42);
     CU_ASSERT_EQUAL(processor.P, 0x70);
+    CU_ASSERT_EQUAL(cycles, 3);
+}
+
+void test_instr_bvs_page() {
+    processor.P = 0x70;
+    memory[0x0600] = 0xEA;
+    memory[0x0601] = 0x70;
+    memory[0x0602] = 0xFF;
+
+    simulateMainloop(&memory, &processor);
+    simulateMainloop(&memory, &processor);
+
+    CU_ASSERT_EQUAL(processor.PC, 0x0601 + 0xFF);
+    CU_ASSERT_EQUAL(processor.P, 0x70);
+    CU_ASSERT_EQUAL(cycles, 6);
 }
 
 // ---------- Run Tests ----------
@@ -266,12 +406,22 @@ CU_pSuite add_branch_suite_to_registry() {
         return NULL;
     }
 
-    if (CU_add_test(suite, "BCS (Carry clear)", test_instr_bcc_clear) == NULL) {
+    if (CU_add_test(suite, "BCC Page Crossed", test_instr_bcc_page) == NULL) {
         CU_cleanup_registry();
         return NULL;
     }
 
-    if (CU_add_test(suite, "BCS (Carry set)", test_instr_bcc_set) == NULL) {
+    if (CU_add_test(suite, "BCS (Carry clear)", test_instr_bcs_clear) == NULL) {
+        CU_cleanup_registry();
+        return NULL;
+    }
+
+    if (CU_add_test(suite, "BCS (Carry set)", test_instr_bcs_set) == NULL) {
+        CU_cleanup_registry();
+        return NULL;
+    }
+
+    if (CU_add_test(suite, "BCS Page Crossed", test_instr_bcs_page) == NULL) {
         CU_cleanup_registry();
         return NULL;
     }
@@ -286,12 +436,22 @@ CU_pSuite add_branch_suite_to_registry() {
         return NULL;
     }
 
+    if (CU_add_test(suite, "BEQ Page Crossed", test_instr_beq_page) == NULL) {
+        CU_cleanup_registry();
+        return NULL;
+    }
+
     if (CU_add_test(suite, "BMI (Negative set)", test_instr_bmi_neg) == NULL) {
         CU_cleanup_registry();
         return NULL;
     }
 
     if (CU_add_test(suite, "BMI (Negative clear)", test_instr_bmi_pos) == NULL) {
+        CU_cleanup_registry();
+        return NULL;
+    }
+
+    if (CU_add_test(suite, "BMI Page Crossed", test_instr_bmi_page) == NULL) {
         CU_cleanup_registry();
         return NULL;
     }
@@ -306,12 +466,22 @@ CU_pSuite add_branch_suite_to_registry() {
         return NULL;
     }
 
+    if (CU_add_test(suite, "BNE Page Crossed", test_instr_bne_page) == NULL) {
+        CU_cleanup_registry();
+        return NULL;
+    }
+
     if (CU_add_test(suite, "BPL (Negative clear)", test_instr_bpl_pos) == NULL) {
         CU_cleanup_registry();
         return NULL;
     }
 
     if (CU_add_test(suite, "BPL (Negative set)", test_instr_bpl_neg) == NULL) {
+        CU_cleanup_registry();
+        return NULL;
+    }
+
+    if (CU_add_test(suite, "BPL Page Crossed", test_instr_bpl_page) == NULL) {
         CU_cleanup_registry();
         return NULL;
     }
@@ -326,12 +496,22 @@ CU_pSuite add_branch_suite_to_registry() {
         return NULL;
     }
 
+    if (CU_add_test(suite, "BVC Page Crossed", test_instr_bvc_page) == NULL) {
+        CU_cleanup_registry();
+        return NULL;
+    }
+
     if (CU_add_test(suite, "BVS (Overflow clear)", test_instr_bvs_vclr) == NULL) {
         CU_cleanup_registry();
         return NULL;
     }
 
     if (CU_add_test(suite, "BVS (Overflow set)", test_instr_bvs_vset) == NULL) {
+        CU_cleanup_registry();
+        return NULL;
+    }
+
+    if (CU_add_test(suite, "BVS Page Crossed", test_instr_bvs_page) == NULL) {
         CU_cleanup_registry();
         return NULL;
     }
