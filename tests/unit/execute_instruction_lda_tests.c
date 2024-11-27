@@ -89,6 +89,7 @@ void test_instr_lda_imm() {
 
     CU_ASSERT_EQUAL(processor.A, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_lda_zp() {
@@ -100,6 +101,7 @@ void test_instr_lda_zp() {
 
     CU_ASSERT_EQUAL(processor.A, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 3);
 }
 
 void test_instr_lda_zpx() {
@@ -112,6 +114,7 @@ void test_instr_lda_zpx() {
 
     CU_ASSERT_EQUAL(processor.A, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 4);
 }
 
 void test_instr_lda_abs() {
@@ -124,6 +127,7 @@ void test_instr_lda_abs() {
 
     CU_ASSERT_EQUAL(processor.A, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 4);
 }
 
 void test_instr_lda_absx() {
@@ -137,6 +141,7 @@ void test_instr_lda_absx() {
 
     CU_ASSERT_EQUAL(processor.A, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 4);
 }
 
 void test_instr_lda_absy() {
@@ -150,6 +155,7 @@ void test_instr_lda_absy() {
 
     CU_ASSERT_EQUAL(processor.A, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 4);
 }
 
 void test_instr_lda_indx() {
@@ -164,6 +170,7 @@ void test_instr_lda_indx() {
 
     CU_ASSERT_EQUAL(processor.A, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 6);
 }
 
 void test_instr_lda_indy() {
@@ -178,6 +185,7 @@ void test_instr_lda_indy() {
 
     CU_ASSERT_EQUAL(processor.A, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 5);
 }
 
 void test_instr_lda_zero() {
@@ -188,6 +196,7 @@ void test_instr_lda_zero() {
 
     CU_ASSERT_EQUAL(processor.A, 0x00);
     CU_ASSERT_EQUAL(processor.P, 0x32);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_lda_neg() {
@@ -198,6 +207,50 @@ void test_instr_lda_neg() {
 
     CU_ASSERT_EQUAL(processor.A, 0x96);
     CU_ASSERT_EQUAL(processor.P, 0xB0);
+    CU_ASSERT_EQUAL(cycles, 2);
+}
+
+void test_instr_lda_absx_page() {
+    processor.X = 0xFF;
+    memory[0x111F] = 0x69;
+    memory[0x0600] = 0xBD;
+    memory[0x0601] = 0x20;
+    memory[0x0602] = 0x10;
+
+    simulateMainloop(&memory, &processor);
+
+    CU_ASSERT_EQUAL(processor.A, 0x69);
+    CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 5);
+}
+
+void test_instr_lda_absy_page() {
+    processor.Y = 0xFF;
+    memory[0x111F] = 0x69;
+    memory[0x0600] = 0xB9;
+    memory[0x0601] = 0x20;
+    memory[0x0602] = 0x10;
+
+    simulateMainloop(&memory, &processor);
+
+    CU_ASSERT_EQUAL(processor.A, 0x69);
+    CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 5);
+}
+
+void test_instr_lda_indy_page() {
+    processor.Y = 0xFF;
+    memory[0x0020] = 0x20;
+    memory[0x0021] = 0x10;
+    memory[0x111F] = 0x69;
+    memory[0x0600] = 0xB1;
+    memory[0x0601] = 0x20;
+
+    simulateMainloop(&memory, &processor);
+
+    CU_ASSERT_EQUAL(processor.A, 0x69);
+    CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 6);
 }
 
 // ---------- Run Tests ----------
@@ -257,6 +310,21 @@ CU_pSuite add_lda_suite_to_registry() {
     }
 
     if (CU_add_test(suite, "LDA Negative", test_instr_lda_neg) == NULL) {
+        CU_cleanup_registry();
+        return NULL;
+    }
+
+    if (CU_add_test(suite, "LDA Absolute,X Page Crossed", test_instr_lda_absx_page) == NULL) {
+        CU_cleanup_registry();
+        return NULL;
+    }
+
+    if (CU_add_test(suite, "LDA Absolute,Y Page Crossed", test_instr_lda_absy_page) == NULL) {
+        CU_cleanup_registry();
+        return NULL;
+    }
+
+    if (CU_add_test(suite, "LDA (Indirect),Y Page Crossed", test_instr_lda_indy_page) == NULL) {
         CU_cleanup_registry();
         return NULL;
     }
