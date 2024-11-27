@@ -92,6 +92,7 @@ void test_instr_nop() {
     CU_ASSERT_EQUAL(processor.A, 0x0);
     CU_ASSERT_EQUAL(processor.X, 0x0);
     CU_ASSERT_EQUAL(processor.Y, 0x0);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 // ---------- Run Tests ----------
