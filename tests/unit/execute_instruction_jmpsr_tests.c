@@ -90,6 +90,7 @@ void test_instr_jmp_abs() {
 
     CU_ASSERT_EQUAL(processor.PC, 0x1020);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 3);
 }
 
 void test_instr_jmp_ind() {
@@ -103,6 +104,7 @@ void test_instr_jmp_ind() {
 
     CU_ASSERT_EQUAL(processor.PC, 0x3040);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 5);
 }
 
 void test_instr_jsr() {
@@ -116,6 +118,7 @@ void test_instr_jsr() {
     CU_ASSERT_EQUAL(processor.P, 0x30);
     CU_ASSERT_EQUAL(memory[0x01FF], 0x06)
     CU_ASSERT_EQUAL(memory[0x01FE], 0x02)
+    CU_ASSERT_EQUAL(cycles, 6);
 }
 
 // ---------- Run Tests ----------
