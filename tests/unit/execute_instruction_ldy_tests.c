@@ -89,6 +89,7 @@ void test_instr_ldy_imm() {
 
     CU_ASSERT_EQUAL(processor.Y, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_ldy_zp() {
@@ -100,6 +101,7 @@ void test_instr_ldy_zp() {
 
     CU_ASSERT_EQUAL(processor.Y, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 3);
 }
 
 void test_instr_ldy_zpx() {
@@ -112,6 +114,7 @@ void test_instr_ldy_zpx() {
 
     CU_ASSERT_EQUAL(processor.Y, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 4);
 }
 
 void test_instr_ldy_abs() {
@@ -124,6 +127,7 @@ void test_instr_ldy_abs() {
 
     CU_ASSERT_EQUAL(processor.Y, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 4);
 }
 
 void test_instr_ldy_absx() {
@@ -137,6 +141,7 @@ void test_instr_ldy_absx() {
 
     CU_ASSERT_EQUAL(processor.Y, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 4);
 }
 
 void test_instr_ldy_zero() {
@@ -147,6 +152,7 @@ void test_instr_ldy_zero() {
 
     CU_ASSERT_EQUAL(processor.Y, 0x00);
     CU_ASSERT_EQUAL(processor.P, 0x32);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_ldy_neg() {
@@ -157,6 +163,21 @@ void test_instr_ldy_neg() {
 
     CU_ASSERT_EQUAL(processor.Y, 0x96);
     CU_ASSERT_EQUAL(processor.P, 0xB0);
+    CU_ASSERT_EQUAL(cycles, 2);
+}
+
+void test_instr_ldy_absx_page() {
+    processor.X = 0xFF;
+    memory[0x111F] = 0x69;
+    memory[0x0600] = 0xBC;
+    memory[0x0601] = 0x20;
+    memory[0x0602] = 0x10;
+
+    simulateMainloop(&memory, &processor);
+
+    CU_ASSERT_EQUAL(processor.Y, 0x69);
+    CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 5);
 }
 
 // ---------- Run Tests ----------
@@ -201,6 +222,11 @@ CU_pSuite add_ldy_suite_to_registry() {
     }
 
     if (CU_add_test(suite, "LDY Negative", test_instr_ldy_neg) == NULL) {
+        CU_cleanup_registry();
+        return NULL;
+    }
+
+    if (CU_add_test(suite, "LDY Absolute,X", test_instr_ldy_absx_page) == NULL) {
         CU_cleanup_registry();
         return NULL;
     }
