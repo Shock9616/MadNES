@@ -89,6 +89,7 @@ void test_instr_ldx_imm() {
 
     CU_ASSERT_EQUAL(processor.X, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_ldx_zp() {
@@ -100,6 +101,7 @@ void test_instr_ldx_zp() {
 
     CU_ASSERT_EQUAL(processor.X, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 3);
 }
 
 void test_instr_ldx_zpy() {
@@ -112,6 +114,7 @@ void test_instr_ldx_zpy() {
 
     CU_ASSERT_EQUAL(processor.X, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 4);
 }
 
 void test_instr_ldx_abs() {
@@ -124,6 +127,7 @@ void test_instr_ldx_abs() {
 
     CU_ASSERT_EQUAL(processor.X, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 4);
 }
 
 void test_instr_ldx_absy() {
@@ -137,6 +141,7 @@ void test_instr_ldx_absy() {
 
     CU_ASSERT_EQUAL(processor.X, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 4);
 }
 
 void test_instr_ldx_zero() {
@@ -147,6 +152,7 @@ void test_instr_ldx_zero() {
 
     CU_ASSERT_EQUAL(processor.X, 0x00);
     CU_ASSERT_EQUAL(processor.P, 0x32);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_ldx_neg() {
@@ -157,6 +163,21 @@ void test_instr_ldx_neg() {
 
     CU_ASSERT_EQUAL(processor.X, 0x96);
     CU_ASSERT_EQUAL(processor.P, 0xB0);
+    CU_ASSERT_EQUAL(cycles, 2);
+}
+
+void test_instr_ldx_absy_page() {
+    processor.Y = 0xFF;
+    memory[0x111F] = 0x69;
+    memory[0x0600] = 0xBE;
+    memory[0x0601] = 0x20;
+    memory[0x0602] = 0x10;
+
+    simulateMainloop(&memory, &processor);
+
+    CU_ASSERT_EQUAL(processor.X, 0x69);
+    CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 5);
 }
 
 // ---------- Run Tests ----------
@@ -201,6 +222,11 @@ CU_pSuite add_ldx_suite_to_registry() {
     }
 
     if (CU_add_test(suite, "LDX Negative", test_instr_ldx_neg) == NULL) {
+        CU_cleanup_registry();
+        return NULL;
+    }
+
+    if (CU_add_test(suite, "LDX Absolyte,Y Page Crossed", test_instr_ldx_absy_page) == NULL) {
         CU_cleanup_registry();
         return NULL;
     }
