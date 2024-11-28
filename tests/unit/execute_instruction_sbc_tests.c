@@ -90,6 +90,7 @@ void test_instr_sbc_imm() {
 
     CU_ASSERT_EQUAL(processor.A, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x31);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_sbc_zp() {
@@ -102,6 +103,7 @@ void test_instr_sbc_zp() {
 
     CU_ASSERT_EQUAL(processor.A, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x31);
+    CU_ASSERT_EQUAL(cycles, 3);
 }
 
 void test_instr_sbc_zpx() {
@@ -115,6 +117,7 @@ void test_instr_sbc_zpx() {
 
     CU_ASSERT_EQUAL(processor.A, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x31);
+    CU_ASSERT_EQUAL(cycles, 4);
 }
 
 void test_instr_sbc_abs() {
@@ -128,6 +131,7 @@ void test_instr_sbc_abs() {
 
     CU_ASSERT_EQUAL(processor.A, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x31);
+    CU_ASSERT_EQUAL(cycles, 4);
 }
 
 void test_instr_sbc_absx() {
@@ -142,6 +146,7 @@ void test_instr_sbc_absx() {
 
     CU_ASSERT_EQUAL(processor.A, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x31);
+    CU_ASSERT_EQUAL(cycles, 4);
 }
 
 void test_instr_sbc_absy() {
@@ -156,6 +161,7 @@ void test_instr_sbc_absy() {
 
     CU_ASSERT_EQUAL(processor.A, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x31);
+    CU_ASSERT_EQUAL(cycles, 4);
 }
 
 void test_instr_sbc_indx() {
@@ -171,6 +177,7 @@ void test_instr_sbc_indx() {
 
     CU_ASSERT_EQUAL(processor.A, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x31);
+    CU_ASSERT_EQUAL(cycles, 6);
 }
 
 void test_instr_sbc_indy() {
@@ -186,6 +193,7 @@ void test_instr_sbc_indy() {
 
     CU_ASSERT_EQUAL(processor.A, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x31);
+    CU_ASSERT_EQUAL(cycles, 5);
 }
 
 void test_instr_sbc_carry() {
@@ -197,6 +205,7 @@ void test_instr_sbc_carry() {
 
     CU_ASSERT_EQUAL(processor.A, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_sbc_zero() {
@@ -209,6 +218,7 @@ void test_instr_sbc_zero() {
 
     CU_ASSERT_EQUAL(processor.A, 0x00);
     CU_ASSERT_EQUAL(processor.P, 0x33);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_sbc_overflow() {
@@ -220,6 +230,7 @@ void test_instr_sbc_overflow() {
 
     CU_ASSERT_EQUAL(processor.A, 0x77);
     CU_ASSERT_EQUAL(processor.P, 0x71);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_sbc_neg() {
@@ -231,6 +242,53 @@ void test_instr_sbc_neg() {
 
     CU_ASSERT_EQUAL(processor.A, 0xEE);
     CU_ASSERT_EQUAL(processor.P, 0xB1);
+    CU_ASSERT_EQUAL(cycles, 2);
+}
+
+void test_instr_sbc_absx_page() {
+    processor.A = 0xFF;
+    processor.X = 0xFF;
+    memory[0x111F] = 0x95;
+    memory[0x0600] = 0xFD;
+    memory[0x0601] = 0x20;
+    memory[0x0602] = 0x10;
+
+    simulateMainloop(&memory, &processor);
+
+    CU_ASSERT_EQUAL(processor.A, 0x69);
+    CU_ASSERT_EQUAL(processor.P, 0x31);
+    CU_ASSERT_EQUAL(cycles, 4);
+}
+
+void test_instr_sbc_absy_page() {
+    processor.A = 0xFF;
+    processor.Y = 0xFF;
+    memory[0x111F] = 0x95;
+    memory[0x0600] = 0xF9;
+    memory[0x0601] = 0x20;
+    memory[0x0602] = 0x10;
+
+    simulateMainloop(&memory, &processor);
+
+    CU_ASSERT_EQUAL(processor.A, 0x69);
+    CU_ASSERT_EQUAL(processor.P, 0x31);
+    CU_ASSERT_EQUAL(cycles, 4);
+}
+
+void test_instr_sbc_indy_page() {
+    processor.A = 0xFF;
+    processor.Y = 0xFF;
+    memory[0x0020] = 0x20;
+    memory[0x0021] = 0x10;
+    memory[0x111F] = 0x95;
+    memory[0x0600] = 0xF1;
+    memory[0x0601] = 0x20;
+
+    simulateMainloop(&memory, &processor);
+
+    CU_ASSERT_EQUAL(processor.A, 0x69);
+    CU_ASSERT_EQUAL(processor.P, 0x31);
+    CU_ASSERT_EQUAL(cycles, 6);
 }
 
 // ---------- Run Tests ----------
