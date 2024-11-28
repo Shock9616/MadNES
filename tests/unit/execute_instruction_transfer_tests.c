@@ -89,6 +89,7 @@ void test_instr_tax() {
 
     CU_ASSERT_EQUAL(processor.X, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_tax_zero() {
@@ -99,6 +100,7 @@ void test_instr_tax_zero() {
 
     CU_ASSERT_EQUAL(processor.X, 0x00);
     CU_ASSERT_EQUAL(processor.P, 0x32);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_tax_neg() {
@@ -109,6 +111,7 @@ void test_instr_tax_neg() {
 
     CU_ASSERT_EQUAL(processor.X, 0x96);
     CU_ASSERT_EQUAL(processor.P, 0xB0);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_tay() {
@@ -119,6 +122,7 @@ void test_instr_tay() {
 
     CU_ASSERT_EQUAL(processor.Y, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_tay_zero() {
@@ -129,6 +133,7 @@ void test_instr_tay_zero() {
 
     CU_ASSERT_EQUAL(processor.Y, 0x00);
     CU_ASSERT_EQUAL(processor.P, 0x32);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_tay_neg() {
@@ -139,6 +144,7 @@ void test_instr_tay_neg() {
 
     CU_ASSERT_EQUAL(processor.Y, 0x96);
     CU_ASSERT_EQUAL(processor.P, 0xB0);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_tsx() {
@@ -149,6 +155,7 @@ void test_instr_tsx() {
 
     CU_ASSERT_EQUAL(processor.X, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_tsx_zero() {
@@ -159,6 +166,7 @@ void test_instr_tsx_zero() {
 
     CU_ASSERT_EQUAL(processor.X, 0x00);
     CU_ASSERT_EQUAL(processor.P, 0x32);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_tsx_neg() {
@@ -169,6 +177,7 @@ void test_instr_tsx_neg() {
 
     CU_ASSERT_EQUAL(processor.X, 0x96);
     CU_ASSERT_EQUAL(processor.P, 0xB0);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_txa() {
@@ -179,6 +188,7 @@ void test_instr_txa() {
 
     CU_ASSERT_EQUAL(processor.A, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_txa_zero() {
@@ -189,6 +199,7 @@ void test_instr_txa_zero() {
 
     CU_ASSERT_EQUAL(processor.A, 0x00);
     CU_ASSERT_EQUAL(processor.P, 0x32);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_txa_neg() {
@@ -199,6 +210,7 @@ void test_instr_txa_neg() {
 
     CU_ASSERT_EQUAL(processor.A, 0x96);
     CU_ASSERT_EQUAL(processor.P, 0xB0);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_txs() {
@@ -209,6 +221,7 @@ void test_instr_txs() {
 
     CU_ASSERT_EQUAL(processor.S, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_tya() {
@@ -219,6 +232,7 @@ void test_instr_tya() {
 
     CU_ASSERT_EQUAL(processor.A, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_tya_zero() {
@@ -229,6 +243,7 @@ void test_instr_tya_zero() {
 
     CU_ASSERT_EQUAL(processor.A, 0x00);
     CU_ASSERT_EQUAL(processor.P, 0x32);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_tya_neg() {
@@ -239,6 +254,7 @@ void test_instr_tya_neg() {
 
     CU_ASSERT_EQUAL(processor.A, 0x96);
     CU_ASSERT_EQUAL(processor.P, 0xB0);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 // ---------- Run Tests ----------
