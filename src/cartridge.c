@@ -187,7 +187,7 @@ void printCartMetadata(const Cartridge* cart) {
             break;
     }
 
-    printf("---------- Cartridge Metadata ----------\n");
+    printf("--------------- ROM Data ---------------\n");
     printf("       PRG-ROM Size: %d KB\n", cart->prg_rom_size * 16);
     printf("       CHR-ROM Size: %d KB\n", cart->chr_rom_size * 8);
     printf("             Mapper: %d\n", mapper_num);

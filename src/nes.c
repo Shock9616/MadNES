@@ -1,5 +1,6 @@
 #include "6502.h"
 #include "cartridge.h"
+#include "logger.h"
 #include "types.h"
 #include "utils.h"
 
@@ -111,7 +112,7 @@ int main(int argc, char** argv) {
         // View ROM file metadata and beginning of PRG-ROM
         int result = loadRom(&cartridge, rom_file);
         if (result != 0) {
-            fprintf(stderr, "ERROR: Failed to load rom (error code %d)\n", result);
+            printLog("CART", "Failed to laod rom", "ERROR");
             return EXIT_FAILURE;
         }
 
@@ -129,16 +130,30 @@ int main(int argc, char** argv) {
     }
     if (opt_emu) {
         // Run full emulator
+        printf("----------------------------------------\n");
+        printf("     MadNES: A Crappy NES Emulator\n");
+        printf("----------------------------------------\n\n");
+        printLog("CART", "Loading ROM...", "INFO");
+
         int result = loadRom(&cartridge, rom_file);
         if (result != 0) {
-            fprintf(stderr, "ERROR: Failed to load rom (error code %d)\n", result);
+            printLog("CART", "Failed to load rom", "ERROR");
             return EXIT_FAILURE;
         }
+
+        printLog("CART", "Success! ROM data loaded!", "INFO");
+
+        printf("\n");
+        printCartMetadata(&cartridge);
 
         // TODO: Do stuff with cartridge data
 
         // Main loop
-        while (processor.PC != 0x0600 + prog_line_count && !processor.halted) {
+        printf("\n");
+        printLog("CPU", "Beginning program execution...", "INFO");
+        printf("\n");
+
+        while (!processor.halted) {
             uint16_t old_PC = processor.PC;
 
             Instruction instr = parseInstruction(memory, processor.PC);
@@ -148,6 +163,9 @@ int main(int argc, char** argv) {
             // Add additional processor cycles if the instruction crosses a page
             addAdditionalCycles(&instr, processor, old_PC);
             cycles += instr.cycles;
+
+            // Logging messages
+            printInstrLog(instr, processor);
         }
     }
 
