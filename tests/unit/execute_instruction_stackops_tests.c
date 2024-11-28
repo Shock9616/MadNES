@@ -89,6 +89,7 @@ void test_instr_pha() {
 
     CU_ASSERT_EQUAL(processor.A, 0x69);
     CU_ASSERT_EQUAL(memory[0x01FF], 0x69);
+    CU_ASSERT_EQUAL(cycles, 3);
 }
 
 void test_instr_php() {
@@ -97,6 +98,7 @@ void test_instr_php() {
     simulateMainloop(&memory, &processor);
 
     CU_ASSERT_EQUAL(memory[0x01FF], 0x30);
+    CU_ASSERT_EQUAL(cycles, 3);
 }
 
 void test_instr_pla() {
@@ -108,6 +110,7 @@ void test_instr_pla() {
 
     CU_ASSERT_EQUAL(processor.A, 0x69);
     CU_ASSERT_EQUAL(processor.S, 0xFF);
+    CU_ASSERT_EQUAL(cycles, 4);
 }
 
 void test_instr_pla_zero() {
@@ -121,6 +124,7 @@ void test_instr_pla_zero() {
     CU_ASSERT_EQUAL(processor.A, 0x00);
     CU_ASSERT_EQUAL(processor.S, 0xFF);
     CU_ASSERT_EQUAL(processor.P, 0x32);
+    CU_ASSERT_EQUAL(cycles, 4);
 }
 
 void test_instr_pla_neg() {
@@ -134,6 +138,7 @@ void test_instr_pla_neg() {
     CU_ASSERT_EQUAL(processor.A, 0x96);
     CU_ASSERT_EQUAL(processor.S, 0xFF);
     CU_ASSERT_EQUAL(processor.P, 0xB0);
+    CU_ASSERT_EQUAL(cycles, 4);
 }
 
 void test_instr_plp() {
@@ -145,6 +150,7 @@ void test_instr_plp() {
 
     CU_ASSERT_EQUAL(processor.P, 0xB1);
     CU_ASSERT_EQUAL(processor.S, 0xFF);
+    CU_ASSERT_EQUAL(cycles, 4);
 }
 
 // ---------- Run Tests ----------
