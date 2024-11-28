@@ -24,7 +24,7 @@ int intToBin(uint8_t n);
 #ifndef TEST
 
 int main(int argc, char** argv) {
-    bool opt_disassemble = false, opt_run = false, opt_cart = false;
+    bool opt_disassemble = false, opt_run = false, opt_cart = false, opt_emu = false;
 
     Processor processor;
     // Set registers to default values
@@ -44,7 +44,7 @@ int main(int argc, char** argv) {
     char* rom_file = NULL;
 
     int arg;
-    while ((arg = getopt(argc, argv, "d:r:c:")) != -1) {
+    while ((arg = getopt(argc, argv, "d:r:c:e:")) != -1) {
         switch (arg) {
             case 'd':
                 opt_disassemble = true;
@@ -56,6 +56,10 @@ int main(int argc, char** argv) {
                 break;
             case 'c':
                 opt_cart = true;
+                rom_file = optarg;
+                break;
+            case 'e':
+                opt_emu = true;
                 rom_file = optarg;
                 break;
             default:
@@ -75,6 +79,7 @@ int main(int argc, char** argv) {
     }
 
     if (opt_disassemble) {
+        // Disassemble a 6502 assembly hexdump
         while (prog_line_count > 0) {
             Instruction instr = parseInstruction(memory, processor.PC);
             printInstruction(instr);
@@ -83,9 +88,11 @@ int main(int argc, char** argv) {
         }
     }
     if (opt_run) {
+        // Run a 6502 assembly program hexdump
         processor.halted = false;
 
         while (processor.PC != 0x0600 + prog_line_count && !processor.halted) {
+            // Main loop
             Instruction instr = parseInstruction(memory, processor.PC);
             executeInstruction(instr, &memory, &processor);
             processor.PC += instr.length;
@@ -100,6 +107,7 @@ int main(int argc, char** argv) {
         printf("------------------------------\n");
     }
     if (opt_cart) {
+        // View ROM file metadata and beginning of PRG-ROM
         int result = loadRom(&cartridge, rom_file);
         if (result != 0) {
             fprintf(stderr, "ERROR: Failed to load rom (error code %d)\n", result);
@@ -117,6 +125,63 @@ int main(int argc, char** argv) {
             fake_PC += instr.length;
         }
         printf("----------------------------------------\n");
+    }
+    if (opt_emu) {
+        // Run full emulator
+        int result = loadRom(&cartridge, rom_file);
+        if (result != 0) {
+            fprintf(stderr, "ERROR: Failed to load rom (error code %d)\n", result);
+            return EXIT_FAILURE;
+        }
+
+        // TODO: Do stuff with cartridge data
+
+        // Main loop
+        while (processor.PC != 0x0600 + prog_line_count && !processor.halted) {
+            uint16_t old_PC = processor.PC;
+
+            Instruction instr = parseInstruction(memory, processor.PC);
+            executeInstruction(instr, &memory, &processor);
+            processor.PC += instr.length;
+
+            // If the address mode is Absolute X, Absolute Y, Indirect Indexed, or
+            // Relative, check if a page was crossed and add an extra cycle
+            switch (instr.addr_mode) {
+                uint16_t addr;
+                case ABSX:
+                    addr = instr.addr;
+                    if (((addr + processor.X) & 0xFF00) != (addr & 0xFF00)) {
+                        instr.cycles++;
+                    }
+                    break;
+                case ABSY:
+                    addr = instr.addr;
+                    if (((addr + processor.Y) & 0xFF00) != (addr & 0xFF00)) {
+                        instr.cycles++;
+                    }
+                    break;
+                case INDY:
+                    addr = concatenateBytes(memory[instr.addr + 1], memory[instr.addr]);
+                    if (((addr + processor.Y) & 0xFF00) != (addr & 0xFF00)) {
+                        instr.cycles++;
+                    }
+                    break;
+                case REL:
+                    if (processor.PC != old_PC + instr.length) {
+                        // Branch succeeded
+                        instr.cycles++;
+
+                        if ((processor.PC & 0xFF00) != (old_PC & 0xFF00)) {
+                            // Page crossed
+                            instr.cycles++;
+                        }
+                    }
+                default:
+                    break;
+            }
+
+            cycles += instr.cycles;
+        }
     }
 
     // Free dynamic memory after run
