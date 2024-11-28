@@ -90,6 +90,7 @@ void test_instr_rol_accum() {
 
     CU_ASSERT_EQUAL(processor.A, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_rol_zp() {
@@ -102,6 +103,7 @@ void test_instr_rol_zp() {
 
     CU_ASSERT_EQUAL(memory[0x0010], 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 5);
 }
 
 void test_instr_rol_zpx() {
@@ -115,6 +117,7 @@ void test_instr_rol_zpx() {
 
     CU_ASSERT_EQUAL(memory[0x0015], 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 6);
 }
 
 void test_instr_rol_abs() {
@@ -128,6 +131,7 @@ void test_instr_rol_abs() {
 
     CU_ASSERT_EQUAL(memory[0x1020], 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 6);
 }
 
 void test_instr_rol_absx() {
@@ -142,6 +146,7 @@ void test_instr_rol_absx() {
 
     CU_ASSERT_EQUAL(memory[0x1025], 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 7);
 }
 
 void test_instr_rol_carry() {
@@ -153,6 +158,7 @@ void test_instr_rol_carry() {
 
     CU_ASSERT_EQUAL(processor.A, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x31);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_rol_zero() {
@@ -164,6 +170,7 @@ void test_instr_rol_zero() {
 
     CU_ASSERT_EQUAL(processor.A, 0x00);
     CU_ASSERT_EQUAL(processor.P, 0x33);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_rol_neg() {
@@ -175,6 +182,7 @@ void test_instr_rol_neg() {
 
     CU_ASSERT_EQUAL(processor.A, 0xD2);
     CU_ASSERT_EQUAL(processor.P, 0xB0);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 // ---------- Run Tests ----------
