@@ -90,6 +90,7 @@ void test_instr_stx_zp() {
 
     CU_ASSERT_EQUAL(memory[0x0010], 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 3);
 }
 
 void test_instr_stx_zpy() {
@@ -102,6 +103,7 @@ void test_instr_stx_zpy() {
 
     CU_ASSERT_EQUAL(memory[0x0015], 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 4);
 }
 
 void test_instr_stx_abs() {
@@ -114,6 +116,7 @@ void test_instr_stx_abs() {
 
     CU_ASSERT_EQUAL(memory[0x1020], 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 4);
 }
 
 void test_instr_sty_zp() {
@@ -125,6 +128,7 @@ void test_instr_sty_zp() {
 
     CU_ASSERT_EQUAL(memory[0x0010], 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 3);
 }
 
 void test_instr_sty_zpx() {
@@ -137,6 +141,7 @@ void test_instr_sty_zpx() {
 
     CU_ASSERT_EQUAL(memory[0x0015], 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 4);
 }
 
 void test_instr_sty_abs() {
@@ -149,6 +154,7 @@ void test_instr_sty_abs() {
 
     CU_ASSERT_EQUAL(memory[0x1020], 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 4);
 }
 
 // ---------- Run Tests ----------
