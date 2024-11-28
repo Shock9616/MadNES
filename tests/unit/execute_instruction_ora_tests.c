@@ -90,6 +90,7 @@ void test_instr_ora_imm() {
 
     CU_ASSERT_EQUAL(processor.A, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_ora_zp() {
@@ -102,6 +103,7 @@ void test_instr_ora_zp() {
 
     CU_ASSERT_EQUAL(processor.A, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 3);
 }
 
 void test_instr_ora_zpx() {
@@ -115,6 +117,7 @@ void test_instr_ora_zpx() {
 
     CU_ASSERT_EQUAL(processor.A, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 4);
 }
 
 void test_instr_ora_abs() {
@@ -128,6 +131,7 @@ void test_instr_ora_abs() {
 
     CU_ASSERT_EQUAL(processor.A, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 4);
 }
 
 void test_instr_ora_absx() {
@@ -142,6 +146,7 @@ void test_instr_ora_absx() {
 
     CU_ASSERT_EQUAL(processor.A, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 4);
 }
 
 void test_instr_ora_absy() {
@@ -156,6 +161,7 @@ void test_instr_ora_absy() {
 
     CU_ASSERT_EQUAL(processor.A, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 4);
 }
 
 void test_instr_ora_indx() {
@@ -171,6 +177,7 @@ void test_instr_ora_indx() {
 
     CU_ASSERT_EQUAL(processor.A, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 6);
 }
 
 void test_instr_ora_indy() {
@@ -186,6 +193,7 @@ void test_instr_ora_indy() {
 
     CU_ASSERT_EQUAL(processor.A, 0x69);
     CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 5);
 }
 
 void test_instr_ora_zero() {
@@ -197,6 +205,7 @@ void test_instr_ora_zero() {
 
     CU_ASSERT_EQUAL(processor.A, 0x00);
     CU_ASSERT_EQUAL(processor.P, 0x32);
+    CU_ASSERT_EQUAL(cycles, 2);
 }
 
 void test_instr_ora_neg() {
@@ -208,6 +217,53 @@ void test_instr_ora_neg() {
 
     CU_ASSERT_EQUAL(processor.A, 0xFF);
     CU_ASSERT_EQUAL(processor.P, 0xB0);
+    CU_ASSERT_EQUAL(cycles, 2);
+}
+
+void test_instr_ora_absx_page() {
+    processor.A = 0x61;
+    processor.X = 0xFF;
+    memory[0x111F] = 0x28;
+    memory[0x0600] = 0x1D;
+    memory[0x0601] = 0x20;
+    memory[0x0602] = 0x10;
+
+    simulateMainloop(&memory, &processor);
+
+    CU_ASSERT_EQUAL(processor.A, 0x69);
+    CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 5);
+}
+
+void test_instr_ora_absy_page() {
+    processor.A = 0x61;
+    processor.Y = 0xFF;
+    memory[0x111F] = 0x28;
+    memory[0x0600] = 0x19;
+    memory[0x0601] = 0x20;
+    memory[0x0602] = 0x10;
+
+    simulateMainloop(&memory, &processor);
+
+    CU_ASSERT_EQUAL(processor.A, 0x69);
+    CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 5);
+}
+
+void test_instr_ora_indy_page() {
+    processor.A = 0x61;
+    processor.Y = 0xFF;
+    memory[0x0020] = 0x20;
+    memory[0x0021] = 0x10;
+    memory[0x111F] = 0x28;
+    memory[0x0600] = 0x11;
+    memory[0x0601] = 0x20;
+
+    simulateMainloop(&memory, &processor);
+
+    CU_ASSERT_EQUAL(processor.A, 0x69);
+    CU_ASSERT_EQUAL(processor.P, 0x30);
+    CU_ASSERT_EQUAL(cycles, 6);
 }
 
 // ---------- Run Tests ----------
@@ -267,6 +323,21 @@ CU_pSuite add_ora_suite_to_registry() {
     }
 
     if (CU_add_test(suite, "ORA Negative", test_instr_ora_neg) == NULL) {
+        CU_cleanup_registry();
+        return NULL;
+    }
+
+    if (CU_add_test(suite, "ORA Absolute,X Page Crossed", test_instr_ora_absx_page) == NULL) {
+        CU_cleanup_registry();
+        return NULL;
+    }
+
+    if (CU_add_test(suite, "ORA Absolute,Y Page Crossed", test_instr_ora_absy_page) == NULL) {
+        CU_cleanup_registry();
+        return NULL;
+    }
+
+    if (CU_add_test(suite, "ORA (Indirect),Y Page Crossed", test_instr_ora_indy_page) == NULL) {
         CU_cleanup_registry();
         return NULL;
     }
