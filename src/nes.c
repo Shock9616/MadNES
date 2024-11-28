@@ -20,6 +20,7 @@ uint64_t cycles = 0;
 
 int loadFile(uint8_t* mem, int start_addr, const char* file_path);
 int intToBin(uint8_t n);
+void addAdditionalCycles(Instruction* instr, Processor processor, uint16_t old_PC);
 
 #ifndef TEST
 
@@ -144,42 +145,8 @@ int main(int argc, char** argv) {
             executeInstruction(instr, &memory, &processor);
             processor.PC += instr.length;
 
-            // If the address mode is Absolute X, Absolute Y, Indirect Indexed, or
-            // Relative, check if a page was crossed and add an extra cycle
-            switch (instr.addr_mode) {
-                uint16_t addr;
-                case ABSX:
-                    addr = instr.addr;
-                    if (((addr + processor.X) & 0xFF00) != (addr & 0xFF00)) {
-                        instr.cycles++;
-                    }
-                    break;
-                case ABSY:
-                    addr = instr.addr;
-                    if (((addr + processor.Y) & 0xFF00) != (addr & 0xFF00)) {
-                        instr.cycles++;
-                    }
-                    break;
-                case INDY:
-                    addr = concatenateBytes(memory[instr.addr + 1], memory[instr.addr]);
-                    if (((addr + processor.Y) & 0xFF00) != (addr & 0xFF00)) {
-                        instr.cycles++;
-                    }
-                    break;
-                case REL:
-                    if (processor.PC != old_PC + instr.length) {
-                        // Branch succeeded
-                        instr.cycles++;
-
-                        if ((processor.PC & 0xFF00) != (old_PC & 0xFF00)) {
-                            // Page crossed
-                            instr.cycles++;
-                        }
-                    }
-                default:
-                    break;
-            }
-
+            // Add additional processor cycles if the instruction crosses a page
+            addAdditionalCycles(&instr, processor, old_PC);
             cycles += instr.cycles;
         }
     }
@@ -245,4 +212,49 @@ int loadFile(uint8_t* mem, int start_addr, const char* file_path) {
  */
 int intToBin(uint8_t n) {
     return (n == 0 || n == 1 ? n : ((n % 2) + 10 * intToBin(n / 2)));
+}
+
+/**
+ * Add additional cycles to the given instruction if it crosses a page
+ *
+ * @param instr - The instruction to potentially add cycles to
+ * @param processor - The struct acting as the system processor
+ * @param old_PC - The value of the PC before the instruction was executed
+ */
+void addAdditionalCycles(Instruction* instr, Processor processor, uint16_t old_PC) {
+    // If the address mode is Absolute X, Absolute Y, Indirect Indexed, or
+    // Relative, check if a page was crossed and add an extra cycle
+    switch (instr->addr_mode) {
+        uint16_t addr;
+        case ABSX:
+            addr = instr->addr;
+            if (((addr + processor.X) & 0xFF00) != (addr & 0xFF00)) {
+                instr->cycles++;
+            }
+            break;
+        case ABSY:
+            addr = instr->addr;
+            if (((addr + processor.Y) & 0xFF00) != (addr & 0xFF00)) {
+                instr->cycles++;
+            }
+            break;
+        case INDY:
+            addr = concatenateBytes(memory[instr->addr + 1], memory[instr->addr]);
+            if (((addr + processor.Y) & 0xFF00) != (addr & 0xFF00)) {
+                instr->cycles++;
+            }
+            break;
+        case REL:
+            if (processor.PC != old_PC + instr->length) {
+                // Branch succeeded
+                instr->cycles++;
+
+                if ((processor.PC & 0xFF00) != (old_PC & 0xFF00)) {
+                    // Page crossed
+                    instr->cycles++;
+                }
+            }
+        default:
+            break;
+    }
 }
