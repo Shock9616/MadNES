@@ -1,7 +1,9 @@
 #include "6502.h"
 
+#include "logger.h"
 #include "utils.h"
 
+#include <_stdio.h>
 #include <stdint.h>
 #include <stdio.h>
 
@@ -15,6 +17,7 @@
  */
 Instruction parseInstruction(uint8_t* mem, uint16_t pc) {
     Instruction instruction;
+    char* err_msg;
 
     instruction.opcode = mem[pc];
 
@@ -831,7 +834,8 @@ Instruction parseInstruction(uint8_t* mem, uint16_t pc) {
             instruction.cycles = 2;
             break;
         default:
-            fprintf(stderr, "ERROR: Invalid opcode 0x%02x\n", instruction.opcode);
+            asprintf(&err_msg, "$%04x: Invalid opcode 0x%02x", pc, instruction.opcode);
+            printLog("CPU", err_msg, "WARNING");
             break;
     }
 
@@ -1661,6 +1665,8 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
  * @param val - The bit value to set the given flag to
  */
 void setFlag(char flag, bool val, Processor* processor) {
+    char* err_msg;
+
     switch (flag) {
         case 'N':
             processor->P = (processor->P & ~0b10000000) | (val ? 0b10000000 : 0);
@@ -1684,7 +1690,8 @@ void setFlag(char flag, bool val, Processor* processor) {
             processor->P = (processor->P & ~0b00000001) | (val ? 0b00000001 : 0);
             break;
         default:
-            fprintf(stderr, "ERROR: Invalid flag '%c'\n", flag);
+            asprintf(&err_msg, "Invalid flag %c", flag);
+            printLog("CPU", err_msg, "ERROR");
             break;
     }
 }
@@ -1699,6 +1706,7 @@ void setFlag(char flag, bool val, Processor* processor) {
  */
 bool getFlag(char flag, Processor* processor) {
     bool val = 0;
+    char* err_msg;
 
     switch (flag) {
         case 'N':
@@ -1723,7 +1731,8 @@ bool getFlag(char flag, Processor* processor) {
             val = processor->P & 1;
             break;
         default:
-            fprintf(stderr, "ERROR: Invalid flag %c\n", flag);
+            asprintf(&err_msg, "Invalid flag %c", flag);
+            printLog("CPU", err_msg, "ERROR");
             break;
     }
 
@@ -1783,7 +1792,7 @@ uint8_t getVal(Instruction instr, uint8_t* mem, Processor processor) {
             val = mem[concatenateBytes(msb_addr, lsb_addr) + processor.Y];
             break;
         default:
-            fprintf(stderr, "ERROR: Addressing mode doesn't return a value\n");
+            printLog("CPU", "Addressing mode doesn't return a value", "ERROR");
             break;
     }
 
@@ -1846,7 +1855,7 @@ uint16_t getAddr(Instruction instr, uint8_t* mem, Processor processor) {
             addr = concatenateBytes(msb_addr, lsb_addr) + processor.Y;
             break;
         default:
-            fprintf(stderr, "ERROR: Instruction doesn't support that addressing mode\n");
+            printLog("CPU", "Instruction doesn't support that addressing mode", "ERROR");
             break;
     }
 

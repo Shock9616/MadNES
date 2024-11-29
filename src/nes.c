@@ -146,14 +146,36 @@ int main(int argc, char** argv) {
         printf("\n");
         printCartMetadata(&cartridge);
 
-        // TODO: Do stuff with cartridge data
+        // Load the contents of PRG-ROM into memory
+        printLog("CART", "Loading PRG-ROM into memory...", "INFO");
+        int mapper_num = ((cartridge.flags8 & 0x0F) << 8) | ((cartridge.flags7 & 0xF0) << 4) |
+                         (cartridge.flags6 & 0xF0);
+        switch (mapper_num) {
+            case 0:
+                // Mapper 0
+                for (int i = 0; i < cartridge.prg_rom_size * 16 * 1024; i++) {
+                    memory[0x8000 + i] = cartridge.prg_rom[i];
+                }
+                printLog("CART", "Finished loading PRG-ROM into memory at $8000! (Mapper 0)",
+                         "INFO");
+                break;
+            default:
+                printf("INFO: Support for ROMs using mapper %d has not yet been implemented",
+                       mapper_num);
+                goto PROGRAM_EXIT;
+        }
+
+        uint16_t reset_vector = concatenateBytes(memory[0xFFFD], memory[0xFFFC]);
+        processor.PC = reset_vector;
+
+        printf("\n");
+        char* prg_start_msg;
+        asprintf(&prg_start_msg, "Beginning program execution at $%04x", processor.PC);
+        printLog("CPU", prg_start_msg, "INFO");
+        printf("\n");
 
         // Main loop
-        printf("\n");
-        printLog("CPU", "Beginning program execution...", "INFO");
-        printf("\n");
-
-        while (!processor.halted) {
+        while (processor.halted) {
             uint16_t old_PC = processor.PC;
 
             Instruction instr = parseInstruction(memory, processor.PC);
@@ -169,6 +191,7 @@ int main(int argc, char** argv) {
         }
     }
 
+PROGRAM_EXIT:
     // Free dynamic memory after run
     if (memory) {
         free(memory);
