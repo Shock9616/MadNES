@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include <unistd.h>
 
 // Pointer to simulator memory
@@ -22,6 +23,7 @@ uint64_t cycles = 0;
 int loadFile(uint8_t* mem, int start_addr, const char* file_path);
 int intToBin(uint8_t n);
 void addAdditionalCycles(Instruction* instr, Processor processor, uint16_t old_PC);
+void delayCycles(int cycles);
 
 #ifndef TEST
 
@@ -174,8 +176,10 @@ int main(int argc, char** argv) {
         printLog("CPU", prg_start_msg, "INFO");
         printf("\n");
 
+        processor.halted = false;
+
         // Main loop
-        while (processor.halted) {
+        while (!processor.halted) {
             uint16_t old_PC = processor.PC;
 
             Instruction instr = parseInstruction(memory, processor.PC);
@@ -184,7 +188,9 @@ int main(int argc, char** argv) {
 
             // Add additional processor cycles if the instruction crosses a page
             addAdditionalCycles(&instr, processor, old_PC);
+
             cycles += instr.cycles;
+            delayCycles(instr.cycles);
 
             // Logging messages
             printInstrLog(instr, processor);
@@ -298,4 +304,18 @@ void addAdditionalCycles(Instruction* instr, Processor processor, uint16_t old_P
         default:
             break;
     }
+}
+
+/**
+ * Sleep for the given amount of time
+ *
+ * @param cycles - the number of cycles to delay for
+ */
+void delayCycles(int cycles) {
+    double delay = (1.0 / 1789773) * cycles;
+
+    struct timespec ts;
+    ts.tv_sec = (time_t)delay;
+    ts.tv_nsec = (long)((delay - ts.tv_sec) * 1e9);
+    nanosleep(&ts, NULL);
 }
