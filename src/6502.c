@@ -833,6 +833,34 @@ Instruction parseInstruction(uint8_t* mem, uint16_t pc) {
             instruction.addr_mode = IMPL;
             instruction.cycles = 2;
             break;
+
+        // ----------- Unofficial Opcodes ----------
+        //
+        //  I'll be implementing these as necessary
+        // to get my target games working. Otherwise
+        //   implementing these opcodes is out of
+        //          scope for this project
+        //
+        // -----------------------------------------
+
+        // ---------- NOP ($1A) ----------
+        case 0x1A:
+            instruction.name = "NOP ($1A)";
+            instruction.addr_mode = IMPL;
+            instruction.cycles = 2;
+            break;
+        // ---------- NOP ($1C) ----------
+        case 0x1C:
+            instruction.name = "NOP ($1C)";
+            instruction.addr_mode = ABSX;
+            instruction.cycles = 4;
+            break;
+        // ---------- SLO ($1F) ----------
+        case 0x1F:
+            instruction.name = "SLO";
+            instruction.addr_mode = ABSX;
+            instruction.cycles = 7;
+            break;
         default:
             asprintf(&err_msg, "$%04x: Invalid opcode 0x%02x", pc, instruction.opcode);
             printLog("CPU", err_msg, "WARNING");
@@ -1652,6 +1680,62 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
 
             // Set the "Negative" flag
             setFlag('N', (processor->A & 0x80) >> 7, processor);
+            break;
+
+        // ----------- Unofficial Opcodes ----------
+        //
+        //  I'll be implementing these as necessary
+        // to get my target games working. Otherwise
+        //   implementing these opcodes is out of
+        //          scope for this project
+        //
+        // -----------------------------------------
+
+        // ---------- NOP ($1A) ----------
+        case 0x1A:  // Implied
+            break;
+        // ---------- NOP ($1C) ----------
+        case 0x1C:
+            break;
+        // ---------- SLO ($1F) ----------
+        case 0x1F:  // Absolute X
+            // Essentially a combination of 2 instructions
+            // Basically an ASL followed by an ORA
+
+            // ----- ASL -----
+
+            val = getVal(instr, *mem, *processor);
+
+            // Set the "Carry" flag
+            setFlag('C', (val & 0x80) >> 7, processor);
+
+            val <<= 1;
+
+            // Wrap val to 8 bits
+            result = val & 0xFF;
+
+            // Set the "Zero" flag
+            setFlag('Z', result == 0, processor);
+
+            // Set the "Negative" flag
+            setFlag('N', (result & 0x80) >> 7, processor);
+
+            (*mem)[getAddr(instr, *mem, *processor)] = result;
+
+            // ----- ORA -----
+
+            val = processor->A | getVal(instr, *mem, *processor);
+
+            // Wrap val to 8 bits
+            result = val & 0xFF;
+
+            // Set the "Zero" flag
+            setFlag('Z', result == 0, processor);
+
+            // Set the "Negative" flag
+            setFlag('N', (result & 0x80) >> 7, processor);
+
+            processor->A = result;
             break;
     }
 
