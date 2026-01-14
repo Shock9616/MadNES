@@ -83,5 +83,5 @@ void printInstrLog(Instruction instr, Processor processor) {
             break;
     }
 
-    printf("%s DEBUG [CPU]: $%04x: %s", ptime, processor.PC - 1, instr_string);
+    printf("%s DEBUG [CPU]: $%04x: %s", ptime, processor.PC, instr_string);
 }

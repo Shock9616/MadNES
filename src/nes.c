@@ -183,6 +183,10 @@ int main(int argc, char** argv) {
             uint16_t old_PC = processor.PC;
 
             Instruction instr = parseInstruction(memory, processor.PC);
+
+            // Logging messages
+            printInstrLog(instr, processor);
+
             executeInstruction(instr, &memory, &processor);
             processor.PC += instr.length;
 
@@ -191,9 +195,6 @@ int main(int argc, char** argv) {
 
             cycles += instr.cycles;
             delayCycles(instr.cycles);
-
-            // Logging messages
-            printInstrLog(instr, processor);
         }
     }
 
