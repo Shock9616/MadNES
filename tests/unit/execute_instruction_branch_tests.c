@@ -106,15 +106,16 @@ void test_instr_bcc_set() {
 }
 
 void test_instr_bcc_page() {
+    processor.PC = 0x06F0;  // Special starting place for page tests
     processor.P = 0x30;
-    memory[0x0600] = 0xEA;
-    memory[0x0601] = 0x90;
-    memory[0x0602] = 0xFF;
+    memory[0x06F0] = 0xEA;
+    memory[0x06F1] = 0x90;
+    memory[0x06F2] = 0x0F;
 
     simulateMainloop(&memory, &processor);
     simulateMainloop(&memory, &processor);
 
-    CU_ASSERT_EQUAL(processor.PC, 0x0601 + 0xFF);
+    CU_ASSERT_EQUAL(processor.PC, 0x06F1 + 0x0F);
     CU_ASSERT_EQUAL(processor.P, 0x30);
     CU_ASSERT_EQUAL(cycles, 6);
 }
@@ -144,15 +145,16 @@ void test_instr_bcs_set() {
 }
 
 void test_instr_bcs_page() {
+    processor.PC = 0x06F0;  // Special starting place for page tests
     processor.P = 0x31;
-    memory[0x0600] = 0xEA;
-    memory[0x0601] = 0xB0;
-    memory[0x0602] = 0xFF;
+    memory[0x06F0] = 0xEA;
+    memory[0x06F1] = 0xB0;
+    memory[0x06F2] = 0x0F;
 
     simulateMainloop(&memory, &processor);
     simulateMainloop(&memory, &processor);
 
-    CU_ASSERT_EQUAL(processor.PC, 0x0601 + 0xFF);
+    CU_ASSERT_EQUAL(processor.PC, 0x06F1 + 0x0F);
     CU_ASSERT_EQUAL(processor.P, 0x31);
     CU_ASSERT_EQUAL(cycles, 6);
 }
@@ -182,15 +184,16 @@ void test_instr_beq_neq() {
 }
 
 void test_instr_beq_page() {
+    processor.PC = 0x06F0;  // Special starting place for page tests
     processor.P = 0x32;
-    memory[0x0600] = 0xEA;
-    memory[0x0601] = 0xF0;
-    memory[0x0602] = 0xFF;
+    memory[0x06F0] = 0xEA;
+    memory[0x06F1] = 0xF0;
+    memory[0x06F2] = 0x0F;
 
     simulateMainloop(&memory, &processor);
     simulateMainloop(&memory, &processor);
 
-    CU_ASSERT_EQUAL(processor.PC, 0x0601 + 0xFF);
+    CU_ASSERT_EQUAL(processor.PC, 0x06F1 + 0x0F);
     CU_ASSERT_EQUAL(processor.P, 0x32);
     CU_ASSERT_EQUAL(cycles, 6);
 }
@@ -220,15 +223,16 @@ void test_instr_bmi_pos() {
 }
 
 void test_instr_bmi_page() {
+    processor.PC = 0x06F0;  // Special starting place for page tests
     processor.P = 0xB0;
-    memory[0x0600] = 0xEA;
-    memory[0x0601] = 0x30;
-    memory[0x0602] = 0xFF;
+    memory[0x06F0] = 0xEA;
+    memory[0x06F1] = 0x30;
+    memory[0x06F2] = 0x0F;
 
     simulateMainloop(&memory, &processor);
     simulateMainloop(&memory, &processor);
 
-    CU_ASSERT_EQUAL(processor.PC, 0x0601 + 0xFF);
+    CU_ASSERT_EQUAL(processor.PC, 0x06F1 + 0x0F);
     CU_ASSERT_EQUAL(processor.P, 0xB0);
     CU_ASSERT_EQUAL(cycles, 6);
 }
@@ -258,15 +262,16 @@ void test_instr_bne_neq() {
 }
 
 void test_instr_bne_page() {
+    processor.PC = 0x06F0;  // Special starting place for page tests
     processor.P = 0x30;
-    memory[0x0600] = 0xEA;
-    memory[0x0601] = 0xD0;
-    memory[0x0602] = 0xFF;
+    memory[0x06F0] = 0xEA;
+    memory[0x06F1] = 0xD0;
+    memory[0x06F2] = 0x0F;
 
     simulateMainloop(&memory, &processor);
     simulateMainloop(&memory, &processor);
 
-    CU_ASSERT_EQUAL(processor.PC, 0x0601 + 0xFF);
+    CU_ASSERT_EQUAL(processor.PC, 0x06F1 + 0x0F);
     CU_ASSERT_EQUAL(processor.P, 0x30);
     CU_ASSERT_EQUAL(cycles, 6);
 }
@@ -296,15 +301,16 @@ void test_instr_bpl_neg() {
 }
 
 void test_instr_bpl_page() {
+    processor.PC = 0x06F0;  // Special starting place for page tests
     processor.P = 0x30;
-    memory[0x0600] = 0xEA;
-    memory[0x0601] = 0x10;
-    memory[0x0602] = 0xFF;
+    memory[0x06F0] = 0xEA;
+    memory[0x06F1] = 0x10;
+    memory[0x06F2] = 0x0F;
 
     simulateMainloop(&memory, &processor);
     simulateMainloop(&memory, &processor);
 
-    CU_ASSERT_EQUAL(processor.PC, 0x0601 + 0xFF);
+    CU_ASSERT_EQUAL(processor.PC, 0x06F1 + 0x0F);
     CU_ASSERT_EQUAL(processor.P, 0x30);
     CU_ASSERT_EQUAL(cycles, 6);
 }
@@ -334,15 +340,16 @@ void test_instr_bvc_vset() {
 }
 
 void test_instr_bvc_page() {
+    processor.PC = 0x06F0;  // Special starting place for page tests
     processor.P = 0x30;
-    memory[0x0600] = 0xEA;
-    memory[0x0601] = 0x50;
-    memory[0x0602] = 0xFF;
+    memory[0x06F0] = 0xEA;
+    memory[0x06F1] = 0x50;
+    memory[0x06F2] = 0x0F;
 
     simulateMainloop(&memory, &processor);
     simulateMainloop(&memory, &processor);
 
-    CU_ASSERT_EQUAL(processor.PC, 0x0601 + 0xFF);
+    CU_ASSERT_EQUAL(processor.PC, 0x06F1 + 0x0F);
     CU_ASSERT_EQUAL(processor.P, 0x30);
     CU_ASSERT_EQUAL(cycles, 6);
 }
@@ -372,15 +379,16 @@ void test_instr_bvs_vset() {
 }
 
 void test_instr_bvs_page() {
+    processor.PC = 0x06F0;  // Special starting place for page tests
     processor.P = 0x70;
-    memory[0x0600] = 0xEA;
-    memory[0x0601] = 0x70;
-    memory[0x0602] = 0xFF;
+    memory[0x06F0] = 0xEA;
+    memory[0x06F1] = 0x70;
+    memory[0x06F2] = 0x0F;
 
     simulateMainloop(&memory, &processor);
     simulateMainloop(&memory, &processor);
 
-    CU_ASSERT_EQUAL(processor.PC, 0x0601 + 0xFF);
+    CU_ASSERT_EQUAL(processor.PC, 0x06F1 + 0x0F);
     CU_ASSERT_EQUAL(processor.P, 0x70);
     CU_ASSERT_EQUAL(cycles, 6);
 }
