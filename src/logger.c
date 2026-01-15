@@ -61,7 +61,7 @@ void printInstrLog(Instruction instr, Processor processor) {
             asprintf(&instr_string, ZPY_FORMAT, instr.name, instr.addr);
             break;
         case REL:
-            asprintf(&instr_string, REL_FORMAT, instr.name, instr.offset);
+            asprintf(&instr_string, REL_FORMAT, instr.name, (uint8_t)instr.offset);
             break;
         case ABS:
             asprintf(&instr_string, ABS_FORMAT, instr.name, instr.addr);
