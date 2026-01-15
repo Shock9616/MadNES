@@ -1029,19 +1029,31 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
         // ---------- BCC ----------
         case 0x90:  // Relative
             if (getFlag('C', processor) == 0) {
-                processor->PC = getAddr(instr, *mem, *processor) - instr.length;
+                if (instr.offset >= 0) {
+                    processor->PC = getAddr(instr, *mem, *processor) - instr.length;
+                } else {
+                    processor->PC = getAddr(instr, *mem, *processor);
+                }
             }
             break;
         // ---------- BCS ----------
         case 0xB0:  // Relative
             if (getFlag('C', processor) == 1) {
-                processor->PC = getAddr(instr, *mem, *processor) - instr.length;
+                if (instr.offset >= 0) {
+                    processor->PC = getAddr(instr, *mem, *processor) - instr.length;
+                } else {
+                    processor->PC = getAddr(instr, *mem, *processor);
+                }
             }
             break;
         // ---------- BEQ ----------
         case 0xF0:  // Relative
             if (getFlag('Z', processor) == 1) {
-                processor->PC = getAddr(instr, *mem, *processor) - instr.length;
+                if (instr.offset >= 0) {
+                    processor->PC = getAddr(instr, *mem, *processor) - instr.length;
+                } else {
+                    processor->PC = getAddr(instr, *mem, *processor);
+                }
             }
             break;
         // ---------- BIT ----------
@@ -1061,19 +1073,31 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
         // ---------- BMI ----------
         case 0x30:  // Relative
             if (getFlag('N', processor) == 1) {
-                processor->PC = getAddr(instr, *mem, *processor) - instr.length;
+                if (instr.offset >= 0) {
+                    processor->PC = getAddr(instr, *mem, *processor) - instr.length;
+                } else {
+                    processor->PC = getAddr(instr, *mem, *processor);
+                }
             }
             break;
         // ---------- BNE ----------
         case 0xD0:
             if (getFlag('Z', processor) == 0) {
-                processor->PC = getAddr(instr, *mem, *processor) - instr.length;
+                if (instr.offset >= 0) {
+                    processor->PC = getAddr(instr, *mem, *processor) - instr.length;
+                } else {
+                    processor->PC = getAddr(instr, *mem, *processor);
+                }
             }
             break;
         // ---------- BPL ----------
         case 0x10:
             if (getFlag('N', processor) == 0) {
-                processor->PC = getAddr(instr, *mem, *processor) - instr.length;
+                if (instr.offset >= 0) {
+                    processor->PC = getAddr(instr, *mem, *processor) - instr.length;
+                } else {
+                    processor->PC = getAddr(instr, *mem, *processor);
+                }
             }
             break;
         // ---------- BRK ----------
@@ -1096,13 +1120,21 @@ void executeInstruction(Instruction instr, uint8_t** mem, Processor* processor) 
         // ---------- BVC ----------
         case 0x50:  // Relative
             if (getFlag('V', processor) == 0) {
-                processor->PC = getAddr(instr, *mem, *processor) - instr.length;
+                if (instr.offset >= 0) {
+                    processor->PC = getAddr(instr, *mem, *processor) - instr.length;
+                } else {
+                    processor->PC = getAddr(instr, *mem, *processor);
+                }
             }
             break;
         // ---------- BVS ----------
         case 0x70:  // Relative
             if (getFlag('V', processor) == 1) {
-                processor->PC = getAddr(instr, *mem, *processor) - instr.length;
+                if (instr.offset >= 0) {
+                    processor->PC = getAddr(instr, *mem, *processor) - instr.length;
+                } else {
+                    processor->PC = getAddr(instr, *mem, *processor);
+                }
             }
             break;
         // ---------- CLC ----------

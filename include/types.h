@@ -43,7 +43,7 @@ typedef struct {
     // Possible types of arguments to an instruction
     uint8_t imm;
     uint16_t addr;
-    uint8_t offset;
+    int8_t offset;
 
     // Instruction metadata
     int length;  // Length of the instruction (in bytes)
