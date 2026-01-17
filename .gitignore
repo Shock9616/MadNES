@@ -56,6 +56,10 @@ dkms.conf
 log.txt
 out.txt
 
+# Test rom stuff
+*.nes
+*.fdb
+
 # Other files/dirs
 **/.nvim/
 **/.zig-cache/
