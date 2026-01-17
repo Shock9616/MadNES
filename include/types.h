@@ -17,6 +17,36 @@ typedef struct {
     bool halted;  // Only used for debugging purposes
 } Processor;
 
+typedef struct {
+    // CPU-visible registers
+    uint8_t ctrl;    // PPUCTRL register (mapped to $2000, write)
+    uint8_t mask;    // PPUMASK register (mapped to $2001, write)
+    uint8_t status;  // PPUSTATUS register (mapped to $2002, read)
+
+    uint8_t oam[256];  // Object Attribute Memory (64 sprites, 4 bytes each)
+    uint8_t oam_addr;  // OAMADDR register (mapped to $2003, write)
+
+    uint8_t data_buffer;  // PPUDATA (mapped to $2007 read + write)
+
+    // Internal memory
+    uint8_t vram[2048];   // Nametables and attribute tables
+    uint8_t palette[32];  // Palette data (addrs $3F00-$3FFF, mirrored after $3F1F)
+
+    // VRAM Addressing
+    uint16_t v;  // Current VRAM addr
+    uint16_t t;  // Temp VRAM addr
+    uint8_t x;   // X scroll
+    bool w;      // Write toggle
+
+    // Timing
+    int scanline;
+    int cycle;
+
+    // NMI
+    bool nmi_occurred;
+    bool nmi_output;
+} PPU;
+
 // All possible addressing modes in 6502 assembly
 typedef enum {
     IMPL,
